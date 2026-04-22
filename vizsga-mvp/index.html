@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0f172a" />
-    <title>Villanyszerelő interaktív vizsga MVP</title>
+    <title>Villanyszerelő Interaktív Vizsga Gyakorló</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -13,12 +13,8 @@
     <div class="shell">
       <header class="hero">
         <div>
-          <p class="eyebrow">Villanyszerelő gyakorlófelület</p>
-          <h1>Interaktív vizsga MVP</h1>
-          <p class="lede">
-            Feleletválasztós kérdések, későbbre jelölés, áttekintő lista és
-            végső kiértékelés. Statikus, megosztható, bővíthető.
-          </p>
+          <p class="eyebrow">Villanyszerelő interaktív vizsga gyakorló</p>
+          <h1>Villanyszerelő Interaktív Vizsga Gyakorló</h1>
         </div>
         <div class="hero-card">
           <div class="hero-card__label">Állapot</div>
@@ -31,11 +27,11 @@
         <aside class="sidebar">
           <section class="panel">
             <div class="panel__header">
-              <h2>Szűrők</h2>
+              <h2>Teszt beállításai</h2>
               <span class="chip chip--soft" id="poolCountChip">0 kérdés</span>
             </div>
             <p class="panel-note">
-              Válassz témaköröket és kérdésszámot, majd indíts új szekciót.
+              Válassz témaköröket és kérdésszámot, majd indíts új tesztet.
             </p>
             <div class="filter-actions">
               <button class="ghost" id="selectAllTopicsButton" type="button">Minden téma</button>
@@ -47,7 +43,7 @@
               <input id="questionCountInput" type="number" min="1" value="10" />
             </label>
             <div class="filter-actions">
-              <button class="button" id="startSessionButton" type="button">Új szekció indítása</button>
+              <button class="button" id="startSessionButton" type="button">Új teszt indítása</button>
             </div>
           </section>
 
@@ -82,7 +78,7 @@
           <section class="panel">
             <div class="panel__header">
               <h2>Kérdések</h2>
-              <span class="chip" id="modeChip">Practice MVP</span>
+              <span class="chip" id="modeChip">Teszt</span>
             </div>
             <div class="question-nav" id="questionNav"></div>
           </section>
@@ -168,10 +164,7 @@
       </main>
 
       <footer class="footer">
-        <div>
-          Későbbi bővítés: <strong>test mode</strong>, <strong>practice mode</strong>,
-          további feladattípusok.
-        </div>
+        <div>Kapcsolat: <a href="mailto:pm3gy@protonmail.com">pm3gy@protonmail.com</a></div>
         <button class="ghost" id="evaluateButton" type="button">Kiértékelés</button>
       </footer>
     </div>

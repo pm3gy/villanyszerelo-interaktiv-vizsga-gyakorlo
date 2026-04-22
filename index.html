@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a" />
     <meta
       name="description"
-      content="Villanyszerelő interaktív vizsga gyakorló. Kérdésbank, gyakorlófelület és dokumentáció egy helyen."
+      content="Villanyszerelő interaktív vizsga gyakorló."
     />
     <title>Villanyszerelő interaktív vizsga gyakorló</title>
     <style>
@@ -14,7 +14,7 @@
         color-scheme: dark;
         --bg: #07111f;
         --bg-2: #0c1c30;
-        --card: rgba(11, 18, 32, 0.78);
+        --card: rgba(11, 18, 32, 0.82);
         --card-border: rgba(148, 163, 184, 0.18);
         --text: #e5eefb;
         --muted: #a8b6c9;
@@ -45,197 +45,82 @@
       }
 
       .wrap {
-        width: min(1080px, calc(100% - 32px));
+        width: min(940px, calc(100% - 24px));
         margin: 0 auto;
-        padding: 40px 0 48px;
-      }
-
-      .hero {
+        min-height: 100vh;
         display: grid;
-        gap: 24px;
-        grid-template-columns: minmax(0, 1.35fr) minmax(290px, 0.9fr);
-        align-items: start;
-        margin-bottom: 28px;
+        place-items: center;
+        padding: 24px 0;
       }
 
-      .eyebrow {
-        margin: 0 0 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.18em;
-        font-size: 0.76rem;
-        color: var(--accent);
+      .shell {
+        width: 100%;
+        display: grid;
+        gap: 18px;
       }
 
       h1 {
         margin: 0;
-        font-size: clamp(2.4rem, 5vw, 4.8rem);
+        font-size: clamp(2.2rem, 5vw, 4.4rem);
         line-height: 1.02;
         letter-spacing: -0.04em;
+        text-align: center;
       }
 
-      .lede {
-        margin: 18px 0 0;
-        max-width: 62ch;
-        color: var(--muted);
-        font-size: 1.05rem;
-        line-height: 1.65;
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
       }
 
-      .panel {
+      .card {
+        display: grid;
+        gap: 14px;
+        align-content: start;
+        padding: 24px;
         background: var(--card);
         border: 1px solid var(--card-border);
-        border-radius: 22px;
+        border-radius: 24px;
         box-shadow: var(--shadow);
         backdrop-filter: blur(16px);
       }
 
-      .hero-card {
-        padding: 22px;
-      }
-
-      .hero-card__title {
-        margin: 0 0 10px;
-        font-size: 1.05rem;
-        color: var(--muted);
-      }
-
-      .status {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin: 0;
-        padding: 10px 14px;
-        border-radius: 999px;
-        background: rgba(125, 211, 252, 0.14);
-        color: var(--text);
-        font-weight: 600;
-      }
-
-      .status::before {
-        content: "";
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: #34d399;
-        box-shadow: 0 0 0 6px rgba(52, 211, 153, 0.12);
-      }
-
-      .hero-card ul {
-        margin: 18px 0 0;
-        padding: 0;
-        list-style: none;
-        color: var(--muted);
-      }
-
-      .hero-card li + li {
-        margin-top: 10px;
-      }
-
-      .grid {
-        display: grid;
-        gap: 18px;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        margin-top: 18px;
-      }
-
-      .card {
-        padding: 22px;
-      }
-
       .card h2 {
-        margin: 0 0 10px;
-        font-size: 1.15rem;
+        margin: 0;
+        font-size: 1.5rem;
       }
 
       .card p {
         margin: 0;
         color: var(--muted);
-        line-height: 1.62;
-      }
-
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 18px;
+        line-height: 1.65;
       }
 
       .button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        min-height: 46px;
+        min-height: 48px;
         padding: 0 18px;
         border-radius: 14px;
         text-decoration: none;
-        font-weight: 700;
-        border: 1px solid transparent;
-        transition:
-          transform 120ms ease,
-          border-color 120ms ease,
-          background 120ms ease;
+        font-weight: 800;
+        color: #07111f;
+        background: linear-gradient(135deg, #7dd3fc, #a78bfa);
+        transition: transform 120ms ease;
       }
 
       .button:hover {
         transform: translateY(-1px);
       }
 
-      .button--primary {
-        color: #07111f;
-        background: linear-gradient(135deg, #7dd3fc, #a78bfa);
-      }
+      @media (max-width: 760px) {
+        .wrap {
+          width: min(100% - 16px, 940px);
+          align-items: start;
+        }
 
-      .button--secondary {
-        color: var(--text);
-        border-color: var(--card-border);
-        background: rgba(15, 23, 42, 0.45);
-      }
-
-      .section {
-        margin-top: 22px;
-      }
-
-      .section h2 {
-        margin: 0 0 10px;
-        font-size: 1.2rem;
-      }
-
-      .list {
-        display: grid;
-        gap: 14px;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .mini {
-        padding: 18px;
-      }
-
-      .mini strong {
-        display: block;
-        margin-bottom: 8px;
-      }
-
-      .mini span {
-        color: var(--muted);
-        line-height: 1.55;
-      }
-
-      code {
-        padding: 0.16rem 0.35rem;
-        border-radius: 8px;
-        background: rgba(148, 163, 184, 0.16);
-      }
-
-      .footer {
-        margin-top: 20px;
-        color: var(--muted);
-        font-size: 0.95rem;
-      }
-
-      @media (max-width: 860px) {
-        .hero,
-        .grid,
-        .list {
+        .cards {
           grid-template-columns: 1fr;
         }
       }
@@ -243,80 +128,25 @@
   </head>
   <body>
     <main class="wrap">
-      <section class="hero">
-        <div>
-          <p class="eyebrow">Villanyszerelő interaktív vizsga gyakorló</p>
-          <h1>Gyakorlóeszköz a vizsga logikájához igazítva.</h1>
-          <p class="lede">
-            Ez a repó csak a megosztható, hostolható részeket tartalmazza:
-            a kérdésbankot, a statikus gyakorlófelületet és a dokumentációt.
-            A nyers szakmai forrásanyagok nem kerültek bele.
-          </p>
-          <div class="actions">
-            <a class="button button--primary" href="./vizsga-mvp/">Nyisd meg a gyakorlót</a>
-            <a class="button button--secondary" href="./kerdesbank/">Nézd meg a kérdésbankot</a>
-          </div>
-        </div>
+      <section class="shell">
+        <h1>Villanyszerelő interaktív vizsga gyakorló</h1>
+        <div class="cards">
+          <article class="card">
+            <h2>Próbatesztelő</h2>
+            <p>
+              Nyisd meg a vizsgaszerű gyakorlófelületet, ahol témaszűrő,
+              kérdésszám, későbbre jelölés és kiértékelés is van.
+            </p>
+            <a class="button" href="./vizsga-mvp/">Megnyitás</a>
+          </article>
 
-        <aside class="panel hero-card">
-          <p class="hero-card__title">Jelenlegi állapot</p>
-          <p class="status">Készen áll statikus hostolásra</p>
-          <ul>
-            <li>240 kérdés</li>
-            <li>8 támogatott kérdéstípus</li>
-            <li>választás, sorrendezés, párosítás, csoportosítás és numerikus feladatok</li>
-            <li>képes feladatok asset-támogatással</li>
-          </ul>
-        </aside>
-      </section>
-
-      <section class="grid">
-        <article class="panel card">
-          <h2>Gyakorlófelület</h2>
-          <p>
-            A <code>vizsga-mvp</code> mappában lévő statikus app kezeli a témaszűrést,
-            a kérdésszámot, az átlépett kérdéseket és az automatikus kiértékelést.
-          </p>
-          <div class="actions">
-            <a class="button button--secondary" href="./vizsga-mvp/">Megnyitás</a>
-          </div>
-        </article>
-
-        <article class="panel card">
-          <h2>Kérdésbank</h2>
-          <p>
-            A <code>kerdesbank</code> mappában vannak a CSV-k, a forráskatalógus,
-            a képek és a bővítő scriptek. Bárki tovább tudja bővíteni a bankot.
-          </p>
-          <div class="actions">
-            <a class="button button--secondary" href="./kerdesbank/">Megnyitás</a>
-          </div>
-        </article>
-      </section>
-
-      <section class="section">
-        <h2>Használat</h2>
-        <div class="list">
-          <div class="panel mini">
-            <strong>Helyi futtatás</strong>
-            <span>
-              Indíts egy statikus szervert a repo gyökeréből, majd nyisd meg a
-              gyökéroldalt vagy közvetlenül a <code>/vizsga-mvp/</code> útvonalat.
-            </span>
-          </div>
-          <div class="panel mini">
-            <strong>Cloudflare Pages</strong>
-            <span>
-              A gyökér <code>index.html</code> miatt a repo közvetlenül publikálható
-              statikus oldalként, külön backend nélkül.
-            </span>
-          </div>
+          <article class="card">
+            <h2>Egyéb infók</h2>
+            <p>Projektcél, dokumentáció, használati útmutató és kapcsolat.</p>
+            <a class="button" href="./egyeb-infok/">Megnyitás</a>
+          </article>
         </div>
       </section>
-
-      <div class="footer">
-        A projekt célja: vizsgaszerű gyakorlás, bővíthető kérdésbankkal és megosztható statikus felülettel.
-      </div>
     </main>
   </body>
 </html>

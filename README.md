@@ -13,7 +13,8 @@ Nyers szakmai forrásanyagokat nem terjesztünk ebben a repóban.
 
 - `kerdesbank`: a kérdésbank, a forráskatalógus és a feldolgozó scriptek
 - `vizsga-mvp`: a hostolható statikus gyakorlófelület
-- `index.html`: a repo gyökérben lévő belépőoldal, ami Cloudflare Pages alatt is működik
+- `index.html`: a gyökér belépőoldala
+- `egyeb-infok`: projektcél, dokumentáció, használat és kapcsolat
 
 ## Jelenlegi állapot
 
@@ -46,6 +47,8 @@ Ezután a gyakorlófelület itt érhető el:
 A fő belépőoldalról külön is nyitható:
 
 `http://localhost:8000/vizsga-mvp/`
+
+`http://localhost:8000/egyeb-infok/`
 
 `http://localhost:8000/kerdesbank/`
 

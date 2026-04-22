@@ -461,10 +461,10 @@ function renderSessionHeader() {
   const visibleCount = questions.length;
   const selectedCount = topics.length;
   els.modeChip.textContent = allTopicsSelected
-    ? `Minden téma / ${visibleCount} kérdés`
+    ? `Minden téma / ${visibleCount} kérdéses teszt`
     : selectedCount
-      ? `${selectedCount} téma / ${visibleCount} kérdés`
-      : `${visibleCount} kérdés`;
+      ? `${selectedCount} téma / ${visibleCount} kérdéses teszt`
+      : `${visibleCount} kérdéses teszt`;
 
   updateNextButtonLabel();
 }

@@ -1,4 +1,4 @@
-# Villanyszerelő interaktív vizsga MVP
+# Villanyszerelő Interaktív Vizsga Gyakorló
 
 Ez egy statikus, hostolható gyakorlófelület a kérdésbankhoz.
 
@@ -12,14 +12,13 @@ Ez egy statikus, hostolható gyakorlófelület a kérdésbankhoz.
 - jelöli a kérdést későbbre
 - külön listázza az átlépett kérdéseket
 - visszanavigálható kérdéslista
-- automatikus kiértékelés a szekció végén
+- automatikus kiértékelés a teszt végén
 - végső eredmény statisztikával
 - állapotmentés böngészőben
 
 ## Amit még nem tud
 
 - `test mode`
-- `practice mode`
 
 ## Adatforrások
 

@@ -191,6 +191,7 @@ h1 {
 .footer {
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .panel__header h2 {
@@ -751,11 +752,24 @@ h1 {
   }
 
   .question-nav {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(2.8rem, 1fr));
   }
 
   .stats {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .question-card {
+    min-height: 0;
+  }
+
+  .question-card__top {
+    align-items: flex-start;
+  }
+
+  .question-badges {
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .choice--field {
@@ -775,5 +789,30 @@ h1 {
   .button,
   .ghost {
     width: 100%;
+  }
+
+  .result-card,
+  .stat {
+    min-width: 0;
+  }
+
+  .question-media {
+    grid-template-columns: 1fr;
+  }
+
+  .question-media__img {
+    max-height: 280px;
+  }
+
+  .review-item__top {
+    align-items: flex-start;
+  }
+
+  .choice,
+  .ordering-item,
+  .skip-item,
+  .review-item {
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
   }
 }
