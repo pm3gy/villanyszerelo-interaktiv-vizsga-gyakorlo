@@ -1,0 +1,6 @@
+asset_id;question_id;path;kind;alt_text;source_id;source_locator
+A0001;Q0091;../kerdesbank/media/vbs_motorvezerlo_kozpont.jpg;photo;Nyitott motorvezérlő központ;S0031;6.1.4 fejezet
+A0002;Q0092;../kerdesbank/media/vbs_tomszelence.jpg;photo;Kábelbevezető tömszelence;S0031;6.1.4 fejezet
+A0003;Q0093;../kerdesbank/media/doc150619_vezetekszakasz.jpg;diagram;A vezetékakaszok száma jelöléssel;S0032;3. oldal
+A0004;Q0094;../kerdesbank/media/doc150619_munkafazisok.jpg;diagram;Falba süllyesztett védőcsöves szerelés munkafázisai;S0032;5. oldal
+A0005;Q0099;../kerdesbank/media/doc150619_valtokapcsolo.jpg;diagram;Váltókapcsolós világítási ábra;S0032;4. oldal

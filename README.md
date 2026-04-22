@@ -11,8 +11,8 @@ Nyers szakmai forrásanyagokat nem terjesztünk ebben a repóban.
 
 ## Tartalom
 
-- `06-kerdesbank`: a kérdésbank, a forráskatalógus és a feldolgozó scriptek
-- `07-vizsga-mvp`: a hostolható statikus gyakorlófelület
+- `kerdesbank`: a kérdésbank, a forráskatalógus és a feldolgozó scriptek
+- `vizsga-mvp`: a hostolható statikus gyakorlófelület
 
 ## Jelenlegi állapot
 
@@ -40,22 +40,21 @@ python3 -m http.server 8000
 
 Ezután a gyakorlófelület itt érhető el:
 
-`http://localhost:8000/07-vizsga-mvp/`
+`http://localhost:8000/vizsga-mvp/`
 
 ## Kérdésbank bővítése
 
-- a kérdések a `06-kerdesbank/questions.csv` fájlban vannak
-- a válaszlehetőségek a `06-kerdesbank/choices.csv` fájlban vannak
-- a források a `06-kerdesbank/sources.csv` fájlban vannak
-- a képek és egyéb médiák az `06-kerdesbank/assets.csv` fájlban vannak
+- a kérdések a `kerdesbank/questions.csv` fájlban vannak
+- a válaszlehetőségek a `kerdesbank/choices.csv` fájlban vannak
+- a források a `kerdesbank/sources.csv` fájlban vannak
+- a képek és egyéb médiák a `kerdesbank/assets.csv` fájlban vannak
 
 A bővítő scriptek:
 
-- `06-kerdesbank/scripts/append_batch_2026_04_19.py`
-- `06-kerdesbank/scripts/dedupe_bank_2026_04_19.py`
+- `kerdesbank/scripts/append_batch_2026_04_19.py`
+- `kerdesbank/scripts/dedupe_bank_2026_04_19.py`
 
 ## Repo-szabály
 
 - csak a gyakorlóeszköz maradjon a repóban
 - a nyers forrásanyagok maradjanak helyben, de ne kerüljenek a Gitbe
-

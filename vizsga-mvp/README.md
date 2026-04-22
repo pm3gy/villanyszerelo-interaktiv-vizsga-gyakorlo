@@ -23,10 +23,10 @@ Ez egy statikus, hostolható gyakorlófelület a kérdésbankhoz.
 
 ## Adatforrások
 
-- `../06-kerdesbank/questions.csv`
-- `../06-kerdesbank/choices.csv`
-- `../06-kerdesbank/sources.csv`
-- `../06-kerdesbank/assets.csv`
+- `../kerdesbank/questions.csv`
+- `../kerdesbank/choices.csv`
+- `../kerdesbank/sources.csv`
+- `../kerdesbank/assets.csv`
 
 ## Helyi futtatás
 
@@ -38,7 +38,7 @@ python3 -m http.server 8000
 
 Ezután a böngészőben nyisd meg:
 
-`http://localhost:8000/07-vizsga-mvp/`
+`http://localhost:8000/vizsga-mvp/`
 
 ## Hostolás
 

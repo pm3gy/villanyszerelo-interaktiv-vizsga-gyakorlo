@@ -1,9 +1,9 @@
 const STORAGE_KEY = "villany-vizsga-mvp:v1";
 const DATA_FILES = {
-  questions: "../06-kerdesbank/questions.csv",
-  choices: "../06-kerdesbank/choices.csv",
-  sources: "../06-kerdesbank/sources.csv",
-  assets: "../06-kerdesbank/assets.csv",
+  questions: "../kerdesbank/questions.csv",
+  choices: "../kerdesbank/choices.csv",
+  sources: "../kerdesbank/sources.csv",
+  assets: "../kerdesbank/assets.csv",
 };
 
 const SUPPORTED_TYPES = new Set([
