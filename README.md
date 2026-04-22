@@ -13,6 +13,7 @@ Nyers szakmai forrásanyagokat nem terjesztünk ebben a repóban.
 
 - `kerdesbank`: a kérdésbank, a forráskatalógus és a feldolgozó scriptek
 - `vizsga-mvp`: a hostolható statikus gyakorlófelület
+- `index.html`: a repo gyökérben lévő belépőoldal, ami Cloudflare Pages alatt is működik
 
 ## Jelenlegi állapot
 
@@ -40,7 +41,15 @@ python3 -m http.server 8000
 
 Ezután a gyakorlófelület itt érhető el:
 
+`http://localhost:8000/`
+
+A fő belépőoldalról külön is nyitható:
+
 `http://localhost:8000/vizsga-mvp/`
+
+`http://localhost:8000/kerdesbank/`
+
+Ha közvetlenül a gyakorlófelületet akarod nézni, a `vizsga-mvp/` útvonalat nyisd meg.
 
 ## Kérdésbank bővítése
 
@@ -58,3 +67,8 @@ A bővítő scriptek:
 
 - csak a gyakorlóeszköz maradjon a repóban
 - a nyers forrásanyagok maradjanak helyben, de ne kerüljenek a Gitbe
+
+## Hostolás
+
+A repó Cloudflare Pages alatt közvetlenül hostolható, mert a gyökérben van egy önálló `index.html`.
+Backendre nincs szükség, a kérdésbank CSV-k és a statikus UI ugyanarról a site-ról tölthetők.
