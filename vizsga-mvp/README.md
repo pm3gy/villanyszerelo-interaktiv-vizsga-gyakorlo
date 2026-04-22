@@ -30,9 +30,10 @@ Ez egy statikus, hostolható gyakorlófelület a kérdésbankhoz.
 
 ## Helyi futtatás
 
-A felületet statikus szerverként érdemes futtatni, például:
+A felületet a repo gyökeréből indított statikus szerverrel érdemes futtatni, például:
 
 ```bash
+cd <repo-root>
 python3 -m http.server 8000
 ```
 

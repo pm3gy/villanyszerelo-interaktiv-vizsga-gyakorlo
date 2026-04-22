@@ -34,7 +34,7 @@ Nyers szakmai forrásanyagokat nem terjesztünk ebben a repóban.
 Indíts statikus szervert a repó gyökeréből:
 
 ```bash
-cd /Users/peter/Documents/villany/interaktiv-vizsga-gyakorlo
+cd <repo-root>
 python3 -m http.server 8000
 ```
 
