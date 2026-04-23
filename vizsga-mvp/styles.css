@@ -330,6 +330,15 @@ h1 {
   padding: 0.8rem 0.9rem;
 }
 
+.filter-actions--start {
+  margin-top: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+#startSessionButton {
+  margin: 0;
+}
+
 .stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -392,6 +401,11 @@ h1 {
 .chip--soft {
   background: rgba(16, 34, 56, 0.06);
   color: var(--muted);
+}
+
+.chip--code {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .ghost,
@@ -801,6 +815,31 @@ h1 {
   margin: 1rem 0 0.25rem;
   padding: 0.9rem 0.3rem;
   color: var(--muted);
+  align-items: flex-start;
+}
+
+.footer__copy {
+  display: grid;
+  gap: 0.22rem;
+  max-width: 54rem;
+}
+
+.footer__label {
+  color: var(--text);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.footer__note {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.mobile-dock {
+  display: none;
 }
 
 .mobile-dock {

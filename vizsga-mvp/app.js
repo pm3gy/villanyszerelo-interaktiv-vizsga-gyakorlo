@@ -67,6 +67,7 @@ const els = {
   questionKicker: document.getElementById("questionKicker"),
   questionTitle: document.getElementById("questionTitle"),
   questionTypeChip: document.getElementById("questionTypeChip"),
+  questionIdChip: document.getElementById("questionIdChip"),
   difficultyChip: document.getElementById("difficultyChip"),
   questionMeta: document.getElementById("questionMeta"),
   prompt: document.getElementById("prompt"),
@@ -78,7 +79,6 @@ const els = {
   resetButton: document.getElementById("resetButton"),
   evaluateButton: document.getElementById("evaluateButton"),
   resultsPanel: document.getElementById("resultsPanel"),
-  backToQuizButton: document.getElementById("backToQuizButton"),
   resultScore: document.getElementById("resultScore"),
   resultCorrect: document.getElementById("resultCorrect"),
   resultWrong: document.getElementById("resultWrong"),
@@ -94,6 +94,7 @@ init().catch((error) => {
   console.error(error);
   els.datasetStatus.textContent = "Betöltési hiba";
   els.datasetMeta.textContent = error.message;
+  syncMobileDock();
   els.questionTitle.textContent = "Nem sikerült betölteni a kérdésbankot";
   els.prompt.innerHTML =
     "<p>Valószínűleg a CSV elérési útja nem jó, vagy a fájlt nem statikus szerveren nyitottad meg.</p>";
@@ -120,7 +121,8 @@ async function init() {
   render();
   startExamClockTicker();
   els.datasetStatus.textContent = "Készen áll";
-  els.datasetMeta.textContent = `${data.questions.length} kérdés, ${data.sources.length} forrás, ${data.assets.length} asset`;
+  syncMobileDock();
+  els.datasetMeta.textContent = `${data.questions.length} kérdés, ${data.sources.size} forrás, ${data.assets.length} asset`;
 }
 
 function requireOk(response) {
@@ -202,12 +204,16 @@ function hydrateStateFromData() {
     getAllTopics()
   );
 
+  state.session = state.session || {};
+  state.session.questionIds = Array.isArray(state.session.questionIds) ? state.session.questionIds : [];
+  state.session.reviewQuestionIds = Array.isArray(state.session.reviewQuestionIds) ? state.session.reviewQuestionIds : [];
+  state.session.phase = state.session.phase || "main";
+
   const filteredPool = getFilteredPool();
   const defaultCount = Math.min(10, filteredPool.length || 1);
   const desiredCount = Number(state.settings.questionCount || defaultCount);
   state.settings.questionCount = clamp(desiredCount, 1, Math.max(filteredPool.length, 1));
 
-  state.session = state.session || {};
   if (!Array.isArray(state.session.questionIds) || state.session.questionIds.length === 0) {
     startNewSession({ silent: true });
   } else {
@@ -247,9 +253,6 @@ function wireEvents() {
     renderResults();
     els.resultsPanel.hidden = false;
     els.resultsPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
-  els.backToQuizButton.addEventListener("click", () => {
-    els.questionCard.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   els.toggleStatusPanelButton?.addEventListener("click", () => {
@@ -469,8 +472,14 @@ function render() {
   syncMobilePanelButtons();
   renderNav();
   renderSkipQueue();
-  renderQuestion(current);
-  els.resultsPanel.hidden = !state.session.completed;
+  if (state.session.completed) {
+    els.questionCard.hidden = true;
+    els.resultsPanel.hidden = false;
+  } else {
+    els.questionCard.hidden = false;
+    renderQuestion(current);
+    els.resultsPanel.hidden = true;
+  }
 }
 
 function renderSessionHeader() {
@@ -481,7 +490,7 @@ function renderSessionHeader() {
   const allTopicsSelected = topics.length === allTopics.length;
 
   els.poolCountChip.textContent = `${pool.length} kérdés`;
-  els.datasetMeta.textContent = `${data.questions.length} kérdés, ${data.sources.length} forrás`;
+  els.datasetMeta.textContent = `${data.questions.length} kérdés, ${data.sources.size} forrás`;
   els.questionCountInput.value = String(state.settings.questionCount || Math.min(10, pool.length || 1));
   els.questionCountInput.max = String(Math.max(pool.length, 1));
 
@@ -530,7 +539,9 @@ function startNewSession(options = {}) {
   state.settings.questionCount = questionCount;
   state.session = {
     questionIds: chosen.map((question) => question.question_id),
+    reviewQuestionIds: [],
     currentIndex: 0,
+    phase: "main",
     completed: false,
     completedAt: null,
     startedAt: new Date().toISOString(),
@@ -553,17 +564,20 @@ function startNewSession(options = {}) {
 function syncSessionWithData() {
   const allowed = new Set(getFilteredPool().map((question) => question.question_id));
   const keptIds = (state.session.questionIds || []).filter((questionId) => allowed.has(questionId));
+  const keptReviewIds = (state.session.reviewQuestionIds || []).filter((questionId) => allowed.has(questionId));
 
-  if (keptIds.length === 0) {
+  if (keptIds.length === 0 && keptReviewIds.length === 0) {
     startNewSession({ silent: true });
     return;
   }
 
   state.session.questionIds = keptIds;
+  state.session.reviewQuestionIds = keptReviewIds;
+  state.session.phase = state.session.phase === "review" && keptReviewIds.length > 0 ? "review" : "main";
   state.session.currentIndex = clamp(
     Number(state.session.currentIndex || 0),
     0,
-    Math.max(keptIds.length - 1, 0)
+    Math.max(getSessionQuestions().length - 1, 0)
   );
   state.session.completed = Boolean(state.session.completed && keptIds.length > 0);
   ensureSessionClock();
@@ -579,6 +593,15 @@ function getFilteredPool() {
 }
 
 function getSessionQuestions() {
+  const phase = state.session?.phase || "main";
+  const ids =
+    phase === "review"
+      ? state.session?.reviewQuestionIds || []
+      : state.session?.questionIds || [];
+  return ids.map((questionId) => data.questionsById.get(questionId)).filter(Boolean);
+}
+
+function getMainSessionQuestions() {
   const ids = state.session?.questionIds || [];
   return ids.map((questionId) => data.questionsById.get(questionId)).filter(Boolean);
 }
@@ -642,9 +665,23 @@ function advance() {
   const current = currentQuestion();
   if (current && !isQuestionAnswered(current)) {
     state.skipped[current.question_id] = true;
+    if (state.session.phase !== "review") {
+      const reviewQueue = state.session.reviewQuestionIds || [];
+      if (!reviewQueue.includes(current.question_id)) {
+        reviewQueue.push(current.question_id);
+      }
+      state.session.reviewQuestionIds = reviewQueue;
+    }
   }
 
   if ((state.session.currentIndex || 0) >= questions.length - 1) {
+    if (state.session.phase !== "review" && (state.session.reviewQuestionIds || []).length > 0) {
+      state.session.phase = "review";
+      state.session.currentIndex = 0;
+      saveState();
+      render();
+      return;
+    }
     completeSession();
     return;
   }
@@ -656,6 +693,7 @@ function advance() {
 
 function completeSession() {
   state.session.completed = true;
+  state.session.phase = "done";
   state.session.completedAt = new Date().toISOString();
   saveState();
   renderResults();
@@ -671,12 +709,20 @@ function updateNextButtonLabel() {
     return;
   }
   const isLast = (state.session.currentIndex || 0) >= questions.length - 1;
-  els.nextButton.textContent = isLast ? "Kiértékelés" : "Következő feladat";
+  const isReviewPhase = state.session.phase === "review";
+  const hasReviewQueue = (state.session.reviewQuestionIds || []).length > 0;
+
+  if (isReviewPhase) {
+    els.nextButton.textContent = isLast ? "Kiértékelés" : "Következő feladat";
+    return;
+  }
+
+  els.nextButton.textContent = isLast && !hasReviewQueue ? "Kiértékelés" : "Következő feladat";
 }
 
 function ensureSessionClock() {
   if (!state.session) return;
-  const questionCount = getSessionQuestions().length || Number(state.settings.questionCount || 1);
+  const questionCount = (state.session.questionIds || []).length || Number(state.settings.questionCount || 1);
   const nextDuration = getExamDurationForQuestionCount(questionCount);
   let changed = false;
 
@@ -780,7 +826,7 @@ function formatDuration(totalSeconds) {
 }
 
 function renderSummary() {
-  const questions = getSessionQuestions();
+  const questions = state.session.completed ? getMainSessionQuestions() : getSessionQuestions();
   const total = questions.length;
   const answered = questions.filter((q) => isQuestionAnswered(q)).length;
   const skipped = questions.filter((q) => state.skipped[q.question_id]).length;
@@ -852,6 +898,9 @@ function renderQuestion(question) {
   if (!question) {
     els.questionKicker.textContent = "Nincs kérdés";
     els.questionTitle.textContent = "A kérdésbank üres";
+    els.questionTypeChip.textContent = "-";
+    els.questionIdChip.textContent = "ID -";
+    els.difficultyChip.textContent = "nehézség -";
     els.prompt.innerHTML = "<p>Nincs betöltött kérdés.</p>";
     els.choices.innerHTML = "";
     els.questionMeta.innerHTML = "";
@@ -863,6 +912,7 @@ function renderQuestion(question) {
   els.questionKicker.textContent = `Kérdés ${state.session.currentIndex + 1} / ${getSessionQuestions().length}`;
   els.questionTitle.textContent = question.subtopic || question.topic || "Kérdés";
   els.questionTypeChip.textContent = question.question_type === "true_false" ? "igaz/hamis" : question.question_type;
+  els.questionIdChip.textContent = `ID ${question.question_id}`;
   els.difficultyChip.textContent = `nehézség ${question.difficulty || "-"}`;
   els.questionMeta.innerHTML = "";
 
@@ -1123,7 +1173,7 @@ function getQuestionState(questionId) {
 
 function renderResults() {
   const result = evaluate();
-  const questions = getSessionQuestions();
+  const questions = getMainSessionQuestions();
   const total = questions.length;
   const wrong = total - result.correctCount;
 
@@ -1168,7 +1218,7 @@ function evaluate() {
   let correctCount = 0;
   let earnedPoints = 0;
 
-  for (const question of getSessionQuestions()) {
+  for (const question of getMainSessionQuestions()) {
     const sessionIndex = questionsIndexInSession(question.question_id);
     const result = evaluateQuestion(question);
     const wasAnswered = isQuestionAnswered(question);
@@ -1463,6 +1513,7 @@ function resetSession() {
   saveState();
   render();
   els.resultsPanel.hidden = true;
+  els.questionCard.hidden = false;
   els.questionCard.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -1477,7 +1528,9 @@ function loadState() {
         },
         session: {
           questionIds: [],
+          reviewQuestionIds: [],
           currentIndex: 0,
+          phase: "main",
           completed: false,
           completedAt: null,
           startedAt: null,
@@ -1495,7 +1548,9 @@ function loadState() {
       },
       session: parsed.session || {
         questionIds: [],
+        reviewQuestionIds: [],
         currentIndex: 0,
+        phase: "main",
         completed: false,
         completedAt: null,
         startedAt: null,
@@ -1512,7 +1567,9 @@ function loadState() {
       },
       session: {
         questionIds: [],
+        reviewQuestionIds: [],
         currentIndex: 0,
+        phase: "main",
         completed: false,
         completedAt: null,
         startedAt: null,

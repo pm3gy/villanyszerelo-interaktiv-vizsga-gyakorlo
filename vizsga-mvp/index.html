@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0f172a" />
     <meta name="format-detection" content="telephone=no, email=no, address=no, date=no" />
     <title>Villanyszerelő - Épületvillamosság (4 0713 04 07) | Interaktív vizsga gyakorló</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260423-1" />
   </head>
   <body>
     <div class="backdrop backdrop-a"></div>
@@ -28,11 +28,10 @@
             <div class="hero-card__head">
               <div>
                 <div class="hero-card__label">Állapot</div>
-                <div class="hero-card__head-value" id="mobileStatus">Betöltés...</div>
+                <div class="hero-card__head-value" id="datasetStatus">Betöltés...</div>
               </div>
             </div>
             <div class="hero-card__body">
-              <div class="hero-card__value" id="datasetStatus">Betöltés...</div>
               <div class="hero-card__meta" id="datasetMeta"></div>
               <div class="hero-card__divider"></div>
               <div class="hero-card__label">Vizsgaóra</div>
@@ -102,7 +101,7 @@
               <span>Kérdésszám</span>
               <input id="questionCountInput" type="number" min="1" value="10" />
             </label>
-            <div class="filter-actions">
+            <div class="filter-actions filter-actions--start">
               <button class="button" id="startSessionButton" type="button">Új teszt indítása</button>
             </div>
             <p class="panel-note">
@@ -125,6 +124,7 @@
               </div>
               <div class="question-badges">
                 <span class="chip" id="questionTypeChip">type</span>
+                <span class="chip chip--soft chip--code" id="questionIdChip">ID</span>
                 <span class="chip chip--soft" id="difficultyChip">difficulty</span>
               </div>
             </div>
@@ -156,9 +156,6 @@
           <section class="panel results" id="resultsPanel" hidden>
             <div class="panel__header">
               <h2>Kiértékelés</h2>
-              <button class="ghost" id="backToQuizButton" type="button">
-                Vissza a kérdésekhez
-              </button>
             </div>
             <div class="results-grid">
               <div class="result-card">
@@ -185,11 +182,24 @@
       </main>
 
       <footer class="footer">
-        <div>Kapcsolat: <a href="mailto:pm3gy@protonmail.com">pm3gy@protonmail.com</a></div>
+        <div class="footer__copy">
+          <div class="footer__label">Visszajelzés</div>
+          <p class="footer__note">
+            Kérdést, javaslatot, hibát stb. ide írhatod meg:
+            <a href="mailto:pm3gy@protonmail.com">pm3gy@protonmail.com</a>
+          </p>
+          <p class="footer__note">
+            [Ha egy kérdésben találtál hibát, akkor küldd el a sorszámát is
+            (pl. <code>Q0030</code>)]
+          </p>
+          <p class="footer__note footer__note--emphasis">
+            FONTOS: ez nem egy hivatalos segédanyag, szóval saját felelősségre használd ;)
+          </p>
+        </div>
         <button class="ghost" id="evaluateButton" type="button">Kiértékelés</button>
       </footer>
     </div>
 
-    <script type="module" src="./app.js"></script>
+    <script type="module" src="./app.js?v=20260423-1"></script>
   </body>
 </html>
