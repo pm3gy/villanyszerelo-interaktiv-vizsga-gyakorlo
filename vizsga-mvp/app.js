@@ -94,6 +94,7 @@ init().catch((error) => {
   console.error(error);
   els.datasetStatus.textContent = "Betöltési hiba";
   els.datasetMeta.textContent = error.message;
+  syncMobileDock();
   els.questionTitle.textContent = "Nem sikerült betölteni a kérdésbankot";
   els.prompt.innerHTML =
     "<p>Valószínűleg a CSV elérési útja nem jó, vagy a fájlt nem statikus szerveren nyitottad meg.</p>";
@@ -120,6 +121,7 @@ async function init() {
   render();
   startExamClockTicker();
   els.datasetStatus.textContent = "Készen áll";
+  syncMobileDock();
   els.datasetMeta.textContent = `${data.questions.length} kérdés, ${data.sources.length} forrás, ${data.assets.length} asset`;
 }
 
