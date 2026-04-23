@@ -73,6 +73,13 @@
                 <span class="chip" id="modeChip">Teszt</span>
               </div>
             </div>
+            <label class="number-field" for="questionCountInput">
+              <span>Kérdésszám</span>
+              <input id="questionCountInput" type="number" min="1" value="10" />
+            </label>
+            <div class="filter-actions">
+              <button class="button" id="startSessionButton" type="button">Új teszt indítása</button>
+            </div>
             <p class="panel-note">
               Válassz témaköröket és kérdésszámot, majd indíts új tesztet.
             </p>
@@ -81,13 +88,6 @@
               <button class="ghost" id="clearTopicsButton" type="button">Szűrés nélkül</button>
             </div>
             <div class="topic-filters" id="topicFilters"></div>
-            <label class="number-field" for="questionCountInput">
-              <span>Kérdésszám</span>
-              <input id="questionCountInput" type="number" min="1" value="10" />
-            </label>
-            <div class="filter-actions">
-              <button class="button" id="startSessionButton" type="button">Új teszt indítása</button>
-            </div>
           </section>
         </aside>
 
