@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0f172a" />
-    <title>4 0713 04 07 - Villanyszerelő - Épületvillamosság | Interaktív vizsga gyakorló</title>
+    <title>Villanyszerelő - Épületvillamosság (4 0713 04 07) | Interaktív vizsga gyakorló</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -15,7 +15,7 @@
         <div>
           <p class="eyebrow">Villanyszerelő interaktív vizsga gyakorló</p>
           <h1>
-            <span>4 0713 04 07 - Villanyszerelő - Épületvillamosság</span>
+            <span>Villanyszerelő - Épületvillamosság (4 0713 04 07)</span>
             <span>Interaktív vizsga gyakorló</span>
           </h1>
         </div>
@@ -23,6 +23,10 @@
           <div class="hero-card__label">Állapot</div>
           <div class="hero-card__value" id="datasetStatus">Betöltés...</div>
           <div class="hero-card__meta" id="datasetMeta"></div>
+          <div class="hero-card__divider"></div>
+          <div class="hero-card__label">Vizsgaóra</div>
+          <div class="hero-card__clock" id="examClock">15:00</div>
+          <div class="hero-card__meta" id="examClockMeta">15 perc / 28 kérdés arányosítva</div>
         </div>
       </header>
 
@@ -123,9 +127,6 @@
             <div class="choices" id="choices"></div>
 
             <div class="actions">
-              <button class="button button--ghost" id="prevButton" type="button">
-                Előző
-              </button>
               <button class="button button--secondary" id="skipButton" type="button">
                 Átlépem a feladatot
               </button>

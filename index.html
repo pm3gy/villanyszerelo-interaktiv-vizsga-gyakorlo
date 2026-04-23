@@ -8,7 +8,7 @@
       name="description"
       content="Villanyszerelő interaktív vizsga gyakorló."
     />
-    <title>4 0713 04 07 - Villanyszerelő - Épületvillamosság | Interaktív vizsga gyakorló</title>
+    <title>Villanyszerelő - Épületvillamosság (4 0713 04 07) | Interaktív vizsga gyakorló</title>
     <style>
       :root {
         color-scheme: dark;
@@ -75,12 +75,13 @@
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 16px;
+        align-items: stretch;
       }
 
       .card {
-        display: grid;
+        display: flex;
+        flex-direction: column;
         gap: 14px;
-        align-content: start;
         padding: 24px;
         background: var(--card);
         border: 1px solid var(--card-border);
@@ -98,6 +99,11 @@
         margin: 0;
         color: var(--muted);
         line-height: 1.65;
+      }
+
+      .card .button {
+        margin-top: auto;
+        align-self: flex-start;
       }
 
       .button {
@@ -134,7 +140,7 @@
     <main class="wrap">
       <section class="shell">
         <h1>
-          <span>4 0713 04 07 - Villanyszerelő - Épületvillamosság</span>
+          <span>Villanyszerelő - Épületvillamosság (4 0713 04 07)</span>
           <span>Interaktív vizsga gyakorló</span>
         </h1>
         <div class="cards">

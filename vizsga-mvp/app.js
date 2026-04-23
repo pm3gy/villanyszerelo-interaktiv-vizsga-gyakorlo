@@ -6,6 +6,11 @@ const DATA_FILES = {
   assets: "../kerdesbank/assets.csv",
 };
 
+// NIVE guide: interaktív vizsgatevékenység 15 perc.
+// The 28-question baseline comes from the referenced exam screenshot.
+const OFFICIAL_EXAM_TIME_SECONDS = 15 * 60;
+const OFFICIAL_EXAM_QUESTION_COUNT = 28;
+
 const SUPPORTED_TYPES = new Set([
   "single_choice",
   "multi_choice",
@@ -34,6 +39,8 @@ let data = null;
 const els = {
   datasetStatus: document.getElementById("datasetStatus"),
   datasetMeta: document.getElementById("datasetMeta"),
+  examClock: document.getElementById("examClock"),
+  examClockMeta: document.getElementById("examClockMeta"),
   poolCountChip: document.getElementById("poolCountChip"),
   topicFilters: document.getElementById("topicFilters"),
   questionCountInput: document.getElementById("questionCountInput"),
@@ -58,7 +65,6 @@ const els = {
   choices: document.getElementById("choices"),
   answerHint: document.getElementById("answerHint"),
   unsupportedBlock: document.getElementById("unsupportedBlock"),
-  prevButton: document.getElementById("prevButton"),
   nextButton: document.getElementById("nextButton"),
   skipButton: document.getElementById("skipButton"),
   resetButton: document.getElementById("resetButton"),
@@ -73,6 +79,8 @@ const els = {
   reviewList: document.getElementById("reviewList"),
   questionCard: document.getElementById("questionCard"),
 };
+
+let examClockTimer = null;
 
 init().catch((error) => {
   console.error(error);
@@ -102,6 +110,7 @@ async function init() {
   wireSettingsEvents();
   wireEvents();
   render();
+  startExamClockTicker();
   els.datasetStatus.textContent = "Készen áll";
   els.datasetMeta.textContent = `${data.questions.length} kérdés, ${data.sources.length} forrás, ${data.assets.length} asset`;
 }
@@ -203,11 +212,11 @@ function hydrateStateFromData() {
       state.skipped[question.question_id] = false;
     }
   }
+  ensureSessionClock();
   saveState();
 }
 
 function wireEvents() {
-  els.prevButton.addEventListener("click", () => move(-1));
   els.nextButton.addEventListener("click", () => {
     advance();
   });
@@ -440,6 +449,7 @@ function render() {
   const current = currentQuestion();
   renderSessionHeader();
   renderSummary();
+  renderExamClock();
   renderNav();
   renderSkipQueue();
   renderQuestion(current);
@@ -505,6 +515,8 @@ function startNewSession(options = {}) {
     currentIndex: 0,
     completed: false,
     completedAt: null,
+    startedAt: new Date().toISOString(),
+    examDurationSeconds: getExamDurationForQuestionCount(chosen.length),
   };
   state.answers = {};
   state.skipped = {};
@@ -517,6 +529,7 @@ function startNewSession(options = {}) {
     saveState();
   }
   syncQuestionCountInput();
+  renderExamClock();
 }
 
 function syncSessionWithData() {
@@ -535,6 +548,7 @@ function syncSessionWithData() {
     Math.max(keptIds.length - 1, 0)
   );
   state.session.completed = Boolean(state.session.completed && keptIds.length > 0);
+  ensureSessionClock();
 }
 
 function getFilteredPool() {
@@ -640,6 +654,76 @@ function updateNextButtonLabel() {
   }
   const isLast = (state.session.currentIndex || 0) >= questions.length - 1;
   els.nextButton.textContent = isLast ? "Kiértékelés" : "Következő feladat";
+}
+
+function ensureSessionClock() {
+  if (!state.session) return;
+  const questionCount = getSessionQuestions().length || Number(state.settings.questionCount || 1);
+  const nextDuration = getExamDurationForQuestionCount(questionCount);
+  let changed = false;
+
+  if (!state.session.startedAt && !state.session.completed) {
+    state.session.startedAt = new Date().toISOString();
+    changed = true;
+  }
+
+  if (state.session.examDurationSeconds !== nextDuration) {
+    state.session.examDurationSeconds = nextDuration;
+    changed = true;
+  }
+
+  if (changed) {
+    saveState();
+  }
+}
+
+function getExamDurationForQuestionCount(questionCount) {
+  const count = Math.max(1, Number(questionCount || 1));
+  return Math.max(60, Math.round((OFFICIAL_EXAM_TIME_SECONDS * count) / OFFICIAL_EXAM_QUESTION_COUNT));
+}
+
+function getExamClockState() {
+  const startedAt = state.session?.startedAt ? Date.parse(state.session.startedAt) : Number.NaN;
+  const duration = Number(state.session?.examDurationSeconds || 0);
+  const launchedCount = getSessionQuestions().length || 0;
+
+  if (!Number.isFinite(startedAt) || duration <= 0) {
+    return {
+      display: "--:--",
+      meta: `Alap: 15 perc / 28 kérdés`,
+    };
+  }
+
+  const referenceTime = state.session.completedAt ? Date.parse(state.session.completedAt) : Date.now();
+  const elapsedSeconds = Math.max(0, Math.floor((referenceTime - startedAt) / 1000));
+  const remainingSeconds = Math.max(0, duration - elapsedSeconds);
+  return {
+    display: formatDuration(remainingSeconds),
+    meta: `Arányosított idő: ${formatDuration(duration)} · ${launchedCount} indított kérdés · alap: 15 perc / 28 kérdés`,
+  };
+}
+
+function renderExamClock() {
+  if (!els.examClock || !els.examClockMeta) return;
+  const { display, meta } = getExamClockState();
+  els.examClock.textContent = display;
+  els.examClockMeta.textContent = meta;
+}
+
+function startExamClockTicker() {
+  if (examClockTimer) {
+    clearInterval(examClockTimer);
+  }
+  examClockTimer = setInterval(() => {
+    renderExamClock();
+  }, 1000);
+}
+
+function formatDuration(totalSeconds) {
+  const seconds = Math.max(0, Math.floor(totalSeconds));
+  const minutes = String(Math.floor(seconds / 60)).padStart(2, "0");
+  const remainingSeconds = String(seconds % 60).padStart(2, "0");
+  return `${minutes}:${remainingSeconds}`;
 }
 
 function renderSummary() {
@@ -1336,6 +1420,8 @@ function loadState() {
           currentIndex: 0,
           completed: false,
           completedAt: null,
+          startedAt: null,
+          examDurationSeconds: 0,
         },
         answers: {},
         skipped: {},
@@ -1352,6 +1438,8 @@ function loadState() {
         currentIndex: 0,
         completed: false,
         completedAt: null,
+        startedAt: null,
+        examDurationSeconds: 0,
       },
       answers: parsed.answers || {},
       skipped: parsed.skipped || {},
@@ -1367,6 +1455,8 @@ function loadState() {
         currentIndex: 0,
         completed: false,
         completedAt: null,
+        startedAt: null,
+        examDurationSeconds: 0,
       },
       answers: {},
       skipped: {},

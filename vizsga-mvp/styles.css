@@ -135,6 +135,8 @@ h1 span {
 
 .hero-card {
   padding: 1.1rem 1.2rem;
+  display: grid;
+  gap: 0.2rem;
 }
 
 .hero-card__label {
@@ -155,6 +157,20 @@ h1 span {
   color: var(--muted);
   font-size: 0.94rem;
   line-height: 1.45;
+}
+
+.hero-card__divider {
+  margin: 0.55rem 0 0.35rem;
+  height: 1px;
+  background: rgba(16, 34, 56, 0.1);
+}
+
+.hero-card__clock {
+  margin-top: 0.18rem;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
 }
 
 .layout {
@@ -802,6 +818,10 @@ h1 span {
   .result-card,
   .stat {
     min-width: 0;
+  }
+
+  .hero-card__clock {
+    font-size: 1.4rem;
   }
 
   .question-media {
