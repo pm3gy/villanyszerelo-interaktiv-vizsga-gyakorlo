@@ -67,6 +67,7 @@ const els = {
   questionKicker: document.getElementById("questionKicker"),
   questionTitle: document.getElementById("questionTitle"),
   questionTypeChip: document.getElementById("questionTypeChip"),
+  questionIdChip: document.getElementById("questionIdChip"),
   difficultyChip: document.getElementById("difficultyChip"),
   questionMeta: document.getElementById("questionMeta"),
   prompt: document.getElementById("prompt"),
@@ -906,6 +907,9 @@ function renderQuestion(question) {
   if (!question) {
     els.questionKicker.textContent = "Nincs kérdés";
     els.questionTitle.textContent = "A kérdésbank üres";
+    els.questionTypeChip.textContent = "-";
+    els.questionIdChip.textContent = "ID -";
+    els.difficultyChip.textContent = "nehézség -";
     els.prompt.innerHTML = "<p>Nincs betöltött kérdés.</p>";
     els.choices.innerHTML = "";
     els.questionMeta.innerHTML = "";
@@ -917,6 +921,7 @@ function renderQuestion(question) {
   els.questionKicker.textContent = `Kérdés ${state.session.currentIndex + 1} / ${getSessionQuestions().length}`;
   els.questionTitle.textContent = question.subtopic || question.topic || "Kérdés";
   els.questionTypeChip.textContent = question.question_type === "true_false" ? "igaz/hamis" : question.question_type;
+  els.questionIdChip.textContent = `ID ${question.question_id}`;
   els.difficultyChip.textContent = `nehézség ${question.difficulty || "-"}`;
   els.questionMeta.innerHTML = "";
 

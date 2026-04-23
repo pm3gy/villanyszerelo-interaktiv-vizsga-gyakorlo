@@ -124,6 +124,7 @@
               </div>
               <div class="question-badges">
                 <span class="chip" id="questionTypeChip">type</span>
+                <span class="chip chip--soft chip--code" id="questionIdChip">ID</span>
                 <span class="chip chip--soft" id="difficultyChip">difficulty</span>
               </div>
             </div>
@@ -181,7 +182,20 @@
       </main>
 
       <footer class="footer">
-        <div>Kapcsolat: <a href="mailto:pm3gy@protonmail.com">pm3gy@protonmail.com</a></div>
+        <div class="footer__copy">
+          <div class="footer__label">Visszajelzés</div>
+          <p class="footer__note">
+            Kérdést, javaslatot, hibát stb. ide írhatod meg:
+            <a href="mailto:pm3gy@protonmail.com">pm3gy@protonmail.com</a>
+          </p>
+          <p class="footer__note">
+            [Ha egy kérdésben találtál hibát, akkor küldd el a sorszámát is
+            (pl. <code>Q0030</code>)]
+          </p>
+          <p class="footer__note footer__note--emphasis">
+            FONTOS: ez nem egy hivatalos segédanyag, szóval saját felelősségre használd ;)
+          </p>
+        </div>
         <button class="ghost" id="evaluateButton" type="button">Kiértékelés</button>
       </footer>
     </div>
