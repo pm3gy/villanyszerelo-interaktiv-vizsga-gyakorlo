@@ -330,8 +330,13 @@ h1 {
   padding: 0.8rem 0.9rem;
 }
 
+.filter-actions--start {
+  margin-top: 0.75rem;
+  margin-bottom: 1rem;
+}
+
 #startSessionButton {
-  margin: 0.35rem 0 0.45rem;
+  margin: 0;
 }
 
 .stats {

@@ -592,10 +592,12 @@ function getFilteredPool() {
 }
 
 function getSessionQuestions() {
-  const ids = state.session?.questionIds || [];
-  const reviewIds = state.session?.reviewQuestionIds || [];
-  const activeIds = state.session?.phase === "review" || state.session?.completed ? [...ids, ...reviewIds] : ids;
-  return activeIds.map((questionId) => data.questionsById.get(questionId)).filter(Boolean);
+  const phase = state.session?.phase || "main";
+  const ids =
+    phase === "review"
+      ? state.session?.reviewQuestionIds || []
+      : state.session?.questionIds || [];
+  return ids.map((questionId) => data.questionsById.get(questionId)).filter(Boolean);
 }
 
 function getMainSessionQuestions() {
@@ -674,7 +676,7 @@ function advance() {
   if ((state.session.currentIndex || 0) >= questions.length - 1) {
     if (state.session.phase !== "review" && (state.session.reviewQuestionIds || []).length > 0) {
       state.session.phase = "review";
-      state.session.currentIndex = state.session.questionIds.length;
+      state.session.currentIndex = 0;
       saveState();
       render();
       return;
@@ -706,13 +708,20 @@ function updateNextButtonLabel() {
     return;
   }
   const isLast = (state.session.currentIndex || 0) >= questions.length - 1;
-  const hasPendingReview = (state.session.reviewQuestionIds || []).length > 0 && state.session.phase !== "review";
-  els.nextButton.textContent = isLast && !hasPendingReview ? "Kiértékelés" : "Következő feladat";
+  const isReviewPhase = state.session.phase === "review";
+  const hasReviewQueue = (state.session.reviewQuestionIds || []).length > 0;
+
+  if (isReviewPhase) {
+    els.nextButton.textContent = isLast ? "Kiértékelés" : "Következő feladat";
+    return;
+  }
+
+  els.nextButton.textContent = isLast && !hasReviewQueue ? "Kiértékelés" : "Következő feladat";
 }
 
 function ensureSessionClock() {
   if (!state.session) return;
-  const questionCount = getSessionQuestions().length || Number(state.settings.questionCount || 1);
+  const questionCount = (state.session.questionIds || []).length || Number(state.settings.questionCount || 1);
   const nextDuration = getExamDurationForQuestionCount(questionCount);
   let changed = false;
 
@@ -822,6 +831,12 @@ function renderSummary() {
   const skipped = questions.filter((q) => state.skipped[q.question_id]).length;
   const score = evaluate().earnedPoints;
   const currentIndex = state.session.currentIndex || 0;
+  const currentPhase = state.session.phase === "review" ? "Átlépett ismétlés" : "Teszt";
+  const topics = state.settings.selectedTopics || [];
+  const allTopics = getAllTopics();
+  const allTopicsSelected = topics.length === allTopics.length;
+  const selectedCount = topics.length;
+  const topicLabel = allTopicsSelected ? "Minden téma" : selectedCount ? `${selectedCount} téma` : "Szűrés nélkül";
 
   els.progressCurrent.textContent = total ? `${Math.min(currentIndex + 1, total)} / ${total}` : "0 / 0";
   els.answeredCount.textContent = String(answered);
@@ -832,6 +847,9 @@ function renderSummary() {
   }
   if (els.mobileProgressDock) {
     els.mobileProgressDock.textContent = total ? `${Math.min(currentIndex + 1, total)} / ${total}` : "0 / 0";
+  }
+  if (els.modeChip && !state.session.completed) {
+    els.modeChip.textContent = `${topicLabel} · ${currentPhase} / ${total} kérdés`;
   }
   els.progressFill.style.width = total ? `${((Math.min(currentIndex + 1, total)) / total) * 100}%` : "0%";
 }
