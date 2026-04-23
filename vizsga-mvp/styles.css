@@ -330,6 +330,10 @@ h1 {
   padding: 0.8rem 0.9rem;
 }
 
+#startSessionButton {
+  margin: 0.35rem 0 0.45rem;
+}
+
 .stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
