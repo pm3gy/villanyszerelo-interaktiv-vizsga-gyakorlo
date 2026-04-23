@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0f172a" />
+    <meta name="format-detection" content="telephone=no, email=no, address=no, date=no" />
     <title>Villanyszerelő - Épületvillamosság (4 0713 04 07) | Interaktív vizsga gyakorló</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -17,51 +18,75 @@
           <h1>
             <span class="title-line">
               Villanyszerelő - Épületvillamosság
-              <span class="title-code">(4 0713 04 07)</span>
+              <span class="title-code" translate="no">(4 0713 04 07)</span>
             </span>
             <span class="title-subtitle">Interaktív vizsga gyakorló</span>
           </h1>
         </div>
         <div class="hero-cards">
-          <div class="hero-card hero-card--status">
-            <div class="hero-card__label">Állapot</div>
-            <div class="hero-card__value" id="datasetStatus">Betöltés...</div>
-            <div class="hero-card__meta" id="datasetMeta"></div>
-            <div class="hero-card__divider"></div>
-            <div class="hero-card__label">Vizsgaóra</div>
-            <div class="hero-card__clock" id="examClock">--:--</div>
-            <div class="hero-card__meta" id="examClockMeta">90 perc / kb. 40 kérdés arányosítva</div>
+          <div class="hero-card hero-card--status" id="statusPanel" data-panel-state="closed">
+            <div class="hero-card__head">
+              <div>
+                <div class="hero-card__label">Állapot</div>
+                <div class="hero-card__head-value" id="mobileStatus">Betöltés...</div>
+              </div>
+            </div>
+            <div class="hero-card__body">
+              <div class="hero-card__value" id="datasetStatus">Betöltés...</div>
+              <div class="hero-card__meta" id="datasetMeta"></div>
+              <div class="hero-card__divider"></div>
+              <div class="hero-card__label">Vizsgaóra</div>
+              <div class="hero-card__clock" id="examClock">--:--</div>
+              <div class="hero-card__meta" id="examClockMeta">90 perc / kb. 40 kérdés arányosítva</div>
+            </div>
           </div>
 
-          <div class="hero-card hero-card--summary">
-            <div class="panel__header panel__header--tight">
-              <h2>Áttekintés</h2>
-              <button class="ghost" id="resetButton" type="button">Újrakezdés</button>
+          <div class="hero-card hero-card--summary" id="summaryPanel" data-panel-state="closed">
+            <div class="hero-card__head">
+              <div>
+                <div class="hero-card__label">Áttekintés</div>
+                <div class="hero-card__head-value" id="mobileProgress">0 / 0</div>
+              </div>
+              <button class="ghost hero-card__toggle" id="resetButton" type="button">Újrakezdés</button>
             </div>
-            <div class="stats stats--compact">
-              <div class="stat">
-                <span>Kérdés</span>
-                <strong id="progressCurrent">0 / 0</strong>
+            <div class="hero-card__body">
+              <div class="stats stats--compact">
+                <div class="stat">
+                  <span>Kérdés</span>
+                  <strong id="progressCurrent">0 / 0</strong>
+                </div>
+                <div class="stat">
+                  <span>Megválaszolt</span>
+                  <strong id="answeredCount">0</strong>
+                </div>
+                <div class="stat">
+                  <span>Átlépett</span>
+                  <strong id="skippedCount">0</strong>
+                </div>
+                <div class="stat">
+                  <span>Pont</span>
+                  <strong id="scoreCount">0</strong>
+                </div>
               </div>
-              <div class="stat">
-                <span>Megválaszolt</span>
-                <strong id="answeredCount">0</strong>
+              <div class="progress-bar" aria-hidden="true">
+                <div class="progress-bar__fill" id="progressFill"></div>
               </div>
-              <div class="stat">
-                <span>Átlépett</span>
-                <strong id="skippedCount">0</strong>
-              </div>
-              <div class="stat">
-                <span>Pont</span>
-                <strong id="scoreCount">0</strong>
-              </div>
-            </div>
-            <div class="progress-bar" aria-hidden="true">
-              <div class="progress-bar__fill" id="progressFill"></div>
             </div>
           </div>
         </div>
       </header>
+
+      <div class="mobile-dock" id="mobileDock">
+        <div class="mobile-dock__stats">
+          <span class="mobile-dock__chip">Állapot: <strong id="mobileStatusDock">Betöltés...</strong></span>
+          <span class="mobile-dock__chip">Idő: <strong id="mobileClock">--:--</strong></span>
+          <span class="mobile-dock__chip">Haladás: <strong id="mobileProgressDock">0 / 0</strong></span>
+        </div>
+        <div class="mobile-dock__actions">
+          <button class="ghost" id="toggleStatusPanelButton" type="button">Állapot</button>
+          <button class="ghost" id="toggleSummaryPanelButton" type="button">Áttekintés</button>
+        </div>
+      </div>
 
       <main class="layout">
         <aside class="sidebar">
