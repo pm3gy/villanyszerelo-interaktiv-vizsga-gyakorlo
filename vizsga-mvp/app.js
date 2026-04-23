@@ -635,11 +635,11 @@ function completeSession() {
 function updateNextButtonLabel() {
   const questions = getSessionQuestions();
   if (questions.length === 0) {
-    els.nextButton.textContent = "Mentés és tovább";
+    els.nextButton.textContent = "Következő feladat";
     return;
   }
   const isLast = (state.session.currentIndex || 0) >= questions.length - 1;
-  els.nextButton.textContent = isLast ? "Kiértékelés" : "Mentés és tovább";
+  els.nextButton.textContent = isLast ? "Kiértékelés" : "Következő feladat";
 }
 
 function renderSummary() {
@@ -743,25 +743,25 @@ function renderQuestion(question) {
     renderChoiceQuestion(question);
     const stateLabel = getQuestionState(question.question_id);
     const selected = state.answers[question.question_id] || [];
-    const hintParts = [];
-    if (stateLabel === "skipped") hintParts.push("Ez a kérdés későbbre van jelölve.");
+    const hintParts = ["Kérem adjon meg választ, vagy kattintson az Átlépem a feladatot gombra."];
+    if (stateLabel === "skipped") hintParts.unshift("Ez a kérdés átlépve lett.");
     if (selected.length) hintParts.push(`Jelenlegi válasz: ${selected.length} elem.`);
     els.answerHint.textContent = hintParts.join(" ");
   } else if (question.question_type === "list_choice") {
     renderListChoiceQuestion(question);
     const stateLabel = getQuestionState(question.question_id);
     if (stateLabel === "skipped") {
-      els.answerHint.textContent = "Ez a kérdés későbbre van jelölve.";
+      els.answerHint.textContent = "Ez a kérdés átlépve lett.";
     } else {
-      els.answerHint.textContent = "";
+      els.answerHint.textContent = "Kérem adjon meg választ, vagy kattintson az Átlépem a feladatot gombra.";
     }
   } else if (question.question_type === "numeric_entry") {
     renderNumericEntryQuestion(question);
     const stateLabel = getQuestionState(question.question_id);
     if (stateLabel === "skipped") {
-      els.answerHint.textContent = "Ez a kérdés későbbre van jelölve.";
+      els.answerHint.textContent = "Ez a kérdés átlépve lett.";
     } else {
-      els.answerHint.textContent = "";
+      els.answerHint.textContent = "Kérem adjon meg választ, vagy kattintson az Átlépem a feladatot gombra.";
     }
   } else if (question.question_type === "ordering") {
     renderOrderingQuestion(question);

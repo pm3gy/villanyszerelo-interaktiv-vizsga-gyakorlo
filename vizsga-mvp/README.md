@@ -1,4 +1,4 @@
-# Villanyszerelő Interaktív Vizsga Gyakorló
+# 4 0713 04 07 - Villanyszerelő - Épületvillamosság | Interaktív vizsga gyakorló
 
 Ez egy statikus, hostolható gyakorlófelület a kérdésbankhoz.
 

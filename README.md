@@ -14,7 +14,7 @@ Nyers szakmai forrásanyagokat nem terjesztünk ebben a repóban.
 - `kerdesbank`: a kérdésbank, a forráskatalógus és a feldolgozó scriptek
 - `vizsga-mvp`: a hostolható statikus gyakorlófelület
 - `index.html`: a gyökér belépőoldala
-- `egyeb-infok`: projektcél, dokumentáció, használat és kapcsolat
+- `infok`: projektcél, dokumentáció és kapcsolat
 
 ## Jelenlegi állapot
 
@@ -48,7 +48,7 @@ A fő belépőoldalról külön is nyitható:
 
 `http://localhost:8000/vizsga-mvp/`
 
-`http://localhost:8000/egyeb-infok/`
+`http://localhost:8000/infok/`
 
 `http://localhost:8000/kerdesbank/`
 

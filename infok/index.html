@@ -6,19 +6,20 @@
     <meta name="theme-color" content="#0f172a" />
     <meta
       name="description"
-      content="Villanyszerelő interaktív vizsga gyakorló - egyéb információk."
+      content="Villanyszerelő interaktív vizsga gyakorló - infók."
     />
-    <title>Egyéb infók</title>
+    <title>4 0713 04 07 - Villanyszerelő - Épületvillamosság | Interaktív vizsga gyakorló</title>
     <style>
       :root {
         color-scheme: dark;
         --bg: #07111f;
         --bg-2: #0c1c30;
-        --card: rgba(11, 18, 32, 0.82);
+        --card: rgba(11, 18, 32, 0.84);
         --card-border: rgba(148, 163, 184, 0.18);
         --text: #e5eefb;
         --muted: #a8b6c9;
         --accent: #7dd3fc;
+        --accent-2: #a78bfa;
         --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
       }
 
@@ -75,6 +76,10 @@
       h1 {
         font-size: clamp(2rem, 4.4vw, 3.6rem);
         letter-spacing: -0.04em;
+      }
+
+      h1 span {
+        display: block;
       }
 
       .lede {
@@ -135,7 +140,7 @@
         text-decoration: none;
         font-weight: 800;
         color: #07111f;
-        background: linear-gradient(135deg, #7dd3fc, #a78bfa);
+        background: linear-gradient(135deg, #7dd3fc, #38bdf8);
       }
 
       .button--secondary {
@@ -166,20 +171,28 @@
   <body>
     <main class="wrap">
       <section class="panel">
-        <p class="eyebrow">Egyéb infók</p>
-        <h1>Projektcél, dokumentáció, használat és kapcsolat.</h1>
+        <p class="eyebrow">Infók</p>
+        <h1>
+          <span>4 0713 04 07 - Villanyszerelő - Épületvillamosság</span>
+          <span>Interaktív vizsga gyakorló</span>
+        </h1>
         <p class="lede">
           Ez a gyakorlóeszköz a villanyszerelő interaktív vizsga logikáját
           segít lemodellezni, és úgy van felépítve, hogy a kérdésbank tovább
           bővíthető maradjon.
         </p>
-        <div class="actions">
-          <a class="button" href="../vizsga-mvp/">Próbatesztelő</a>
-          <a class="button button--secondary" href="../kerdesbank/">Kérdésbank</a>
-        </div>
       </section>
 
       <section class="grid">
+        <article class="card">
+          <h2>Disclaimer</h2>
+          <p>
+            Ez az eszköz nem hivatalos vizsgarendszer, nem ad semmilyen
+            garanciát a vizsgán elért eredményre, és kizárólag személyes
+            vizsgafelkészüléshez, gyakorláshoz használható.
+          </p>
+        </article>
+
         <article class="card">
           <h2>Cél</h2>
           <p>
@@ -189,34 +202,24 @@
         </article>
 
         <article class="card">
-          <h2>Dokumentáció</h2>
-          <ul>
-            <li><a href="../README.md">Gyökér README</a></li>
-            <li><a href="../vizsga-mvp/README.md">Gyakorlófelület README</a></li>
-            <li><a href="../kerdesbank/README.md">Kérdésbank README</a></li>
-          </ul>
-        </article>
-
-        <article class="card">
           <h2>Kapcsolat</h2>
           <p>
-            Ha kérdésed vagy javaslatod van, írj ide:
+            Ha kérdésed, javaslatod van, hibát találtál stb. írj ide:
             <code>pm3gy@protonmail.com</code>
           </p>
         </article>
 
         <article class="card">
-          <h2>Használat</h2>
+          <h2>Forráskód &amp; Dokumentáció</h2>
           <p>
-            Helyi futtatáshoz indíts egy statikus szervert a repo gyökeréből, és
-            nyisd meg a gyökéroldalt vagy a <code>/vizsga-mvp/</code> útvonalat.
+            A teljes forráskód, a használati útmutató és a kapcsolódó
+            dokumentáció a GitHub repóban található:
           </p>
+          <div class="actions">
+            <a class="button" href="https://github.com/pm3gy/villanyszerelo-interaktiv-vizsga-gyakorlo" target="_blank" rel="noreferrer">GitHub repo</a>
+          </div>
         </article>
       </section>
-
-      <div class="footer">
-        A repó csak a megosztható gyakorlóeszköz anyagait tartalmazza.
-      </div>
     </main>
   </body>
 </html>
