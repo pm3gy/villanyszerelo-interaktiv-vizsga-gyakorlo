@@ -739,11 +739,14 @@ function renderSummary() {
   els.answeredCount.textContent = String(answered);
   els.skippedCount.textContent = String(skipped);
   els.scoreCount.textContent = String(score);
-  els.skipQueueCount.textContent = String(skipped);
+  if (els.skipQueueCount) {
+    els.skipQueueCount.textContent = String(skipped);
+  }
   els.progressFill.style.width = total ? `${((Math.min(currentIndex + 1, total)) / total) * 100}%` : "0%";
 }
 
 function renderNav() {
+  if (!els.questionNav) return;
   els.questionNav.innerHTML = "";
   const questions = getSessionQuestions();
   questions.forEach((question, sessionIndex) => {
@@ -761,6 +764,7 @@ function renderNav() {
 }
 
 function renderSkipQueue() {
+  if (!els.skipQueue) return;
   const skippedQuestions = getSessionQuestions().filter((q) => state.skipped[q.question_id]);
   if (skippedQuestions.length === 0) {
     els.skipQueue.innerHTML = `<div class="meta-pill">Nincs átlépett kérdés.</div>`;

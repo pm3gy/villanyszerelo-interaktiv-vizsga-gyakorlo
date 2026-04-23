@@ -10,12 +10,11 @@ Ez egy statikus, hostolható gyakorlófelület a kérdésbankhoz.
 - témakör szerint szűrhető
 - állítható kérdésszámot támogat
 - jelöli a kérdést későbbre
-- külön listázza az átlépett kérdéseket
-- visszanavigálható kérdéslista
 - automatikus kiértékelés a teszt végén
 - végső eredmény statisztikával
 - állapotmentés böngészőben
 - vizsgaóra a hivatalos 90 perces időkeretből, kb. 40 kérdéses arányosítással
+- az állapot és az áttekintés a fejlécben látszik
 
 ## Amit még nem tud
 

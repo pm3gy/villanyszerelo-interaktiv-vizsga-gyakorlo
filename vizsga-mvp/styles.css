@@ -86,9 +86,9 @@ button {
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 19rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 38rem);
   gap: 1rem;
-  align-items: end;
+  align-items: start;
   margin-bottom: 1rem;
 }
 
@@ -112,8 +112,22 @@ h1 {
   font-size: clamp(2.2rem, 5vw, 4.2rem);
 }
 
-h1 span {
+.title-line {
   display: block;
+}
+
+.title-code {
+  display: inline-block;
+  margin-left: 0.35rem;
+  font-size: 0.58em;
+  letter-spacing: 0;
+  opacity: 0.78;
+  white-space: nowrap;
+}
+
+.title-subtitle {
+  display: block;
+  margin-top: 0.55rem;
 }
 
 .lede {
@@ -137,6 +151,16 @@ h1 span {
   padding: 1.1rem 1.2rem;
   display: grid;
   gap: 0.2rem;
+}
+
+.hero-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.hero-card--summary {
+  padding-bottom: 1rem;
 }
 
 .hero-card__label {
@@ -171,6 +195,13 @@ h1 span {
   font-weight: 800;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
+}
+
+.panel__chips {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .layout {
@@ -281,6 +312,10 @@ h1 span {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.8rem;
   margin-top: 1rem;
+}
+
+.stats--compact {
+  margin-top: 0.85rem;
 }
 
 .stat {
@@ -758,6 +793,10 @@ h1 span {
     grid-template-columns: 1fr;
   }
 
+  .hero-cards {
+    grid-template-columns: 1fr;
+  }
+
   .question-nav {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
@@ -773,6 +812,10 @@ h1 span {
   .panel,
   .question-card {
     border-radius: 20px;
+  }
+
+  .hero-cards {
+    grid-template-columns: 1fr;
   }
 
   .question-nav {

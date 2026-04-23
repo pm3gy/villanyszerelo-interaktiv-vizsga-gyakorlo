@@ -15,51 +15,30 @@
         <div>
           <p class="eyebrow">Villanyszerelő interaktív vizsga gyakorló</p>
           <h1>
-            <span>Villanyszerelő - Épületvillamosság (4 0713 04 07)</span>
-            <span>Interaktív vizsga gyakorló</span>
+            <span class="title-line">
+              Villanyszerelő - Épületvillamosság
+              <span class="title-code">(4 0713 04 07)</span>
+            </span>
+            <span class="title-subtitle">Interaktív vizsga gyakorló</span>
           </h1>
         </div>
-        <div class="hero-card">
-          <div class="hero-card__label">Állapot</div>
-          <div class="hero-card__value" id="datasetStatus">Betöltés...</div>
-          <div class="hero-card__meta" id="datasetMeta"></div>
-          <div class="hero-card__divider"></div>
-          <div class="hero-card__label">Vizsgaóra</div>
-          <div class="hero-card__clock" id="examClock">--:--</div>
-          <div class="hero-card__meta" id="examClockMeta">90 perc / kb. 40 kérdés arányosítva</div>
-        </div>
-      </header>
+        <div class="hero-cards">
+          <div class="hero-card hero-card--status">
+            <div class="hero-card__label">Állapot</div>
+            <div class="hero-card__value" id="datasetStatus">Betöltés...</div>
+            <div class="hero-card__meta" id="datasetMeta"></div>
+            <div class="hero-card__divider"></div>
+            <div class="hero-card__label">Vizsgaóra</div>
+            <div class="hero-card__clock" id="examClock">--:--</div>
+            <div class="hero-card__meta" id="examClockMeta">90 perc / kb. 40 kérdés arányosítva</div>
+          </div>
 
-      <main class="layout">
-        <aside class="sidebar">
-          <section class="panel">
-            <div class="panel__header">
-              <h2>Teszt beállításai</h2>
-              <span class="chip chip--soft" id="poolCountChip">0 kérdés</span>
-            </div>
-            <p class="panel-note">
-              Válassz témaköröket és kérdésszámot, majd indíts új tesztet.
-            </p>
-            <div class="filter-actions">
-              <button class="ghost" id="selectAllTopicsButton" type="button">Minden téma</button>
-              <button class="ghost" id="clearTopicsButton" type="button">Szűrés nélkül</button>
-            </div>
-            <div class="topic-filters" id="topicFilters"></div>
-            <label class="number-field" for="questionCountInput">
-              <span>Kérdésszám</span>
-              <input id="questionCountInput" type="number" min="1" value="10" />
-            </label>
-            <div class="filter-actions">
-              <button class="button" id="startSessionButton" type="button">Új teszt indítása</button>
-            </div>
-          </section>
-
-          <section class="panel panel--summary">
-            <div class="panel__header">
+          <div class="hero-card hero-card--summary">
+            <div class="panel__header panel__header--tight">
               <h2>Áttekintés</h2>
               <button class="ghost" id="resetButton" type="button">Újrakezdés</button>
             </div>
-            <div class="stats">
+            <div class="stats stats--compact">
               <div class="stat">
                 <span>Kérdés</span>
                 <strong id="progressCurrent">0 / 0</strong>
@@ -80,22 +59,35 @@
             <div class="progress-bar" aria-hidden="true">
               <div class="progress-bar__fill" id="progressFill"></div>
             </div>
-          </section>
+          </div>
+        </div>
+      </header>
 
+      <main class="layout">
+        <aside class="sidebar">
           <section class="panel">
             <div class="panel__header">
-              <h2>Kérdések</h2>
-              <span class="chip" id="modeChip">Teszt</span>
+              <h2>Teszt beállításai</h2>
+              <div class="panel__chips">
+                <span class="chip chip--soft" id="poolCountChip">0 kérdés</span>
+                <span class="chip" id="modeChip">Teszt</span>
+              </div>
             </div>
-            <div class="question-nav" id="questionNav"></div>
-          </section>
-
-          <section class="panel">
-            <div class="panel__header">
-              <h2>Átlépett kérdések</h2>
-              <span class="chip chip--soft" id="skipQueueCount">0</span>
+            <p class="panel-note">
+              Válassz témaköröket és kérdésszámot, majd indíts új tesztet.
+            </p>
+            <div class="filter-actions">
+              <button class="ghost" id="selectAllTopicsButton" type="button">Minden téma</button>
+              <button class="ghost" id="clearTopicsButton" type="button">Szűrés nélkül</button>
             </div>
-            <div class="skip-list" id="skipQueue"></div>
+            <div class="topic-filters" id="topicFilters"></div>
+            <label class="number-field" for="questionCountInput">
+              <span>Kérdésszám</span>
+              <input id="questionCountInput" type="number" min="1" value="10" />
+            </label>
+            <div class="filter-actions">
+              <button class="button" id="startSessionButton" type="button">Új teszt indítása</button>
+            </div>
           </section>
         </aside>
 
