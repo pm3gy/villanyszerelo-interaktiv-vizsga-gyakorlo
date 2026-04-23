@@ -14,7 +14,7 @@ Ez egy statikus, hostolható gyakorlófelület a kérdésbankhoz.
 - végső eredmény statisztikával
 - állapotmentés böngészőben
 - vizsgaóra a hivatalos 90 perces időkeretből, kb. 40 kérdéses arányosítással
-- az állapot és az áttekintés a fejlécben látszik
+- az állapot és az áttekintés a fejlécben, mobilon külön dockból érhető el
 
 ## Amit még nem tud
 

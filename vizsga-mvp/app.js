@@ -40,6 +40,13 @@ let data = null;
 const els = {
   datasetStatus: document.getElementById("datasetStatus"),
   datasetMeta: document.getElementById("datasetMeta"),
+  mobileStatusDock: document.getElementById("mobileStatusDock"),
+  mobileClock: document.getElementById("mobileClock"),
+  mobileProgressDock: document.getElementById("mobileProgressDock"),
+  toggleStatusPanelButton: document.getElementById("toggleStatusPanelButton"),
+  toggleSummaryPanelButton: document.getElementById("toggleSummaryPanelButton"),
+  statusPanel: document.getElementById("statusPanel"),
+  summaryPanel: document.getElementById("summaryPanel"),
   examClock: document.getElementById("examClock"),
   examClockMeta: document.getElementById("examClockMeta"),
   poolCountChip: document.getElementById("poolCountChip"),
@@ -243,6 +250,14 @@ function wireEvents() {
   });
   els.backToQuizButton.addEventListener("click", () => {
     els.questionCard.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  els.toggleStatusPanelButton?.addEventListener("click", () => {
+    toggleMobilePanel("status");
+  });
+
+  els.toggleSummaryPanelButton?.addEventListener("click", () => {
+    toggleMobilePanel("summary");
   });
 
   document.addEventListener("change", (event) => {
@@ -451,6 +466,7 @@ function render() {
   renderSessionHeader();
   renderSummary();
   renderExamClock();
+  syncMobilePanelButtons();
   renderNav();
   renderSkipQueue();
   renderQuestion(current);
@@ -477,6 +493,7 @@ function renderSessionHeader() {
       ? `${selectedCount} téma / ${visibleCount} kérdéses teszt`
       : `${visibleCount} kérdéses teszt`;
 
+  syncMobileDock();
   updateNextButtonLabel();
 }
 
@@ -709,6 +726,41 @@ function renderExamClock() {
   const { display, meta } = getExamClockState();
   els.examClock.textContent = display;
   els.examClockMeta.textContent = meta;
+  if (els.mobileClock) {
+    els.mobileClock.textContent = display;
+  }
+}
+
+function syncMobileDock() {
+  if (els.mobileStatusDock) {
+    els.mobileStatusDock.textContent = els.datasetStatus?.textContent || "Készen áll";
+  }
+  if (els.mobileProgressDock && els.progressCurrent) {
+    els.mobileProgressDock.textContent = els.progressCurrent.textContent || "0 / 0";
+  }
+}
+
+function toggleMobilePanel(panelName) {
+  const target = panelName === "status" ? els.statusPanel : els.summaryPanel;
+  const other = panelName === "status" ? els.summaryPanel : els.statusPanel;
+  if (!target) return;
+  const isOpen = target.dataset.panelState === "open";
+  target.dataset.panelState = isOpen ? "closed" : "open";
+  if (other && !isOpen) {
+    other.dataset.panelState = "closed";
+  }
+  syncMobilePanelButtons();
+}
+
+function syncMobilePanelButtons() {
+  const statusOpen = els.statusPanel?.dataset.panelState === "open";
+  const summaryOpen = els.summaryPanel?.dataset.panelState === "open";
+  if (els.toggleStatusPanelButton) {
+    els.toggleStatusPanelButton.textContent = statusOpen ? "Állapot bezárása" : "Állapot";
+  }
+  if (els.toggleSummaryPanelButton) {
+    els.toggleSummaryPanelButton.textContent = summaryOpen ? "Áttekintés bezárása" : "Áttekintés";
+  }
 }
 
 function startExamClockTicker() {
@@ -741,6 +793,9 @@ function renderSummary() {
   els.scoreCount.textContent = String(score);
   if (els.skipQueueCount) {
     els.skipQueueCount.textContent = String(skipped);
+  }
+  if (els.mobileProgressDock) {
+    els.mobileProgressDock.textContent = total ? `${Math.min(currentIndex + 1, total)} / ${total}` : "0 / 0";
   }
   els.progressFill.style.width = total ? `${((Math.min(currentIndex + 1, total)) / total) * 100}%` : "0%";
 }
