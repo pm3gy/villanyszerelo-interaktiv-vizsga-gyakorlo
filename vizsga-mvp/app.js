@@ -6,10 +6,11 @@ const DATA_FILES = {
   assets: "../kerdesbank/assets.csv",
 };
 
-// NIVE guide: interaktív vizsgatevékenység 15 perc.
-// The 28-question baseline comes from the referenced exam screenshot.
-const OFFICIAL_EXAM_TIME_SECONDS = 15 * 60;
-const OFFICIAL_EXAM_QUESTION_COUNT = 28;
+// Official interaktív vizsgaidő: 90 perc.
+// The question count is not published officially; we use an approximate 40-question baseline
+// for proportional timing, based on the real exam screenshots and available practice material.
+const OFFICIAL_EXAM_TIME_SECONDS = 90 * 60;
+const OFFICIAL_EXAM_QUESTION_COUNT = 40;
 
 const SUPPORTED_TYPES = new Set([
   "single_choice",
@@ -690,7 +691,7 @@ function getExamClockState() {
   if (!Number.isFinite(startedAt) || duration <= 0) {
     return {
       display: "--:--",
-      meta: `Alap: 15 perc / 28 kérdés`,
+      meta: `Alap: 90 perc / kb. 40 kérdés`,
     };
   }
 
@@ -699,7 +700,7 @@ function getExamClockState() {
   const remainingSeconds = Math.max(0, duration - elapsedSeconds);
   return {
     display: formatDuration(remainingSeconds),
-    meta: `Arányosított idő: ${formatDuration(duration)} · ${launchedCount} indított kérdés · alap: 15 perc / 28 kérdés`,
+    meta: `Arányosított idő: ${formatDuration(duration)} · ${launchedCount} indított kérdés · alap: 90 perc / kb. 40 kérdés`,
   };
 }
 

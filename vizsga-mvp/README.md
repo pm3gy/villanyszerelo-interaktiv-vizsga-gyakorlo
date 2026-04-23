@@ -15,6 +15,7 @@ Ez egy statikus, hostolható gyakorlófelület a kérdésbankhoz.
 - automatikus kiértékelés a teszt végén
 - végső eredmény statisztikával
 - állapotmentés böngészőben
+- vizsgaóra a hivatalos 90 perces időkeretből, kb. 40 kérdéses arányosítással
 
 ## Amit még nem tud
 
@@ -44,3 +45,10 @@ Ezután a böngészőben nyisd meg:
 
 Bármely statikus hosztra feltehető, amely a repo struktúráját megtartja.
 Ha a teljes repó gyökere kerül kiszolgálásra, a CSV-k relatív útvonala működni fog.
+
+## Vizsgaóra
+
+A beépített vizsgaóra a hivatalos `90 perc` időkeretből indul ki, és a gyakorlatban
+használt, hozzávetőleges `kb. 40 kérdés` baseline alapján arányosítja a rendelkezésre álló időt.
+Ez azt jelenti, hogy a kiválasztott kérdésszámhoz képest mutatja a hátralévő időt,
+nem pedig egy fix, minden tesztre azonos futási időt.
