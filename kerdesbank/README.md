@@ -122,6 +122,23 @@ Kiegészítő forráscsoportok:
 - túlfeszültség- és villámvédelem
 - szekrénytechnika, rack, kültéri és Ex p tokozatok
 
+## Gyors kérdésfelvitel
+
+Ha kézzel, de gyorsabban szeretnél kérdést hozzáadni, használd ezt:
+
+```bash
+python3 scripts/quick_add_question.py
+```
+
+A segéd:
+
+- legenerálja a következő `Q...`, `C...`, `A...`, `S...` azonosítókat
+- elkéri a kérdés típusát, szövegét és a válaszokat
+- választathatóvá teszi a meglévő témákat és forrásokat
+- opcionálisan új forrást is fel tud venni
+- opcionálisan asset sorokat is létrehoz a megadott képfájlokhoz, és a helyi fájlt be is másolja a `media/` mappába
+- közvetlenül a CSV-ket frissíti, így nem kell kézzel szerkesztened a táblákat
+
 Ajánlott sorrend:
 
 1. `sources.csv` feltöltése

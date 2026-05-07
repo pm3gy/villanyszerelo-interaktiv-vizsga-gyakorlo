@@ -894,3 +894,10 @@ C1156;Q0328;A;A csatlakozóvezeték fogadása és az első túláramvédelmi ké
 C1157;Q0328;B;A fogyasztók esztétikai fedése;false;2;;;;
 C1158;Q0328;C;Csak a világítási körök színkódolása;false;3;;;;
 C1159;Q0328;D;A mérőeszközök kalibrálása;false;4;;;;
+C1160;Q0329;A;Vezetékfolytonosság ellenőrzése (PE-vezeték folytonosságának ellenőrzése);false;1;;;;
+C1161;Q0329;B;Szigetelési ellenállás mérése;false;2;;;;
+C1162;Q0329;C;Vezetékfelcserélés vizsgálata az egyes fogyasztóknál (polaritásvizsgálat);false;3;;;;
+C1163;Q0329;D;Hibahelyi hurokimpedancia mérése;false;4;;;;
+C1164;Q0329;E;Kiegészitő védelem hatásosságának vizsgálata (pl. ÁVK);false;5;;;;
+C1165;Q0329;F;Feszültségesés ellenőrzése;false;6;;;;
+C1166;Q0329;G;Működés ellenőrzése;false;7;;;;
