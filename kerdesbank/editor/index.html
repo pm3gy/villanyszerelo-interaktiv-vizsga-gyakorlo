@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="hu">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="format-detection" content="telephone=no, email=no, address=no, date=no" />
+    <title>Kérdésbank szerkesztő</title>
+    <link rel="stylesheet" href="../../vizsga-mvp/styles.css?v=20260511-6" />
+    <link rel="stylesheet" href="./styles.css?v=20260511-6" />
+  </head>
+  <body>
+    <div class="backdrop backdrop-a"></div>
+    <div class="backdrop backdrop-b"></div>
+    <div class="shell editor-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Kérdésbank edit mode</p>
+          <h1>
+            <span class="title-line">Kérdésbank szerkesztő</span>
+            <span class="title-subtitle">Csak localhoston működik</span>
+          </h1>
+        </div>
+        <div class="hero-cards">
+          <div class="hero-card hero-card--status" id="workspaceCard" data-panel-state="open">
+            <div class="hero-card__head">
+              <div>
+                <div class="hero-card__label">Munkaterület</div>
+                <div class="hero-card__head-value" id="workspaceStatus">Mappa kiválasztása szükséges</div>
+              </div>
+            </div>
+            <div class="hero-card__body">
+              <div class="hero-card__meta" id="workspaceMeta">questions.csv, choices.csv, sources.csv és assets.csv betöltése</div>
+              <div class="hero-card__divider"></div>
+              <div class="hero-card__label">Fájlok</div>
+              <div class="hero-card__meta" id="workspaceFiles">-</div>
+            </div>
+          </div>
+
+          <div class="hero-card hero-card--summary" id="draftCard" data-panel-state="open">
+            <div class="hero-card__head">
+              <div>
+                <div class="hero-card__label">Piszkozat</div>
+                <div class="hero-card__head-value" id="draftStatus">Még nincs kérdés</div>
+              </div>
+              <button class="ghost hero-card__toggle" id="saveButtonTop" type="button">Mentés</button>
+            </div>
+            <div class="hero-card__body">
+              <div class="stats stats--compact">
+                <div class="stat">
+                  <span>Kérdés</span>
+                  <strong id="nextQuestionIdPreview">Q0001</strong>
+                </div>
+                <div class="stat">
+                  <span>Válaszok</span>
+                  <strong id="choiceCountPreview">0</strong>
+                </div>
+                <div class="stat">
+                  <span>Assetek</span>
+                  <strong id="assetCountPreview">0</strong>
+                </div>
+                <div class="stat">
+                  <span>Állapot</span>
+                  <strong id="draftSaveState">Szerkesztésre kész</strong>
+                </div>
+              </div>
+              <div class="progress-bar" aria-hidden="true">
+                <div class="progress-bar__fill" id="draftProgressFill"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="layout">
+        <aside class="sidebar">
+          <section class="panel">
+            <div class="panel__header">
+              <h2>Alapok</h2>
+              <div class="panel__chips">
+                <span class="chip chip--soft" id="loadedCountsChip">0 kérdés</span>
+                <span class="chip" id="editModeChip">Új kérdés</span>
+              </div>
+            </div>
+
+            <div class="editor-actions">
+              <button class="button" id="pickWorkspaceButton" type="button">Repo mappa kiválasztása</button>
+              <button class="ghost" id="reloadButton" type="button">CSV-k újratöltése</button>
+            </div>
+
+            <div class="editor-section editor-section--compact">
+              <div class="section-head">
+                <h3>Kérdés kiválasztása</h3>
+                <div class="section-head__meta" id="questionNavMeta">Új piszkozat</div>
+              </div>
+              <label class="field">
+                <span>Keresés / szűrő</span>
+                <input id="questionFilterInput" type="search" placeholder="ID, szöveg, témakör, alcím..." />
+              </label>
+              <label class="field">
+                <span>Meglévő kérdések</span>
+                <select id="questionSelect"></select>
+              </label>
+              <div class="editor-actions editor-actions--inline">
+                <button class="ghost" id="prevQuestionButton" type="button">Előző</button>
+                <button class="ghost" id="nextQuestionButton" type="button">Következő</button>
+                <button class="button button--secondary" id="newQuestionButton" type="button">Új kérdés</button>
+              </div>
+            </div>
+
+            <label class="field">
+              <span>Választott forrás</span>
+              <select id="sourceModeSelect">
+                <option value="existing">Meglévő forrás</option>
+                <option value="new">Új forrás</option>
+              </select>
+            </label>
+
+            <label class="field" id="existingSourceField">
+              <span>Forrás</span>
+              <select id="sourceSelect"></select>
+            </label>
+
+            <div id="newSourceFields" hidden>
+              <label class="field">
+                <span>Forráscím</span>
+                <input id="newSourceTitle" type="text" placeholder="pl. Saját jegyzet" />
+              </label>
+              <label class="field">
+                <span>Forrás elérési út</span>
+                <input id="newSourcePath" type="text" placeholder="pl. dadatol/..." />
+              </label>
+              <div class="field-grid">
+                <label class="field">
+                  <span>Forrás típus</span>
+                  <input id="newSourceType" type="text" value="pdf" />
+                </label>
+                <label class="field">
+                  <span>Kategória</span>
+                  <input id="newSourceCategory" type="text" value="vizsga" />
+                </label>
+              </div>
+              <div class="field-grid">
+                <label class="field">
+                  <span>Év</span>
+                  <input id="newSourceYear" type="text" placeholder="2026" />
+                </label>
+                <label class="field">
+                  <span>Megjegyzés</span>
+                  <input id="newSourceNotes" type="text" placeholder="pl. saját forrás" />
+                </label>
+              </div>
+            </div>
+
+            <label class="field">
+              <span>Típus</span>
+              <select id="questionTypeSelect"></select>
+            </label>
+
+            <div class="field-grid">
+              <label class="field">
+                <span>Témakör</span>
+                <input id="topicInput" type="text" list="topicList" placeholder="pl. vezetékek" />
+                <datalist id="topicList"></datalist>
+              </label>
+              <label class="field">
+                <span>Alcím</span>
+                <input id="subtopicInput" type="text" placeholder="pl. TN-C-S" />
+              </label>
+            </div>
+
+            <div class="field-grid">
+              <label class="field">
+                <span>Nehézség</span>
+                <input id="difficultyInput" type="number" min="1" max="5" value="2" />
+              </label>
+              <label class="field">
+                <span>Pont</span>
+                <input id="pointsInput" type="number" min="1" value="1" />
+              </label>
+            </div>
+
+            <div class="field-grid">
+              <label class="field">
+                <span>Időbecslés (mp)</span>
+                <input id="timeEstimateInput" type="number" min="1" value="20" />
+              </label>
+              <label class="field">
+                <span>Nyelv</span>
+                <input id="languageInput" type="text" value="hu" />
+              </label>
+            </div>
+
+            <label class="field">
+              <span>Forrás helye</span>
+              <input id="sourceLocatorInput" type="text" placeholder="pl. 4. oldal" />
+            </label>
+
+            <label class="field">
+              <span>Címkék</span>
+              <input id="tagsInput" type="text" placeholder="pl. érintésvédelem, TN-C-S" />
+            </label>
+          </section>
+        </aside>
+
+        <section class="workspace">
+          <article class="panel question-card">
+            <div class="question-card__top">
+              <div>
+                <p class="question-kicker">Új kérdés</p>
+                <h2>Kérdés szövege</h2>
+              </div>
+              <div class="question-badges">
+                <span class="chip" id="questionTypeChipPreview">single_choice</span>
+                <span class="chip chip--soft chip--code" id="questionIdChipPreview">ID Q0001</span>
+                <span class="chip chip--soft" id="sourceIdChipPreview">source</span>
+              </div>
+            </div>
+
+            <div class="editor-grid">
+              <label class="field field--wide">
+                <span>Kérdés</span>
+                <textarea id="promptInput" rows="5" placeholder="Írd ide a kérdést..."></textarea>
+              </label>
+
+              <label class="field field--wide">
+                <span>Magyarázat</span>
+                <textarea id="explanationInput" rows="4" placeholder="Rövid magyarázat..."></textarea>
+              </label>
+            </div>
+
+            <div class="editor-section">
+              <div class="section-head">
+                <h3>Válaszok</h3>
+                <div class="section-head__meta" id="answerMeta">single_choice / multi_choice / true_false / list_choice / ordering / matching / grouping / numeric_entry</div>
+              </div>
+              <div id="answerEditor"></div>
+            </div>
+
+            <div class="editor-section">
+              <div class="section-head">
+                <h3>Assetek</h3>
+                <div class="section-head__meta">A kiválasztott fájlok a workspace `kerdesbank/media/` mappájába másolódnak.</div>
+              </div>
+              <div class="asset-picker">
+                <label class="field field--wide">
+                  <span>Fájlok kiválasztása</span>
+                  <input id="assetFilesInput" type="file" multiple />
+                </label>
+                <label class="field">
+                  <span>Kind</span>
+                  <select id="assetKindInput">
+                    <option value="image">image</option>
+                    <option value="diagram">diagram</option>
+                    <option value="photo">photo</option>
+                  </select>
+                </label>
+              </div>
+              <div class="asset-list" id="assetList"></div>
+            </div>
+
+            <div class="editor-section">
+              <div class="section-head">
+                <h3>Előnézet</h3>
+                <div class="section-head__meta" id="validationState">Kész a mentésre</div>
+              </div>
+              <pre class="csv-preview" id="csvPreview"></pre>
+            </div>
+
+            <div class="actions editor-actions editor-actions--save">
+              <button class="button" id="saveButton" type="button">Mentés a workspace-be</button>
+              <button class="button button--secondary" id="resetDraftButton" type="button">Űrlap törlése</button>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./app.js?v=20260511-6"></script>
+  </body>
+</html>

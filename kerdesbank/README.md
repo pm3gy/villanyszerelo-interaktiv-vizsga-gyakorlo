@@ -139,6 +139,23 @@ A segéd:
 - opcionálisan asset sorokat is létrehoz a megadott képfájlokhoz, és a helyi fájlt be is másolja a `media/` mappába
 - közvetlenül a CSV-ket frissíti, így nem kell kézzel szerkesztened a táblákat
 
+### Browser editor
+
+Van egy külön, localhost-only böngészős szerkesztő is itt:
+
+- `kerdesbank/editor/`
+
+Ez a felület:
+
+- ugyanazt a vizuális szerkezetet használja, mint a gyakorlóoldal
+- csak `localhost` alatt működik
+- a helyi `kerdesbank/*.csv` fájlokat közvetlenül írja
+- képes meglévő kérdéseket kiválasztani és felülírni
+- új kérdés és meglévő kérdés között is lehet váltani a szerkesztőben
+- a kiválasztott képfájlokat a `kerdesbank/media/` mappába másolja
+
+Chrome vagy Edge ajánlott, mert a mappaírás a File System Access API-t használja.
+
 Ajánlott sorrend:
 
 1. `sources.csv` feltöltése
