@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import random
 import re
 from pathlib import Path
 
@@ -256,15 +257,16 @@ def question_key(question_type: str, prompt: str, fact: dict[str, str]) -> tuple
 def make_choice_rows(question_id: str, choice_id_start: int, correct: str, wrongs: list[str]):
     rows = []
     labels = ["A", "B", "C", "D"]
-    options = [correct, *wrongs]
-    for idx, option in enumerate(options):
+    options = [(correct, True), *[(wrong, False) for wrong in wrongs]]
+    random.shuffle(options)
+    for idx, (option, is_correct) in enumerate(options):
         rows.append(
             {
                 "choice_id": f"C{choice_id_start + idx:04d}",
                 "question_id": question_id,
                 "choice_label": labels[idx],
                 "choice_text_md": option,
-                "is_correct": "true" if idx == 0 else "false",
+                "is_correct": "true" if is_correct else "false",
                 "sort_order": str(idx + 1),
                 "feedback_md": "",
                 "match_role": "",
@@ -276,7 +278,7 @@ def make_choice_rows(question_id: str, choice_id_start: int, correct: str, wrong
 
 
 def make_tf_rows(question_id: str, choice_id_start: int, statement: str, answer: bool):
-    return [
+    rows = [
         {
             "choice_id": f"C{choice_id_start:04d}",
             "question_id": question_id,
@@ -302,6 +304,11 @@ def make_tf_rows(question_id: str, choice_id_start: int, statement: str, answer:
             "group_label": "",
         },
     ]
+    random.shuffle(rows)
+    for index, row in enumerate(rows, start=1):
+        row["choice_label"] = chr(64 + index)
+        row["sort_order"] = str(index)
+    return rows
 
 
 def main():

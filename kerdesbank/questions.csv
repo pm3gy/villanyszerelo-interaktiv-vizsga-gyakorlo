@@ -94,8 +94,19 @@ Q0092;true_false;A képen kábelbevezetésre szolgáló tömszelence látható.;
 Q0093;single_choice;Az ábra szerint melyik vezetékszakasz 4 vezetékes?;A táblázat szerint az e jelű vezetékszakaszhoz 4 vezeték tartozik, a többihez 3.;vezetékek;vezetékakaszok;1;1;15;S0032;3. oldal;vezetékek,vezetékszám,ábra;hu;;
 Q0094;ordering;Rendezze sorba a falba süllyesztett, vékony falú műanyag védőcsővel kialakított szerelés főbb munkafázisait!;A munkafázisok sorrendje: előkészület, nyomvonal kijelölése, horony- és fészekvésés, dobozok beépítése, védőcsövek fektetése, hornyok elvakolása, vezetékek behúzása, kötések elkészítése, ellenőrzés és üzembe helyezés.;vezetékek;technológia;2;1;45;S0032;5. oldal;ordering,technológia,védőcső;hu;;
 Q0095;multi_choice;Az alábbi kismegszakító-adattábla alapján mely megállapítások helyesek?;A B10 jelölés 10 A névleges áramot és B karakterisztikát jelent. A 230/400 V a névleges feszültség, a 6000 pedig 6 kA megszakítóképesség.;védelem;kismegszakító;2;1;35;S0023;5. oldal;kismegszakító,multi_choice,adatlap;hu;;
-Q0096;numeric_entry;Mekkora a ventilátor áramfelvétele?;I = P / (U · cos φ) = 600 / (230 · 0,8) ≈ 3,26 A.;számítás;áramfelvétel;3;1;40;S0023;9. oldal;számítás,áramfelvétel,numeric;hu;3.26;0.02
-Q0097;numeric_entry;Mekkora a ventilátor napi villamos fogyasztása?;510 perc = 8,5 óra, a 600 W = 0,6 kW, ezért a napi villamos fogyasztás 0,6 × 8,5 = 5,1 kWh.;számítás;fogyasztás;2;1;35;S0023;9. oldal;számítás,kWh,numeric;hu;5.1;0.05
+Q0096;numeric_entry;"A szellőztetéshez egy ventillátort is használnak.
+Számítsa ki a ventillátor áramfelvételét!
+Névleges feszültség: 230 V 1 fázisú táplálás
+Felvett hatásos teljesítmény: 600 W
+Teljesítménytényező – cos φ - 0,8";I = P / (U · cos φ) = 600 / (230 · 0,8) ≈ 3,26 A.;számítás;áramfelvétel;3;9;40;S0023;9. oldal;számítás,áramfelvétel,numeric;hu;3.26;0.02
+Q0097;numeric_entry;"A szellőztetéshez egy ventillátort is használnak.
+Számítsa ki a ventillátor áramfelvételét!
+Névleges feszültség: 230 V 1 fázisú táplálás
+Felvett hatásos teljesítmény: 600 W
+Teljesítménytényező – cos φ - 0,8
+
+Mekkora a ventillátor adott napi villamos fogyasztása KWh-ban, ha
+üzemelési ideje 510 perc?";510 perc = 8,5 óra, a 600 W = 0,6 kW, ezért a napi villamos fogyasztás 0,6 × 8,5 = 5,1 kWh.;számítás;fogyasztás;2;1;35;S0023;9. oldal;számítás,kWh,numeric;hu;5.1;0.05
 Q0098;grouping;Csoportosítsa a villamos szerelvények rajzjeleit funkció szerint!;A dugaszolóaljzatok, a kapcsolók és a világítótestek külön funkcionális csoportba rendezhetők.;rajzjelek;szerelvények;2;1;35;S0023;14. oldal;grouping,rajzjelek,szerelvények;hu;;
 Q0099;single_choice;Az ábra szerint milyen kapcsoló vezérli a három világítótestet?;A rajzon váltókapcsolóval vezérelt világítási kör látható.;kapcsolók;világítási kör;1;1;20;S0032;4. oldal;kapcsolók,váltókapcsoló,ábra;hu;;
 Q0100;true_false;A B10 jelölés 10 A névleges áramot és B kioldási karakterisztikát jelent.;A B betű a kioldási karakterisztikára, a 10 pedig a 10 A névleges áramra utal.;védelem;kismegszakító;1;1;10;S0023;5. oldal;igaz-hamis,kismegszakító,karakterisztika;hu;;
@@ -107,7 +118,12 @@ Q0105;multi_choice;Válassza ki a II. érintésvédelmi osztályú villamos bere
 Q0106;true_false;A TN-C-S rendszerben a szétválasztási pont után a nullavezetősint és a védővezetősint nem szabad összekötni.;A szétválasztás után a N és PE sín külön vezetett, ezért nem szabad őket újra összekötni.;érintésvédelem;TN-C-S;1;1;10;S0024;4. oldal;TN-C-S,N,PE;hu;;
 Q0107;single_choice;Miért előnyösebb a TN-C-S hibavédelem áram-védőkapcsolóval kiegészítve a TT földelt hibavédelemhez képest?;Azért, mert a hurokimpedancia lehet nagy értékű, és az áram-védőkapcsoló így növeli a hibavédelem hatékonyságát.;érintésvédelem;hibavédelem;2;1;25;S0024;3. oldal;TN-C-S,TT,ÁVK;hu;;
 Q0108;numeric_entry;Mekkora a szellőztető motor áramfelvétele?;A 400 V-os háromfázisú motor áramfelvétele 3,25 A körül van.;számítás;motor;3;1;35;S0021;4. oldal;motor,áramfelvétel,számítás;hu;3.25;0.02
-Q0109;numeric_entry;Mekkora az elektromos radiátor napi villamos fogyasztása 12 órás üzemnél?;A 1200 W-os készülék 12 óra alatt 14,4 kWh energiát fogyaszt.;számítás;fogyasztás;2;1;25;S0024;6. oldal;fogyasztás,kWh,radiátor;hu;14.4;0.05
+Q0109;numeric_entry;"A napi villamos fogyasztáshoz egyes készülékekre vonatkozóan számításokat végeztek.
+Mekkora a szellőztető motor napi átlagos villamos fogyasztása KWh-ban, ha
+teljesítménye 1200 W, és napi átlagos üzemelési ideje 12 óra? 
+Két tizedes pontossággal számoljon.";"Villamos fogyasztás
+W = P*t
+W motor 1200 W * 12 óra = 14400 Wh = 14,40 KWh";számítás;fogyasztás;2;1;25;S0024;6. oldal;fogyasztás,kWh,radiátor;hu;14.4;0.05
 Q0110;single_choice;A 12,5 ohmos hurokimpedancia megfelelő-e a 0,03 A érzékenységű áram-védőkapcsolóval védett körben?;Igen, mert a megengedett értéknél kisebb hurokimpedancia is elegendő.;érintésvédelem;hurokimpedancia;2;1;20;S0020;8. oldal;hurokimpedancia,ÁVK;hu;;
 Q0111;ordering;Rendezze sorba a feszültségmentesítés fel nem cserélhető műveleti lépéseit!;A helyes sorrend: teljes leválasztás, visszakapcsolás megakadályozása, feszültség nélküli állapot ellenőrzése, földelés és rövidre zárás, majd a feszültség alatt maradó részek elhatárolása.;biztonság;feszültségmentesítés;2;1;45;S0023;11. oldal;feszültségmentesítés,ordering;hu;;
 Q0112;grouping;Csoportosítsa a villamos szerelvények rajzjeleit funkció szerint!;A rajzjeleket dugalj, kapcsoló és világítás csoportokba lehet sorolni.;rajzok;szerelvények;2;1;35;S0022;12. oldal;rajzjelek,csportosítás,szerelvények;hu;;

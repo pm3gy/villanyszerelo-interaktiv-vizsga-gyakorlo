@@ -6,6 +6,7 @@ Ez egy statikus, hostolható gyakorlófelület a kérdésbankhoz.
 
 - CSV-ből betölti a kérdésbankot
 - támogatja a sima választós, igaz/hamis, listás, sorrendezős, párosítós, csoportosítós és numerikus kérdéseket is
+- a választós és párosítós feladatoknál a megjelenési sorrendet tesztindításkor összekeveri, de a CSV-ben tárolt kanonikus helyesség marad az értékelés alapja
 - a képes feladatoknál az `assets.csv` alapján megjeleníti a kapcsolt ábrákat és fotókat
 - témakör szerint szűrhető
 - állítható kérdésszámot támogat

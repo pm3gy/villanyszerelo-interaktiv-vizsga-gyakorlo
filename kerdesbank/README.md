@@ -82,6 +82,8 @@ Megjegyzés:
 - `difficulty` skála: 1 nagyon könnyű, 5 nehéz
 - `question_type` kezdetben a forrásokból ténylegesen kinyert típus legyen
 - `choices.csv`-ben egy kérdéshez egy vagy több `is_correct = true` sor tartozhat
+- a választós kérdéseknél a gyakorlófelület a megjelenési sorrendet tesztindításkor összekeveri, ezért a CSV-sorok sorrendje nem jelent helyes válaszpozíciót
+- kivétel az `ordering`, ahol a `sort_order` a kanonikus helyes sorrendet jelenti
 - `prompt_md` lehet sima szöveg is, a Markdown csak lehetőséget ad a tagolásra
 - `source_locator` legyen minél konkrétabb, hogy később vissza lehessen nézni az eredetit
 - a témaneveket próbáljuk egységesen használni, például a `vezeték`, `vezetékezés`, `vezetékjelölés` és `kábel` témák most a `vezetékek` alá vannak vonva

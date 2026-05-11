@@ -191,10 +191,10 @@ async function init() {
 
 async function loadRepositoryData() {
   const [questionsText, choicesText, sourcesText, assetsText] = await Promise.all([
-    fetch(DATA_FILES.questions).then(requireOk).then((response) => response.text()),
-    fetch(DATA_FILES.choices).then(requireOk).then((response) => response.text()),
-    fetch(DATA_FILES.sources).then(requireOk).then((response) => response.text()),
-    fetch(DATA_FILES.assets).then(requireOk).then((response) => response.text()),
+    fetch(DATA_FILES.questions, { cache: "no-store" }).then(requireOk).then((response) => response.text()),
+    fetch(DATA_FILES.choices, { cache: "no-store" }).then(requireOk).then((response) => response.text()),
+    fetch(DATA_FILES.sources, { cache: "no-store" }).then(requireOk).then((response) => response.text()),
+    fetch(DATA_FILES.assets, { cache: "no-store" }).then(requireOk).then((response) => response.text()),
   ]);
 
   state.data.questions = parseCsv(questionsText);
@@ -868,7 +868,15 @@ function renderAnswerEditor() {
   els.questionTypeChipPreview.textContent = type;
   els.questionIdChipPreview.textContent = `ID ${getCurrentQuestionId()}`;
   els.sourceIdChipPreview.textContent = state.form.sourceMode === "new" ? `új forrás` : (state.form.sourceId || "forrás");
-  els.answerMeta.textContent = `${type} formátum`;
+  if (type === "single_choice" || type === "multi_choice" || type === "list_choice" || type === "true_false") {
+    els.answerMeta.textContent = "A helyességet jelöld meg, a gyakorlóban a megjelenési sorrend kevert lesz.";
+  } else if (type === "matching" || type === "grouping") {
+    els.answerMeta.textContent = "A helyes párosítás / csoportosítás számít, nem a látható sorrend.";
+  } else if (type === "ordering") {
+    els.answerMeta.textContent = "A sorrend itt a kanonikus helyes sorrend; a gyakorló ezt tesztindításkor keveri.";
+  } else {
+    els.answerMeta.textContent = `${type} formátum`;
+  }
 
   if (type === "single_choice" || type === "multi_choice" || type === "list_choice") {
     const rows = getChoiceRows(type);
@@ -904,6 +912,7 @@ function renderAnswerEditor() {
       )
       .join("");
     els.answerEditor.innerHTML = `
+      <div class="meta-pill">A helyes választ a jelöléssel add meg. A gyakorlófelületen a választási sorrend tesztindításkor kevert lesz.</div>
       <div class="choice-editor-list">
         ${list}
       </div>
@@ -916,6 +925,7 @@ function renderAnswerEditor() {
 
   if (type === "true_false") {
     els.answerEditor.innerHTML = `
+      <div class="meta-pill">Az állítás igaz/hamis volta jelöli a helyes választ. A gyakorló a két opció sorrendjét keverve mutatja.</div>
       <div class="choice-row choice-row--truefalse">
         <label class="choice-radio">
           <input type="radio" name="trueFalseCorrect" value="true" ${state.form.trueFalseCorrect === "true" ? "checked" : ""} />
@@ -933,6 +943,7 @@ function renderAnswerEditor() {
 
   if (type === "ordering") {
     els.answerEditor.innerHTML = `
+      <div class="meta-pill">A sorok itt a kanonikus helyes sorrendet jelentik. A gyakorló a kezdő sorrendet keverve mutatja.</div>
       <label class="field field--wide">
         <span>Rendezett elemek, soronként egy tétel</span>
         <textarea id="orderingTextInput" class="ordering-text" rows="7" placeholder="1. elem&#10;2. elem&#10;3. elem">${escapeHtml(state.form.orderingText)}</textarea>
@@ -943,6 +954,7 @@ function renderAnswerEditor() {
 
   if (type === "matching") {
     els.answerEditor.innerHTML = `
+      <div class="meta-pill">A bal és jobb oldali elemek helyes párosítása számít; a gyakorló a megjelenési sorrendet keveri.</div>
       <label class="field field--wide">
         <span>Párok, soronként: bal | jobb</span>
         <textarea id="matchingTextInput" class="matching-text" rows="7" placeholder="Bal oldali elem | Jobb oldali elem">${escapeHtml(state.form.matchingText)}</textarea>
@@ -953,6 +965,7 @@ function renderAnswerEditor() {
 
   if (type === "grouping") {
     els.answerEditor.innerHTML = `
+      <div class="meta-pill">A csoportosítás helyessége számít, a megjelenési sorrend nem.</div>
       <label class="field field--wide">
         <span>Elemek, soronként: tétel | csoport</span>
         <textarea id="groupingTextInput" class="grouping-text" rows="7" placeholder="Elem | csoport">${escapeHtml(state.form.groupingText)}</textarea>
@@ -1311,7 +1324,11 @@ function buildAssetRowsPreview() {
   const source = getSelectedSource();
   const questionId = getCurrentQuestionId();
   const kind = els.assetKindInput.value || "image";
-  return state.assetFiles.map((file, index) => ({
+  const existingRows = state.editingQuestionId
+    ? state.data.assets.filter((asset) => asset.question_id === state.editingQuestionId)
+    : [];
+  const existingPreview = existingRows.map((row) => ({ ...row }));
+  const newPreview = state.assetFiles.map((file, index) => ({
     asset_id: `A${String(getNextAssetIdNumber() + index).padStart(4, "0")}`,
     question_id: questionId,
     path: `../kerdesbank/media/${sanitizeFilename(file.name)}`,
@@ -1320,6 +1337,7 @@ function buildAssetRowsPreview() {
     source_id: source ? source.source_id : "",
     source_locator: state.form.source_locator.trim(),
   }));
+  return [...existingPreview, ...newPreview];
 }
 
 function getSelectedSource() {

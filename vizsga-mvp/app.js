@@ -102,10 +102,10 @@ init().catch((error) => {
 
 async function init() {
   const [questionsText, choicesText, sourcesText, assetsText] = await Promise.all([
-    fetch(DATA_FILES.questions).then(requireOk).then((r) => r.text()),
-    fetch(DATA_FILES.choices).then(requireOk).then((r) => r.text()),
-    fetch(DATA_FILES.sources).then(requireOk).then((r) => r.text()),
-    fetch(DATA_FILES.assets).then(requireOk).then((r) => r.text()),
+    fetch(DATA_FILES.questions, { cache: "no-store" }).then(requireOk).then((r) => r.text()),
+    fetch(DATA_FILES.choices, { cache: "no-store" }).then(requireOk).then((r) => r.text()),
+    fetch(DATA_FILES.sources, { cache: "no-store" }).then(requireOk).then((r) => r.text()),
+    fetch(DATA_FILES.assets, { cache: "no-store" }).then(requireOk).then((r) => r.text()),
   ]);
 
   const questions = parseCsv(questionsText);
@@ -197,6 +197,65 @@ function buildData(questionRows, choiceRows, sourceRows, assetRows) {
   return { questions, questionsById, sources, choicesByQuestion, assets };
 }
 
+function buildPresentationForQuestion(question) {
+  const presentation = {};
+
+  if (
+    question.question_type === "single_choice" ||
+    question.question_type === "multi_choice" ||
+    question.question_type === "true_false" ||
+    question.question_type === "list_choice"
+  ) {
+    presentation.choiceOrder = shuffle(question.choices.map((choice) => choice.choice_id));
+  }
+
+  if (question.question_type === "matching") {
+    const leftIds = question.choices.filter((choice) => choice.match_role === "left").map((choice) => choice.choice_id);
+    const rightIds = question.choices.filter((choice) => choice.match_role === "right").map((choice) => choice.choice_id);
+    presentation.leftOrder = shuffle(leftIds);
+    presentation.rightOrder = shuffle(rightIds);
+  }
+
+  if (question.question_type === "grouping") {
+    presentation.itemOrder = shuffle(question.choices.map((choice) => choice.choice_id));
+    presentation.groupOrder = shuffle([...new Set(question.choices.map((choice) => choice.group_label).filter(Boolean))]);
+  }
+
+  return presentation;
+}
+
+function ensureQuestionPresentation(question) {
+  if (!state.session || !question) return null;
+  state.session.presentationByQuestionId = state.session.presentationByQuestionId || {};
+  if (!state.session.presentationByQuestionId[question.question_id]) {
+    state.session.presentationByQuestionId[question.question_id] = buildPresentationForQuestion(question);
+  }
+  return state.session.presentationByQuestionId[question.question_id];
+}
+
+function getSessionQuestionIds() {
+  const mainIds = state.session?.questionIds || [];
+  const reviewIds = state.session?.reviewQuestionIds || [];
+  return [...new Set([...mainIds, ...reviewIds])];
+}
+
+function ensureSessionPresentation() {
+  if (!state.session || !data) return;
+  state.session.presentationByQuestionId = state.session.presentationByQuestionId || {};
+  let changed = false;
+  for (const questionId of getSessionQuestionIds()) {
+    const question = data.questionsById.get(questionId);
+    if (!question) continue;
+    if (!state.session.presentationByQuestionId[questionId]) {
+      state.session.presentationByQuestionId[questionId] = buildPresentationForQuestion(question);
+      changed = true;
+    }
+  }
+  if (changed) {
+    saveState();
+  }
+}
+
 function hydrateStateFromData() {
   state.settings = state.settings || {};
   state.settings.selectedTopics = normalizeSelectedTopics(
@@ -208,6 +267,7 @@ function hydrateStateFromData() {
   state.session.questionIds = Array.isArray(state.session.questionIds) ? state.session.questionIds : [];
   state.session.reviewQuestionIds = Array.isArray(state.session.reviewQuestionIds) ? state.session.reviewQuestionIds : [];
   state.session.phase = state.session.phase || "main";
+  state.session.presentationByQuestionId = state.session.presentationByQuestionId || {};
 
   const filteredPool = getFilteredPool();
   const defaultCount = Math.min(10, filteredPool.length || 1);
@@ -227,6 +287,7 @@ function hydrateStateFromData() {
     }
   }
   ensureSessionClock();
+  ensureSessionPresentation();
   saveState();
 }
 
@@ -546,6 +607,7 @@ function startNewSession(options = {}) {
     completedAt: null,
     startedAt: new Date().toISOString(),
     examDurationSeconds: getExamDurationForQuestionCount(chosen.length),
+    presentationByQuestionId: {},
   };
   state.answers = {};
   state.skipped = {};
@@ -554,6 +616,7 @@ function startNewSession(options = {}) {
     state.skipped[question.question_id] = false;
   }
 
+  ensureSessionPresentation();
   if (!options.silent) {
     saveState();
   }
@@ -573,6 +636,13 @@ function syncSessionWithData() {
 
   state.session.questionIds = keptIds;
   state.session.reviewQuestionIds = keptReviewIds;
+  state.session.presentationByQuestionId = state.session.presentationByQuestionId || {};
+  const allowedIds = new Set([...keptIds, ...keptReviewIds]);
+  for (const questionId of Object.keys(state.session.presentationByQuestionId)) {
+    if (!allowedIds.has(questionId)) {
+      delete state.session.presentationByQuestionId[questionId];
+    }
+  }
   state.session.phase = state.session.phase === "review" && keptReviewIds.length > 0 ? "review" : "main";
   state.session.currentIndex = clamp(
     Number(state.session.currentIndex || 0),
@@ -581,6 +651,7 @@ function syncSessionWithData() {
   );
   state.session.completed = Boolean(state.session.completed && keptIds.length > 0);
   ensureSessionClock();
+  ensureSessionPresentation();
 }
 
 function getFilteredPool() {
@@ -978,8 +1049,15 @@ function renderQuestion(question) {
 function renderChoiceQuestion(question) {
   const selected = new Set(state.answers[question.question_id] || []);
   const type = question.question_type === "multi_choice" ? "checkbox" : "radio";
+  const presentation = ensureQuestionPresentation(question);
+  const byId = new Map(question.choices.map((choice) => [choice.choice_id, choice]));
+  const choiceOrder = presentation?.choiceOrder || [];
+  const choicesToRender =
+    choiceOrder.length === question.choices.length
+      ? choiceOrder.map((choiceId) => byId.get(choiceId)).filter(Boolean)
+      : question.choices;
 
-  for (const choice of question.choices) {
+  for (const choice of choicesToRender) {
     const label = document.createElement("label");
     label.className = "choice";
     label.dataset.choiceId = choice.choice_id;
@@ -1005,6 +1083,13 @@ function renderChoiceQuestion(question) {
 
 function renderListChoiceQuestion(question) {
   const selected = Array.isArray(state.answers[question.question_id]) ? state.answers[question.question_id][0] : "";
+  const presentation = ensureQuestionPresentation(question);
+  const byId = new Map(question.choices.map((choice) => [choice.choice_id, choice]));
+  const choiceOrder = presentation?.choiceOrder || [];
+  const choicesToRender =
+    choiceOrder.length === question.choices.length
+      ? choiceOrder.map((choiceId) => byId.get(choiceId)).filter(Boolean)
+      : question.choices;
   const wrapper = document.createElement("label");
   wrapper.className = "choice choice--field";
   wrapper.innerHTML = `
@@ -1014,7 +1099,7 @@ function renderListChoiceQuestion(question) {
     </div>
     <select class="list-choice-select" aria-label="Válaszlista">
       <option value="">Válassz...</option>
-      ${question.choices
+      ${choicesToRender
         .map(
           (choice) => {
             const text = `${choice.choice_label ? `${choice.choice_label}. ` : ""}${choice.choice_text_md}`;
@@ -1078,8 +1163,16 @@ function renderOrderingQuestion(question) {
 
 function renderMatchingQuestion(question) {
   const answer = state.answers[question.question_id] || {};
-  const leftItems = question.choices.filter((choice) => choice.match_role === "left");
-  const rightItems = question.choices.filter((choice) => choice.match_role === "right");
+  const presentation = ensureQuestionPresentation(question);
+  const byId = new Map(question.choices.map((choice) => [choice.choice_id, choice]));
+  const leftIds = presentation?.leftOrder || [];
+  const rightIds = presentation?.rightOrder || [];
+  const canonicalLeft = question.choices.filter((choice) => choice.match_role === "left");
+  const canonicalRight = question.choices.filter((choice) => choice.match_role === "right");
+  const leftItems =
+    leftIds.length === canonicalLeft.length ? leftIds.map((choiceId) => byId.get(choiceId)).filter(Boolean) : canonicalLeft;
+  const rightItems =
+    rightIds.length === canonicalRight.length ? rightIds.map((choiceId) => byId.get(choiceId)).filter(Boolean) : canonicalRight;
 
   leftItems.forEach((choice, index) => {
     const wrapper = document.createElement("label");
@@ -1105,9 +1198,15 @@ function renderMatchingQuestion(question) {
 
 function renderGroupingQuestion(question) {
   const answer = state.answers[question.question_id] || {};
-  const groups = [...new Set(question.choices.map((choice) => choice.group_label).filter(Boolean))];
+  const presentation = ensureQuestionPresentation(question);
+  const byId = new Map(question.choices.map((choice) => [choice.choice_id, choice]));
+  const itemIds = presentation?.itemOrder || [];
+  const groupOrder = presentation?.groupOrder || [];
+  const groups = groupOrder.length > 0 ? groupOrder : [...new Set(question.choices.map((choice) => choice.group_label).filter(Boolean))];
+  const items =
+    itemIds.length === question.choices.length ? itemIds.map((choiceId) => byId.get(choiceId)).filter(Boolean) : question.choices;
 
-  question.choices.forEach((choice, index) => {
+  items.forEach((choice, index) => {
     const wrapper = document.createElement("label");
     wrapper.className = "choice choice--field";
     wrapper.innerHTML = `
@@ -1535,6 +1634,7 @@ function loadState() {
           completedAt: null,
           startedAt: null,
           examDurationSeconds: 0,
+          presentationByQuestionId: {},
         },
         answers: {},
         skipped: {},
@@ -1555,6 +1655,7 @@ function loadState() {
         completedAt: null,
         startedAt: null,
         examDurationSeconds: 0,
+        presentationByQuestionId: {},
       },
       answers: parsed.answers || {},
       skipped: parsed.skipped || {},
@@ -1574,6 +1675,7 @@ function loadState() {
         completedAt: null,
         startedAt: null,
         examDurationSeconds: 0,
+        presentationByQuestionId: {},
       },
       answers: {},
       skipped: {},

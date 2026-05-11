@@ -12,6 +12,12 @@ CHOICES_CSV = BASE / "choices.csv"
 SOURCES_CSV = BASE / "sources.csv"
 ASSETS_CSV = BASE / "assets.csv"
 
+AUTHORING_NOTE = (
+    "Megjegyzés: a gyakorlófelületen a választós és párosítós kérdések "
+    "megjelenési sorrendje véletlenszerű lesz, ezért a helyességet mindig a "
+    "jelölés / párosítás alapján add meg, ne a sorpozíció alapján."
+)
+
 QUESTION_TYPES = [
     "single_choice",
     "multi_choice",
@@ -410,6 +416,8 @@ def preview(question_row: dict[str, str], choice_rows: list[dict[str, str]], ass
 
 
 def main():
+    print(AUTHORING_NOTE)
+    print()
     questions = read_csv(QUESTIONS_CSV)
     choices = read_csv(CHOICES_CSV)
     sources = read_csv(SOURCES_CSV)
@@ -441,7 +449,7 @@ def main():
     asset_rows = []
 
     if question_type in {"single_choice", "multi_choice", "list_choice"}:
-        raw_options = ask_multiline("Answer options, one per line. Prefix correct ones with *")
+        raw_options = ask_multiline("Answer options, one per line. Prefix correct ones with *. The order in the CSV is not the displayed order.")
         entries = parse_marked_lines(raw_options)
         if len(entries) < 2:
             raise SystemExit("At least two answer options are required.")
@@ -457,19 +465,19 @@ def main():
         is_true = ask("Is the statement true? [y/N]", "n").lower().startswith("y")
         choice_rows = build_choice_rows(question_id, question_type, choice_id_start, [(prompt_md, is_true)], "choices")
     elif question_type == "ordering":
-        raw_items = ask_multiline("Items in the correct order, one per line")
+        raw_items = ask_multiline("Items in the correct order, one per line. This is the canonical order; the practice tool will shuffle the starting display.")
         items = [line.strip() for line in raw_items.splitlines() if line.strip()]
         if len(items) < 2:
             raise SystemExit("ordering needs at least two items.")
         choice_rows = build_choice_rows(question_id, question_type, choice_id_start, items, "choices")
     elif question_type == "matching":
-        raw_pairs = ask_multiline("Pairs as left | right, one per line")
+        raw_pairs = ask_multiline("Pairs as left | right, one per line. The practice tool will shuffle the visible order.")
         pairs = parse_pairs(raw_pairs)
         if len(pairs) < 2:
             raise SystemExit("matching needs at least two pairs.")
         choice_rows = build_choice_rows(question_id, question_type, choice_id_start, pairs, "choices")
     elif question_type == "grouping":
-        raw_items = ask_multiline("Items as item | group, one per line")
+        raw_items = ask_multiline("Items as item | group, one per line. The practice tool will shuffle the visible order.")
         pairs = parse_pairs(raw_items)
         if len(pairs) < 2:
             raise SystemExit("grouping needs at least two items.")
