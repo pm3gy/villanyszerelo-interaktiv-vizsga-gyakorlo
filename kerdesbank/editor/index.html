@@ -7,8 +7,8 @@
     <meta name="robots" content="noindex, nofollow, noarchive" />
     <meta name="format-detection" content="telephone=no, email=no, address=no, date=no" />
     <title>Kérdésbank szerkesztő</title>
-    <link rel="stylesheet" href="../../vizsga-mvp/styles.css?v=20260511-8" />
-    <link rel="stylesheet" href="./styles.css?v=20260511-8" />
+    <link rel="stylesheet" href="../../vizsga-mvp/styles.css?v=20260511-11" />
+    <link rel="stylesheet" href="./styles.css?v=20260511-11" />
   </head>
   <body>
     <div class="backdrop backdrop-a"></div>
@@ -273,13 +273,27 @@
 
             <div class="actions editor-actions editor-actions--save">
               <button class="button" id="saveButton" type="button">Mentés a workspace-be</button>
+              <button class="button button--danger" id="deleteQuestionButton" type="button">Kérdés törlése</button>
               <button class="button button--secondary" id="resetDraftButton" type="button">Űrlap törlése</button>
+            </div>
+
+            <div class="delete-panel" id="deleteQuestionPanel" hidden>
+              <div class="delete-panel__title">Kérdés végleges törlése</div>
+              <div class="delete-panel__body" id="deleteQuestionMessage"></div>
+              <label class="field">
+                <span>Írd be a kérdés azonosítóját a megerősítéshez</span>
+                <input id="deleteQuestionConfirmInput" type="text" placeholder="Q0001" />
+              </label>
+              <div class="editor-actions">
+                <button class="button button--danger" id="confirmDeleteQuestionButton" type="button">Törlés megerősítése</button>
+                <button class="ghost" id="cancelDeleteQuestionButton" type="button">Mégse</button>
+              </div>
             </div>
           </article>
         </section>
       </main>
     </div>
 
-    <script type="module" src="./app.js?v=20260511-8"></script>
+    <script type="module" src="./app.js?v=20260511-11"></script>
   </body>
 </html>

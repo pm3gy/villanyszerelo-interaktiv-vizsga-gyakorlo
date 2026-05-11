@@ -100,6 +100,8 @@ const state = {
   lastSavedMessage: "Szerkesztésre kész",
   loadError: "",
   busy: false,
+  deletePendingQuestionId: null,
+  deleteConfirmText: "",
 };
 
 const els = {
@@ -156,7 +158,13 @@ const els = {
   csvPreview: document.getElementById("csvPreview"),
   validationState: document.getElementById("validationState"),
   saveButton: document.getElementById("saveButton"),
+  deleteQuestionButton: document.getElementById("deleteQuestionButton"),
   resetDraftButton: document.getElementById("resetDraftButton"),
+  deleteQuestionPanel: document.getElementById("deleteQuestionPanel"),
+  deleteQuestionMessage: document.getElementById("deleteQuestionMessage"),
+  deleteQuestionConfirmInput: document.getElementById("deleteQuestionConfirmInput"),
+  confirmDeleteQuestionButton: document.getElementById("confirmDeleteQuestionButton"),
+  cancelDeleteQuestionButton: document.getElementById("cancelDeleteQuestionButton"),
 };
 
 function renderBlocked(title = "Ez a szerkesztő csak localhoston működik", body = "Nyisd meg a repo egy lokális HTTP szerverén, például `python3 -m http.server 8000` mellett.") {
@@ -238,6 +246,13 @@ function wireEvents() {
   });
   els.saveButton.addEventListener("click", saveDraftToWorkspace);
   els.saveButtonTop.addEventListener("click", saveDraftToWorkspace);
+  els.deleteQuestionButton.addEventListener("click", deleteCurrentQuestion);
+  els.confirmDeleteQuestionButton.addEventListener("click", confirmDeleteCurrentQuestion);
+  els.cancelDeleteQuestionButton.addEventListener("click", () => clearDeleteConfirmation());
+  els.deleteQuestionConfirmInput.addEventListener("input", () => {
+    state.deleteConfirmText = els.deleteQuestionConfirmInput.value;
+    syncDeletePanelState();
+  });
   els.resetDraftButton.addEventListener("click", resetDraftForm);
   els.questionSelect.addEventListener("change", () => {
     const questionId = els.questionSelect.value;
@@ -570,6 +585,7 @@ function formatQuestionOption(question) {
 function loadExistingQuestion(questionId) {
   const question = state.data.questions.find((item) => item.question_id === questionId);
   if (!question) return;
+  clearDeleteConfirmation(false);
   state.editingQuestionId = question.question_id;
   state.form = createDraftFromQuestion(question);
   state.assetFiles = [];
@@ -579,6 +595,7 @@ function loadExistingQuestion(questionId) {
 }
 
 function startNewDraft() {
+  clearDeleteConfirmation(false);
   state.editingQuestionId = null;
   state.form = createBlankDraft();
   state.assetFiles = [];
@@ -861,6 +878,8 @@ function renderAll() {
   updateWorkspaceSummary();
   updateAssetList();
   updatePreview();
+  syncDeleteButtonState();
+  syncDeletePanelState();
 }
 
 function renderAnswerEditor() {
@@ -1020,6 +1039,47 @@ function updateWorkspaceSummary() {
   }
   els.workspaceFiles.textContent = `Q:${nextQuestionId} / C:${nextChoiceId} / A:${nextAssetId}`;
   els.sourceIdChipPreview.textContent = state.form.sourceMode === "new" ? "új forrás" : (state.form.sourceId || "forrás");
+}
+
+function syncDeleteButtonState() {
+  if (!els.deleteQuestionButton) return;
+  const disabled = state.busy || !state.editingQuestionId;
+  els.deleteQuestionButton.disabled = disabled;
+  els.deleteQuestionButton.textContent = state.editingQuestionId ? `Kérdés törlése` : "Kérdés törlése";
+}
+
+function syncDeletePanelState() {
+  if (!els.deleteQuestionPanel || !els.deleteQuestionMessage || !els.deleteQuestionConfirmInput || !els.confirmDeleteQuestionButton) {
+    return;
+  }
+  const questionId = state.deletePendingQuestionId;
+  const open = Boolean(questionId);
+  els.deleteQuestionPanel.hidden = !open;
+  if (!open) {
+    els.deleteQuestionMessage.textContent = "";
+    els.deleteQuestionConfirmInput.value = "";
+    els.confirmDeleteQuestionButton.disabled = true;
+    return;
+  }
+  const question = state.data.questions.find((item) => item.question_id === questionId) || null;
+  els.deleteQuestionMessage.textContent = question
+    ? `${question.question_id}: ${question.prompt_md || "Nincs kérdésszöveg."}`
+    : `A kérdés törlésre kész: ${questionId}`;
+  if (els.deleteQuestionConfirmInput.value !== state.deleteConfirmText) {
+    els.deleteQuestionConfirmInput.value = state.deleteConfirmText;
+  }
+  els.confirmDeleteQuestionButton.disabled = state.busy || normalizeQuestionId(state.deleteConfirmText) !== questionId;
+  if (!state.busy && document.activeElement !== els.deleteQuestionConfirmInput) {
+    els.deleteQuestionConfirmInput.focus();
+  }
+}
+
+function clearDeleteConfirmation(shouldRender = true) {
+  state.deletePendingQuestionId = null;
+  state.deleteConfirmText = "";
+  if (shouldRender) {
+    syncDeletePanelState();
+  }
 }
 
 function getCurrentChoiceRowsCount() {
@@ -1480,6 +1540,88 @@ async function saveDraftToWorkspace() {
   }
 }
 
+function deleteCurrentQuestion() {
+  const questionId = state.editingQuestionId;
+  if (!questionId) return;
+  state.deletePendingQuestionId = questionId;
+  state.deleteConfirmText = "";
+  syncDeletePanelState();
+}
+
+async function confirmDeleteCurrentQuestion() {
+  const questionId = state.deletePendingQuestionId;
+  if (!questionId) return;
+  if (normalizeQuestionId(state.deleteConfirmText) !== questionId) {
+    state.lastSavedMessage = `Törléshez írd be pontosan ezt: ${questionId}`;
+    updateWorkspaceSummary();
+    syncDeletePanelState();
+    return;
+  }
+
+  if (!state.bankFolderHandle) {
+    try {
+      await pickWorkspace();
+    } catch {
+      state.lastSavedMessage = "Mappa kiválasztása szükséges";
+      updateWorkspaceSummary();
+      return;
+    }
+  }
+
+  const orderedQuestions = getOrderedQuestions();
+  const currentIndex = orderedQuestions.findIndex((question) => question.question_id === questionId);
+  const fallbackQuestion =
+    orderedQuestions[currentIndex + 1] ||
+    orderedQuestions[currentIndex - 1] ||
+    null;
+
+  state.busy = true;
+  els.saveButton.disabled = true;
+  els.saveButtonTop.disabled = true;
+  if (els.deleteQuestionButton) els.deleteQuestionButton.disabled = true;
+  if (els.confirmDeleteQuestionButton) els.confirmDeleteQuestionButton.disabled = true;
+
+  try {
+    const questionRows = state.data.questions.filter((row) => row.question_id !== questionId);
+    const choiceRows = state.data.choices.filter((row) => row.question_id !== questionId);
+    const assetRows = state.data.assets.filter((row) => row.question_id !== questionId);
+
+    await writeWorkspaceCsv("questions.csv", questionRows, QUESTION_FIELDS);
+    await writeWorkspaceCsv("choices.csv", choiceRows, CHOICE_FIELDS);
+    await writeWorkspaceCsv("assets.csv", assetRows, ASSET_FIELDS);
+
+    state.data.questions = questionRows;
+    state.data.choices = choiceRows;
+    state.data.assets = assetRows;
+    state.assetFiles = [];
+    els.assetFilesInput.value = "";
+    clearDeleteConfirmation(false);
+
+    if (fallbackQuestion) {
+      state.editingQuestionId = fallbackQuestion.question_id;
+      state.form = createDraftFromQuestion(fallbackQuestion);
+      saveDraft();
+    } else {
+      startNewDraft();
+    }
+
+    state.lastSavedMessage = `Törölve: ${questionId}`;
+    renderStaticOptions();
+    renderAll();
+  } catch (error) {
+    console.error(error);
+    state.lastSavedMessage = `Törlési hiba: ${error.message}`;
+    updateWorkspaceSummary();
+  } finally {
+    state.busy = false;
+    els.saveButton.disabled = false;
+    els.saveButtonTop.disabled = false;
+    syncDeleteButtonState();
+    syncDeletePanelState();
+    updateWorkspaceSummary();
+  }
+}
+
 async function writeAssetFiles(questionId, sourceRow) {
   if (state.assetFiles.length === 0) return [];
   const mediaDir = await state.bankFolderHandle.getDirectoryHandle("media", { create: true });
@@ -1721,6 +1863,14 @@ function formatBytes(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function normalizeText(text) {
+  return String(text || "").trim().replace(/\s+/g, " ");
+}
+
+function normalizeQuestionId(text) {
+  return normalizeText(text).toUpperCase();
 }
 
 function sanitizeFilename(name) {

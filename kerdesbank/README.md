@@ -154,6 +154,7 @@ Ez a felület:
 - a helyi `kerdesbank/*.csv` fájlokat közvetlenül írja
 - képes meglévő kérdéseket kiválasztani és felülírni
 - új kérdés és meglévő kérdés között is lehet váltani a szerkesztőben
+- a kiválasztott kérdést véglegesen törölni is lehet, ilyenkor a hozzá tartozó `questions.csv`, `choices.csv` és `assets.csv` sorok is eltűnnek
 - a kiválasztott képfájlokat a `kerdesbank/media/` mappába másolja
 
 Chrome vagy Edge ajánlott, mert a mappaírás a File System Access API-t használja.
