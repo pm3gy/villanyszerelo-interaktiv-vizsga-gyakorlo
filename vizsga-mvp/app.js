@@ -22,6 +22,7 @@ const SUPPORTED_TYPES = new Set([
   "grouping",
   "numeric_entry",
 ]);
+const SELECTION_MODES = new Set(["all", "range", "source", "topics"]);
 
 const TOPIC_ALIASES = new Map([
   ["erintesvedelem", "érintésvédelem"],
@@ -51,6 +52,12 @@ const els = {
   examClockMeta: document.getElementById("examClockMeta"),
   poolCountChip: document.getElementById("poolCountChip"),
   topicFilters: document.getElementById("topicFilters"),
+  topicsConfig: document.getElementById("topicsConfig"),
+  rangeConfig: document.getElementById("rangeConfig"),
+  sourceConfig: document.getElementById("sourceConfig"),
+  sourceSelect: document.getElementById("sourceSelect"),
+  questionRangeFromInput: document.getElementById("questionRangeFromInput"),
+  questionRangeToInput: document.getElementById("questionRangeToInput"),
   questionCountInput: document.getElementById("questionCountInput"),
   startSessionButton: document.getElementById("startSessionButton"),
   selectAllTopicsButton: document.getElementById("selectAllTopicsButton"),
@@ -115,6 +122,7 @@ async function init() {
 
   data = buildData(questions, choices, sources, assets);
   hydrateStateFromData();
+  renderSourceOptions();
   renderTopicFilters();
   wireSettingsEvents();
   wireEvents();
@@ -258,10 +266,14 @@ function ensureSessionPresentation() {
 
 function hydrateStateFromData() {
   state.settings = state.settings || {};
+  state.settings.selectionMode = normalizeSelectionMode(state.settings.selectionMode, state.settings.selectedTopics);
   state.settings.selectedTopics = normalizeSelectedTopics(
     state.settings.selectedTopics,
     getAllTopics()
   );
+  state.settings.selectedSourceId = normalizeSelectedSourceId(state.settings.selectedSourceId);
+  state.settings.questionRangeFrom = normalizeStoredQuestionRangeId(state.settings.questionRangeFrom, getFirstQuestionId());
+  state.settings.questionRangeTo = normalizeStoredQuestionRangeId(state.settings.questionRangeTo, getLastQuestionId());
 
   state.session = state.session || {};
   state.session.questionIds = Array.isArray(state.session.questionIds) ? state.session.questionIds : [];
@@ -496,13 +508,50 @@ function wireSettingsEvents() {
     renderSessionHeader();
   });
 
-  els.questionCountInput.addEventListener("change", () => {
-    const filteredPool = getFilteredPool();
-    const nextCount = clamp(Number(els.questionCountInput.value || 1), 1, Math.max(filteredPool.length, 1));
-    state.settings.questionCount = nextCount;
-    els.questionCountInput.value = String(nextCount);
+  document.querySelectorAll(".selection-mode-radio").forEach((input) => {
+    input.addEventListener("change", () => {
+      if (!(input instanceof HTMLInputElement) || !input.checked) return;
+      state.settings.selectionMode = normalizeSelectionMode(input.value);
+      syncQuestionCountInput();
+      saveState();
+      renderTopicFilters();
+      renderSessionHeader();
+    });
+  });
+
+  els.questionRangeFromInput.addEventListener("input", () => {
+    syncRangeBoundary("questionRangeFrom", els.questionRangeFromInput, getFirstQuestionId(), {
+      preserveInputValue: true,
+    });
+  });
+
+  els.questionRangeFromInput.addEventListener("change", () => {
+    syncRangeBoundary("questionRangeFrom", els.questionRangeFromInput, getFirstQuestionId());
+  });
+
+  els.questionRangeToInput.addEventListener("input", () => {
+    syncRangeBoundary("questionRangeTo", els.questionRangeToInput, getLastQuestionId(), {
+      preserveInputValue: true,
+    });
+  });
+
+  els.questionRangeToInput.addEventListener("change", () => {
+    syncRangeBoundary("questionRangeTo", els.questionRangeToInput, getLastQuestionId());
+  });
+
+  els.sourceSelect.addEventListener("change", () => {
+    state.settings.selectedSourceId = normalizeSelectedSourceId(els.sourceSelect.value);
+    syncQuestionCountInput();
     saveState();
     renderSessionHeader();
+  });
+
+  els.questionCountInput.addEventListener("input", () => {
+    syncQuestionCountSetting({ preserveInputValue: true });
+  });
+
+  els.questionCountInput.addEventListener("change", () => {
+    syncQuestionCountSetting();
   });
 
   document.addEventListener("change", (event) => {
@@ -543,25 +592,22 @@ function render() {
   }
 }
 
-function renderSessionHeader() {
+function renderSessionHeader(options = {}) {
   const pool = getFilteredPool();
-  const questions = getSessionQuestions();
-  const topics = state.settings.selectedTopics || [];
-  const allTopics = getAllTopics();
-  const allTopicsSelected = topics.length === allTopics.length;
+  const selectionLabel = getSelectionLabel();
 
   els.poolCountChip.textContent = `${pool.length} kérdés`;
   els.datasetMeta.textContent = `${data.questions.length} kérdés, ${data.sources.size} forrás`;
-  els.questionCountInput.value = String(state.settings.questionCount || Math.min(10, pool.length || 1));
+  if (!options.preserveQuestionCountInput) {
+    els.questionCountInput.value = String(state.settings.questionCount || Math.min(10, pool.length || 1));
+  }
   els.questionCountInput.max = String(Math.max(pool.length, 1));
+  if (!options.preserveSelectionInputs) {
+    renderSelectionControls();
+  }
 
-  const visibleCount = questions.length;
-  const selectedCount = topics.length;
-  els.modeChip.textContent = allTopicsSelected
-    ? `Minden téma / ${visibleCount} kérdéses teszt`
-    : selectedCount
-      ? `${selectedCount} téma / ${visibleCount} kérdéses teszt`
-      : `${visibleCount} kérdéses teszt`;
+  const plannedCount = Number(state.settings.questionCount || Math.min(10, pool.length || 1));
+  els.modeChip.textContent = `${selectionLabel} / ${plannedCount} kérdéses teszt`;
 
   syncMobileDock();
   updateNextButtonLabel();
@@ -585,6 +631,56 @@ function renderTopicFilters() {
     `;
     els.topicFilters.appendChild(label);
   }
+}
+
+function renderSourceOptions() {
+  const sources = getSourcesWithQuestionCounts();
+  els.sourceSelect.innerHTML = "";
+
+  for (const source of sources) {
+    const option = document.createElement("option");
+    option.value = source.source_id;
+    option.textContent = `${source.title} (${source.count} kérdés)`;
+    els.sourceSelect.appendChild(option);
+  }
+}
+
+function renderSelectionControls() {
+  const mode = normalizeSelectionMode(state.settings.selectionMode);
+  document.querySelectorAll(".selection-mode-radio").forEach((input) => {
+    if (input instanceof HTMLInputElement) {
+      input.checked = input.value === mode;
+    }
+  });
+
+  els.rangeConfig.hidden = mode !== "range";
+  els.sourceConfig.hidden = mode !== "source";
+  els.topicsConfig.hidden = mode !== "topics";
+  els.questionRangeFromInput.value = state.settings.questionRangeFrom || getFirstQuestionId();
+  els.questionRangeToInput.value = state.settings.questionRangeTo || getLastQuestionId();
+  els.sourceSelect.value = state.settings.selectedSourceId || normalizeSelectedSourceId();
+}
+
+function syncRangeBoundary(settingKey, input, defaultFallback, options = {}) {
+  state.settings[settingKey] = options.preserveInputValue
+    ? input.value
+    : normalizeStoredQuestionRangeId(input.value, state.settings[settingKey] || defaultFallback);
+  syncQuestionCountInput();
+  saveState();
+  renderSessionHeader({ preserveSelectionInputs: Boolean(options.preserveInputValue) });
+}
+
+function syncQuestionCountSetting(options = {}) {
+  const filteredPool = getFilteredPool();
+  const max = Math.max(filteredPool.length, 1);
+  const rawCount = Number(els.questionCountInput.value || 1);
+  const nextCount = clamp(Number.isFinite(rawCount) ? rawCount : 1, 1, max);
+  state.settings.questionCount = nextCount;
+  if (!options.preserveInputValue) {
+    els.questionCountInput.value = String(nextCount);
+  }
+  saveState();
+  renderSessionHeader({ preserveQuestionCountInput: Boolean(options.preserveInputValue) });
 }
 
 function startNewSession(options = {}) {
@@ -655,12 +751,26 @@ function syncSessionWithData() {
 }
 
 function getFilteredPool() {
-  const selected = new Set(state.settings.selectedTopics || []);
-  const pool = data.questions.filter((question) => {
-    const topicOk = selected.size === 0 || selected.has(question.topic);
-    return topicOk;
-  });
-  return pool.filter((question) => SUPPORTED_TYPES.has(question.question_type));
+  const supported = data.questions.filter((question) => SUPPORTED_TYPES.has(question.question_type));
+  const mode = normalizeSelectionMode(state.settings.selectionMode);
+
+  if (mode === "range") {
+    const bounds = getQuestionRangeBounds();
+    if (!bounds) return [];
+    return supported.filter((question) => question.index >= bounds.fromIndex && question.index <= bounds.toIndex);
+  }
+
+  if (mode === "source") {
+    const sourceId = normalizeSelectedSourceId(state.settings.selectedSourceId);
+    return supported.filter((question) => question.source_id === sourceId);
+  }
+
+  if (mode === "topics") {
+    const selected = new Set(state.settings.selectedTopics || []);
+    return supported.filter((question) => selected.size === 0 || selected.has(question.topic));
+  }
+
+  return supported;
 }
 
 function getSessionQuestions() {
@@ -685,6 +795,96 @@ function getAllTopics() {
   return [...new Set(data.questions.map((question) => question.topic).filter(Boolean))].sort((a, b) =>
     prettyTopic(a).localeCompare(prettyTopic(b), "hu")
   );
+}
+
+function getSourcesWithQuestionCounts() {
+  const counts = new Map();
+  for (const question of data.questions) {
+    if (!SUPPORTED_TYPES.has(question.question_type) || !question.source_id) continue;
+    counts.set(question.source_id, (counts.get(question.source_id) || 0) + 1);
+  }
+  return [...data.sources.values()]
+    .map((source) => ({
+      ...source,
+      count: counts.get(source.source_id) || 0,
+    }))
+    .filter((source) => source.count > 0)
+    .sort((a, b) => {
+      const yearDelta = Number(b.year || 0) - Number(a.year || 0);
+      return yearDelta || a.title.localeCompare(b.title, "hu");
+    });
+}
+
+function getFirstQuestionId() {
+  return data.questions[0]?.question_id || "";
+}
+
+function getLastQuestionId() {
+  return data.questions[data.questions.length - 1]?.question_id || "";
+}
+
+function normalizeSelectionMode(selectionMode, selectedTopics) {
+  if (SELECTION_MODES.has(selectionMode)) {
+    return selectionMode;
+  }
+  const oldTopicSelection = Array.isArray(selectedTopics) && selectedTopics.length > 0;
+  return oldTopicSelection ? "topics" : "all";
+}
+
+function normalizeSelectedSourceId(sourceId) {
+  const sources = getSourcesWithQuestionCounts();
+  if (sourceId && sources.some((source) => source.source_id === sourceId)) {
+    return sourceId;
+  }
+  return sources[0]?.source_id || "";
+}
+
+function normalizeQuestionIdInput(value) {
+  const raw = String(value || "").trim().toUpperCase();
+  if (!raw) return "";
+  const numericMatch = raw.match(/^Q?0*(\d+)$/);
+  if (!numericMatch) return raw;
+  return `Q${numericMatch[1].padStart(4, "0")}`;
+}
+
+function normalizeStoredQuestionRangeId(value, fallback) {
+  const normalized = normalizeQuestionIdInput(value);
+  if (normalized && data.questionsById.has(normalized)) {
+    return normalized;
+  }
+  return fallback || "";
+}
+
+function getQuestionRangeBounds() {
+  const fromId = normalizeQuestionIdInput(state.settings.questionRangeFrom) || getFirstQuestionId();
+  const toId = normalizeQuestionIdInput(state.settings.questionRangeTo) || getLastQuestionId();
+  const fromQuestion = data.questionsById.get(fromId);
+  const toQuestion = data.questionsById.get(toId);
+  if (!fromQuestion || !toQuestion) return null;
+  return {
+    fromIndex: Math.min(fromQuestion.index, toQuestion.index),
+    toIndex: Math.max(fromQuestion.index, toQuestion.index),
+    fromId,
+    toId,
+  };
+}
+
+function getSelectionLabel() {
+  const mode = normalizeSelectionMode(state.settings.selectionMode);
+  if (mode === "range") {
+    const bounds = getQuestionRangeBounds();
+    return bounds ? `${bounds.fromId}-${bounds.toId}` : "ID tartomány";
+  }
+  if (mode === "source") {
+    const sourceId = normalizeSelectedSourceId(state.settings.selectedSourceId);
+    return data.sources.get(sourceId)?.title || "Forrás szerint";
+  }
+  if (mode === "topics") {
+    const topics = state.settings.selectedTopics || [];
+    const allTopics = getAllTopics();
+    return topics.length === allTopics.length ? "Minden téma" : `${topics.length} téma`;
+  }
+  return "Teljes kérdésbank";
 }
 
 function normalizeSelectedTopics(selectedTopics, allTopics) {
@@ -1622,7 +1822,11 @@ function loadState() {
     if (!raw) {
       return {
         settings: {
+          selectionMode: "all",
           selectedTopics: [],
+          selectedSourceId: "",
+          questionRangeFrom: "",
+          questionRangeTo: "",
           questionCount: 10,
         },
         session: {
@@ -1643,7 +1847,11 @@ function loadState() {
     const parsed = JSON.parse(raw);
     return {
       settings: parsed.settings || {
+        selectionMode: "all",
         selectedTopics: [],
+        selectedSourceId: "",
+        questionRangeFrom: "",
+        questionRangeTo: "",
         questionCount: 10,
       },
       session: parsed.session || {
@@ -1663,7 +1871,11 @@ function loadState() {
   } catch {
     return {
       settings: {
+        selectionMode: "all",
         selectedTopics: [],
+        selectedSourceId: "",
+        questionRangeFrom: "",
+        questionRangeTo: "",
         questionCount: 10,
       },
       session: {
