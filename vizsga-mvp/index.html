@@ -101,17 +101,56 @@
               <span>Kérdésszám</span>
               <input id="questionCountInput" type="number" min="1" value="10" />
             </label>
+            <fieldset class="selection-modes" aria-label="Kérdésválasztás módja">
+              <legend>Kérdésválasztás</legend>
+              <label class="selection-mode-option">
+                <input class="selection-mode-radio" type="radio" name="selectionMode" value="all" checked />
+                <span>Teljes kérdésbank</span>
+              </label>
+              <label class="selection-mode-option">
+                <input class="selection-mode-radio" type="radio" name="selectionMode" value="range" />
+                <span>Kérdés ID tartomány</span>
+              </label>
+              <label class="selection-mode-option">
+                <input class="selection-mode-radio" type="radio" name="selectionMode" value="source" />
+                <span>Forrás szerint</span>
+              </label>
+              <label class="selection-mode-option">
+                <input class="selection-mode-radio" type="radio" name="selectionMode" value="topics" />
+                <span>Témakörök szerint</span>
+              </label>
+            </fieldset>
+            <div class="selection-config" id="rangeConfig" hidden>
+              <div class="range-fields">
+                <label class="number-field" for="questionRangeFromInput">
+                  <span>Tól</span>
+                  <input id="questionRangeFromInput" type="text" inputmode="numeric" placeholder="Q0001" />
+                </label>
+                <label class="number-field" for="questionRangeToInput">
+                  <span>Ig</span>
+                  <input id="questionRangeToInput" type="text" inputmode="numeric" placeholder="Q0412" />
+                </label>
+              </div>
+            </div>
+            <div class="selection-config" id="sourceConfig" hidden>
+              <label class="select-field" for="sourceSelect">
+                <span>Forrás</span>
+                <select id="sourceSelect"></select>
+              </label>
+            </div>
+            <div class="selection-config" id="topicsConfig" hidden>
+              <div class="filter-actions">
+                <button class="ghost" id="selectAllTopicsButton" type="button">Minden téma</button>
+                <button class="ghost" id="clearTopicsButton" type="button">Szűrés nélkül</button>
+              </div>
+              <div class="topic-filters" id="topicFilters"></div>
+            </div>
             <div class="filter-actions filter-actions--start">
               <button class="button" id="startSessionButton" type="button">Új teszt indítása</button>
             </div>
             <p class="panel-note">
-              Válassz témaköröket és kérdésszámot, majd indíts új tesztet.
+              Válassz kérdésszámot és opcionálisan szűkítsd a kérdésbankot, majd indíts új tesztet.
             </p>
-            <div class="filter-actions">
-              <button class="ghost" id="selectAllTopicsButton" type="button">Minden téma</button>
-              <button class="ghost" id="clearTopicsButton" type="button">Szűrés nélkül</button>
-            </div>
-            <div class="topic-filters" id="topicFilters"></div>
           </section>
         </aside>
 

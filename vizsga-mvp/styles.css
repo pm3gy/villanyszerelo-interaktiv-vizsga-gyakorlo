@@ -42,7 +42,8 @@ body {
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
@@ -285,6 +286,61 @@ h1 {
   margin-top: 0.9rem;
 }
 
+.selection-modes {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.selection-modes legend {
+  margin-bottom: 0.35rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.selection-mode-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 2.7rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: var(--radius-md);
+  background: rgba(19, 32, 51, 0.04);
+  border: 1px solid rgba(19, 32, 51, 0.08);
+  cursor: pointer;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.selection-mode-option:has(input:checked) {
+  border-color: rgba(29, 78, 216, 0.42);
+  background: rgba(29, 78, 216, 0.08);
+}
+
+.selection-mode-option input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--accent);
+}
+
+.selection-config {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+}
+
+.selection-config[hidden] {
+  display: none;
+}
+
+.range-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
 .topic-option {
   display: flex;
   align-items: center;
@@ -314,7 +370,8 @@ h1 {
   margin-top: 0.1rem;
 }
 
-.number-field {
+.number-field,
+.select-field {
   display: grid;
   gap: 0.35rem;
   margin-top: 0.9rem;
@@ -322,12 +379,19 @@ h1 {
   font-size: 0.9rem;
 }
 
-.number-field input {
+.range-fields .number-field,
+.selection-config .select-field {
+  margin-top: 0;
+}
+
+.number-field input,
+.select-field select {
   width: 100%;
   border-radius: 14px;
   border: 1px solid rgba(19, 32, 51, 0.12);
   background: white;
   padding: 0.8rem 0.9rem;
+  color: var(--text);
 }
 
 .filter-actions--start {
