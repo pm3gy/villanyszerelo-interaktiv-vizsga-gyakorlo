@@ -97,6 +97,9 @@ const els = {
   evaluateButton: document.getElementById("evaluateButton"),
   resultsPanel: document.getElementById("resultsPanel"),
   resultScore: document.getElementById("resultScore"),
+  resultPercentCard: document.getElementById("resultPercentCard"),
+  resultPercent: document.getElementById("resultPercent"),
+  resultPercentIcon: document.getElementById("resultPercentIcon"),
   resultCorrect: document.getElementById("resultCorrect"),
   resultWrong: document.getElementById("resultWrong"),
   resultTotal: document.getElementById("resultTotal"),
@@ -563,6 +566,13 @@ function renderPwaControls(statusOverride = "") {
   }
 
   els.pwaStatus.textContent = status;
+  if (els.statusPanel) {
+    els.statusPanel.dataset.updateAvailable = String(updateAvailable);
+    if (updateAvailable) {
+      els.statusPanel.dataset.panelState = "open";
+    }
+  }
+  els.pwaStatus.classList.toggle("pwa-panel__status--update", updateAvailable);
   if (els.installPwaButton) {
     els.installPwaButton.hidden = !installAvailable || updateAvailable;
   }
@@ -1620,8 +1630,25 @@ function renderResults() {
   const questions = getMainSessionQuestions();
   const total = questions.length;
   const wrong = total - result.correctCount;
+  const correctPct = total > 0 ? Math.round((result.correctCount / total) * 100) : 0;
+  const scoreTone = getResultScoreTone(correctPct);
 
   els.resultScore.textContent = `${result.earnedPoints} pont`;
+  if (els.resultPercent) {
+    els.resultPercent.textContent = `${correctPct}%`;
+  }
+  if (els.resultPercentIcon) {
+    els.resultPercentIcon.textContent = scoreTone.icon;
+  }
+  if (els.resultPercentCard) {
+    els.resultPercentCard.classList.remove(
+      "result-card--score-excellent",
+      "result-card--score-good",
+      "result-card--score-medium",
+      "result-card--score-danger"
+    );
+    els.resultPercentCard.classList.add(scoreTone.cardClass);
+  }
   els.resultCorrect.textContent = String(result.correctCount);
   els.resultWrong.textContent = String(wrong);
   els.resultTotal.textContent = String(total);
@@ -1655,6 +1682,32 @@ function renderResults() {
     `;
     els.reviewList.appendChild(card);
   }
+}
+
+function getResultScoreTone(correctPct) {
+  if (correctPct >= 90) {
+    return {
+      cardClass: "result-card--score-excellent",
+      icon: "🎉",
+    };
+  }
+  if (correctPct >= 70) {
+    return {
+      cardClass: "result-card--score-good",
+      icon: "",
+    };
+  }
+  if (correctPct >= 40) {
+    return {
+      cardClass: "result-card--score-medium",
+      icon: "",
+    };
+  }
+
+  return {
+    cardClass: "result-card--score-danger",
+    icon: "",
+  };
 }
 
 function evaluate() {

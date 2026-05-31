@@ -15,15 +15,14 @@
     <div class="backdrop backdrop-b"></div>
     <div class="shell">
       <header class="hero">
-        <div>
-          <p class="eyebrow">Villanyszerelő interaktív vizsga gyakorló</p>
-          <h1>
-            <span class="title-line">
-              Villanyszerelő - Épületvillamosság
-              <span class="title-code" translate="no">(4 0713 04 07)</span>
-            </span>
-            <span class="title-subtitle">Interaktív vizsga gyakorló</span>
-          </h1>
+          <div>
+	          <h1 class="hero-title">
+	            <span class="title-line">
+	              Villanyszerelő - Épületvillamosság
+	              <span class="title-code" translate="no">(4 0713 04 07)</span>
+	            </span>
+	            <span class="title-subtitle">Interaktív vizsga gyakorló</span>
+	          </h1>
         </div>
         <div class="hero-cards">
           <div class="hero-card hero-card--status" id="statusPanel" data-panel-state="closed">
@@ -211,6 +210,13 @@
               <div class="result-card">
                 <span>Pontszám</span>
                 <strong id="resultScore">0</strong>
+              </div>
+              <div class="result-card result-card--percent" id="resultPercentCard">
+                <span>Teljesítés</span>
+                <strong>
+                  <span id="resultPercent">0%</span>
+                  <span id="resultPercentIcon" class="result-score-icon" aria-hidden="true"></span>
+                </strong>
               </div>
               <div class="result-card">
                 <span>Helyes</span>
