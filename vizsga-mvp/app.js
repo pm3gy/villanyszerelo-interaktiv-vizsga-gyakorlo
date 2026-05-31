@@ -24,6 +24,7 @@ const SUPPORTED_TYPES = new Set([
   "numeric_entry",
 ]);
 const SELECTION_MODES = new Set(["all", "range", "source", "topics"]);
+const SHUFFLED_CHOICE_TYPES = new Set(["single_choice", "multi_choice", "list_choice"]);
 
 const TOPIC_ALIASES = new Map([
   ["erintesvedelem", "érintésvédelem"],
@@ -230,6 +231,7 @@ function hydrateStateFromData() {
   state.session.questionIds = Array.isArray(state.session.questionIds) ? state.session.questionIds : [];
   state.session.reviewQuestionIds = Array.isArray(state.session.reviewQuestionIds) ? state.session.reviewQuestionIds : [];
   state.session.phase = state.session.phase || "main";
+  state.choiceOrders = state.choiceOrders || {};
 
   const filteredPool = getFilteredPool();
   const defaultCount = Math.min(10, filteredPool.length || 1);
@@ -813,6 +815,7 @@ function startNewSession(options = {}) {
   };
   state.answers = {};
   state.skipped = {};
+  state.choiceOrders = {};
   for (const question of chosen) {
     state.answers[question.question_id] = createDefaultAnswer(question);
     state.skipped[question.question_id] = false;
@@ -1012,6 +1015,39 @@ function shuffle(items) {
     [copy[i], copy[j]] = [copy[j], copy[i]];
   }
   return copy;
+}
+
+function getRenderedChoices(question, choices, scope) {
+  if (!SHUFFLED_CHOICE_TYPES.has(question.question_type) && scope === "choices") {
+    return choices;
+  }
+  const ids = choices.map((choice) => choice.choice_id);
+  const orderedIds = getStableChoiceOrder(question, scope, ids);
+  const byId = new Map(choices.map((choice) => [choice.choice_id, choice]));
+  return orderedIds.map((choiceId) => byId.get(choiceId)).filter(Boolean);
+}
+
+function getStableChoiceOrder(question, scope, choiceIds) {
+  state.choiceOrders = state.choiceOrders || {};
+  const uniqueIds = [...new Set(choiceIds)];
+  const key = `${question.question_id}:${scope}`;
+  const saved = Array.isArray(state.choiceOrders[key])
+    ? state.choiceOrders[key].filter((choiceId) => uniqueIds.includes(choiceId))
+    : [];
+
+  if (saved.length === uniqueIds.length && new Set(saved).size === uniqueIds.length) {
+    return saved;
+  }
+
+  const next = shuffle(uniqueIds);
+  state.choiceOrders[key] = next;
+  saveState();
+  return next;
+}
+
+function choiceLabelForIndex(index) {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  return alphabet[index] || String(index + 1);
 }
 
 function clamp(value, min, max) {
@@ -1346,8 +1382,10 @@ function renderQuestion(question) {
 function renderChoiceQuestion(question) {
   const selected = new Set(state.answers[question.question_id] || []);
   const type = question.question_type === "multi_choice" ? "checkbox" : "radio";
+  const choices = getRenderedChoices(question, question.choices, "choices");
 
-  for (const choice of question.choices) {
+  choices.forEach((choice, index) => {
+    const displayLabel = choiceLabelForIndex(index);
     const label = document.createElement("label");
     label.className = "choice";
     label.dataset.choiceId = choice.choice_id;
@@ -1359,20 +1397,21 @@ function renderChoiceQuestion(question) {
         name="choice"
         value="${escapeHtml(choice.choice_id)}"
         ${checked ? "checked" : ""}
-        aria-label="${escapeHtml(`${choice.choice_label}. ${choice.choice_text_md}`)}"
+        aria-label="${escapeHtml(`${displayLabel}. ${choice.choice_text_md}`)}"
       />
       <div>
-        <span class="choice__label">${escapeHtml(choice.choice_label || "")}</span>
+        <span class="choice__label">${escapeHtml(displayLabel)}</span>
         <span class="choice__text">${renderMarkdown(choice.choice_text_md)}</span>
       </div>
     `;
 
     els.choices.appendChild(label);
-  }
+  });
 }
 
 function renderListChoiceQuestion(question) {
   const selected = Array.isArray(state.answers[question.question_id]) ? state.answers[question.question_id][0] : "";
+  const choices = getRenderedChoices(question, question.choices, "choices");
   const wrapper = document.createElement("label");
   wrapper.className = "choice choice--field";
   wrapper.innerHTML = `
@@ -1382,10 +1421,10 @@ function renderListChoiceQuestion(question) {
     </div>
     <select class="list-choice-select" aria-label="Válaszlista">
       <option value="">Válassz...</option>
-      ${question.choices
+      ${choices
         .map(
-          (choice) => {
-            const text = `${choice.choice_label ? `${choice.choice_label}. ` : ""}${choice.choice_text_md}`;
+          (choice, index) => {
+            const text = `${choiceLabelForIndex(index)}. ${choice.choice_text_md}`;
             return `<option value="${escapeHtml(choice.choice_id)}" ${choice.choice_id === selected ? "selected" : ""}>${escapeHtml(text)}</option>`;
           }
         )
@@ -1433,7 +1472,6 @@ function renderOrderingQuestion(question) {
     item.innerHTML = `
       <div class="ordering-item__rank">${index + 1}</div>
       <div class="ordering-item__body">
-        <div class="ordering-item__label">${escapeHtml(choice.choice_label || "")}</div>
         <div class="ordering-item__text">${renderMarkdown(choice.choice_text_md)}</div>
       </div>
       <div class="ordering-item__handle" aria-hidden="true">↕</div>
@@ -1447,14 +1485,18 @@ function renderOrderingQuestion(question) {
 function renderMatchingQuestion(question) {
   const answer = state.answers[question.question_id] || {};
   const leftItems = question.choices.filter((choice) => choice.match_role === "left");
-  const rightItems = question.choices.filter((choice) => choice.match_role === "right");
+  const rightItems = getRenderedChoices(
+    question,
+    question.choices.filter((choice) => choice.match_role === "right"),
+    "matching-right"
+  );
 
   leftItems.forEach((choice, index) => {
     const wrapper = document.createElement("label");
     wrapper.className = "choice choice--field";
     wrapper.innerHTML = `
       <div>
-        <span class="choice__label">${escapeHtml(choice.choice_label || String(index + 1))}</span>
+        <span class="choice__label">${escapeHtml(choiceLabelForIndex(index))}</span>
         <span class="choice__text">${renderMarkdown(choice.choice_text_md)}</span>
       </div>
       <select class="matching-select" data-left-choice-id="${escapeHtml(choice.choice_id)}" aria-label="Pár választása">
@@ -1462,7 +1504,7 @@ function renderMatchingQuestion(question) {
         ${rightItems
           .map(
             (rightChoice) =>
-              `<option value="${escapeHtml(rightChoice.choice_id)}" ${String(answer[choice.choice_id] || "") === rightChoice.choice_id ? "selected" : ""}>${escapeHtml(rightChoice.choice_label || "")}. ${escapeHtml(rightChoice.choice_text_md)}</option>`
+              `<option value="${escapeHtml(rightChoice.choice_id)}" ${String(answer[choice.choice_id] || "") === rightChoice.choice_id ? "selected" : ""}>${escapeHtml(rightChoice.choice_text_md)}</option>`
           )
           .join("")}
       </select>
@@ -1474,13 +1516,14 @@ function renderMatchingQuestion(question) {
 function renderGroupingQuestion(question) {
   const answer = state.answers[question.question_id] || {};
   const groups = [...new Set(question.choices.map((choice) => choice.group_label).filter(Boolean))];
+  const items = getRenderedChoices(question, question.choices, "grouping-items");
 
-  question.choices.forEach((choice, index) => {
+  items.forEach((choice, index) => {
     const wrapper = document.createElement("label");
     wrapper.className = "choice choice--field";
     wrapper.innerHTML = `
       <div>
-        <span class="choice__label">${escapeHtml(choice.choice_label || String(index + 1))}</span>
+        <span class="choice__label">${escapeHtml(choiceLabelForIndex(index))}</span>
         <span class="choice__text">${renderMarkdown(choice.choice_text_md)}</span>
       </div>
       <select class="grouping-select" data-item-id="${escapeHtml(choice.choice_id)}" aria-label="Csoport kiválasztása">
@@ -1693,7 +1736,7 @@ function formatChoiceAnswers(question, answerIds) {
   return normalized
     .map((choiceId) => {
       const choice = byId.get(choiceId);
-      return choice ? `${choice.choice_label}. ${choice.choice_text_md}` : choiceId;
+      return choice ? choice.choice_text_md : choiceId;
     })
     .join(" | ");
 }
@@ -1910,6 +1953,7 @@ function loadState() {
         },
         answers: {},
         skipped: {},
+        choiceOrders: {},
       };
     }
     const parsed = JSON.parse(raw);
@@ -1934,6 +1978,7 @@ function loadState() {
       },
       answers: parsed.answers || {},
       skipped: parsed.skipped || {},
+      choiceOrders: parsed.choiceOrders || {},
     };
   } catch {
     return {
@@ -1957,6 +2002,7 @@ function loadState() {
       },
       answers: {},
       skipped: {},
+      choiceOrders: {},
     };
   }
 }

@@ -48,7 +48,7 @@ Megjegyzés:
 
 - `choice_id`: egyedi azonosító, például `C0001`
 - `question_id`: hivatkozás a `questions.csv` sorára
-- `choice_label`: válaszjel, például `A`, `B`, `C`, `D`
+- `choice_label`: válaszjel, például `A`, `B`, `C`, `D`; strukturált feladatoknál (`ordering`, `matching`, `grouping`) üres, hogy ne áruljon el eredeti sorrendet
 - `choice_text_md`: a válasz szövege Markdown formában
 - `is_correct`: `true` vagy `false`
 - `sort_order`: megjelenítési sorrend

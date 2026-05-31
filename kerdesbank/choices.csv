@@ -359,33 +359,33 @@ C0357;Q77;E;Im = 1000 A a maximális megszakítóképességet jelöli.;true;5;Ez
 C0358;Q77;F;Un = 230 V a névleges feszültséget jelöli.;true;6;Ez a helyes jelölés.;;;
 C0359;Q77;G;F 202 a típust jelöli.;true;7;Ez a helyes jelölés.;;;
 C0360;Q77;H;50 Hz a névleges frekvenciát jelöli.;false;8;Ez nem szerepel a forrásban.;;;
-C0362;Q78;B;Előkészületi munkák;false;1;;;;
-C0364;Q78;D;Nyomvonal kijelölése;false;2;;;;
-C0366;Q78;F;Horony- és fészekvésés;false;3;;;;
-C0361;Q78;A;Kötő- és szerelvénydobozok, beépítése;false;4;;;;
-C0368;Q78;H;Műanyag védőcsövek horonyba fektetése;false;5;;;;
-C0369;Q78;I;Hornyok elvakolása;false;6;;;;
-C0367;Q78;G;Vezetékek leszabása és behúzása;false;7;;;;
-C0363;Q78;C;Vezetékek azonosítása, kötések elkészítése;false;8;;;;
-C0365;Q78;E;Szerelői ellenőrzés, üzembe helyezés;false;9;;;;
-C0370;Q79;A;IΔn = 0,03 A;false;1;;left;C0377;
-C0371;Q79;B;AC;false;2;;left;C0378;
-C0372;Q79;C;ABB;false;3;;left;C0379;
-C0373;Q79;D;25 A;false;4;;left;C0380;
-C0374;Q79;E;Im = 1000 A;false;5;;left;C0381;
-C0375;Q79;F;Un = ~230 V;false;6;;left;C0382;
-C0376;Q79;G;F 202;false;7;;left;C0383;
-C0377;Q79;1;érzékenység;false;1;;right;;
-C0378;Q79;2;áramnem;false;2;;right;;
-C0379;Q79;3;gyártó;false;3;;right;;
-C0380;Q79;4;névleges áram;false;4;;right;;
-C0381;Q79;5;maximális megszakítóképesség;false;5;;right;;
-C0382;Q79;6;névleges feszültség;false;6;;right;;
-C0383;Q79;7;típus;false;7;;right;;
-C0384;Q80;A;Barna;false;1;;;;fázisvezető
-C0385;Q80;B;Fekete;false;2;;;;fázisvezető
-C0386;Q80;C;Szürke;false;3;;;;fázisvezető
-C0387;Q80;D;Kék;false;4;;;;nullavezető
+C0362;Q78;;Előkészületi munkák;false;1;;;;
+C0364;Q78;;Nyomvonal kijelölése;false;2;;;;
+C0366;Q78;;Horony- és fészekvésés;false;3;;;;
+C0361;Q78;;Kötő- és szerelvénydobozok, beépítése;false;4;;;;
+C0368;Q78;;Műanyag védőcsövek horonyba fektetése;false;5;;;;
+C0369;Q78;;Hornyok elvakolása;false;6;;;;
+C0367;Q78;;Vezetékek leszabása és behúzása;false;7;;;;
+C0363;Q78;;Vezetékek azonosítása, kötések elkészítése;false;8;;;;
+C0365;Q78;;Szerelői ellenőrzés, üzembe helyezés;false;9;;;;
+C0370;Q79;;IΔn = 0,03 A;false;1;;left;C0377;
+C0371;Q79;;AC;false;2;;left;C0378;
+C0372;Q79;;ABB;false;3;;left;C0379;
+C0373;Q79;;25 A;false;4;;left;C0380;
+C0374;Q79;;Im = 1000 A;false;5;;left;C0381;
+C0375;Q79;;Un = ~230 V;false;6;;left;C0382;
+C0376;Q79;;F 202;false;7;;left;C0383;
+C0377;Q79;;érzékenység;false;1;;right;;
+C0378;Q79;;áramnem;false;2;;right;;
+C0379;Q79;;gyártó;false;3;;right;;
+C0380;Q79;;névleges áram;false;4;;right;;
+C0381;Q79;;maximális megszakítóképesség;false;5;;right;;
+C0382;Q79;;névleges feszültség;false;6;;right;;
+C0383;Q79;;típus;false;7;;right;;
+C0384;Q80;;Barna;false;1;;;;fázisvezető
+C0385;Q80;;Fekete;false;2;;;;fázisvezető
+C0386;Q80;;Szürke;false;3;;;;fázisvezető
+C0387;Q80;;Kék;false;4;;;;nullavezető
 C0388;Q81;A;A zárlati szilárdságot, azaz a megszakítóképességet jelenti.;true;1;;;;
 C0389;Q81;B;A névleges áramerősséget jelenti.;false;2;;;;
 C0390;Q81;C;A kioldási karakterisztikát jelenti.;false;3;;;;
@@ -406,7 +406,7 @@ C0404;Q89;A;Igaz.;false;1;;;;
 C0405;Q89;B;Hamis.;true;2;;;;
 C0406;Q90;A;Igaz.;false;1;;;;
 C0407;Q90;B;Hamis.;true;2;;;;
-C0408;Q80;E;Zöld-sárga;false;5;;;;védővezető
+C0408;Q80;;Zöld-sárga;false;5;;;;védővezető
 C0409;Q91;A;Motorvezérlő központ;true;1;Ez látható a fotón.;;;
 C0410;Q91;B;Fogyasztásmérő szekrény;false;2;Ez másféle szekrény.;;;
 C0411;Q91;C;Kábelátvezető tömszelence;false;3;Ez egy kisebb szerelvény.;;;
@@ -418,26 +418,26 @@ C0416;Q93;B;b;false;2;;;;
 C0417;Q93;C;c;false;3;;;;
 C0418;Q93;D;d;false;4;;;;
 C0419;Q93;E;e;true;5;;;;
-C0420;Q94;A;Előkészületi munkák, eszközök előkészítése, ellenőrzése;false;1;;;;
-C0421;Q94;B;Nyomvonal kijelölése;false;2;;;;
-C0422;Q94;C;Horony- és fészekvésés;false;3;;;;
-C0423;Q94;D;Kötő- és szerelvénydobozok beépítése;false;4;;;;
-C0424;Q94;E;Műanyag védőcsövek horonyba fektetése;false;5;;;;
-C0425;Q94;F;Hornyok elvakolása;false;6;;;;
-C0426;Q94;G;Vezetékek leszabása és behúzása;false;7;;;;
-C0427;Q94;H;Vezetékek azonosítása, kötések elkészítése;false;8;;;;
-C0428;Q94;I;Szerelői ellenőrzés, üzembe helyezés;false;9;;;;
+C0420;Q94;;Előkészületi munkák, eszközök előkészítése, ellenőrzése;false;1;;;;
+C0421;Q94;;Nyomvonal kijelölése;false;2;;;;
+C0422;Q94;;Horony- és fészekvésés;false;3;;;;
+C0423;Q94;;Kötő- és szerelvénydobozok beépítése;false;4;;;;
+C0424;Q94;;Műanyag védőcsövek horonyba fektetése;false;5;;;;
+C0425;Q94;;Hornyok elvakolása;false;6;;;;
+C0426;Q94;;Vezetékek leszabása és behúzása;false;7;;;;
+C0427;Q94;;Vezetékek azonosítása, kötések elkészítése;false;8;;;;
+C0428;Q94;;Szerelői ellenőrzés, üzembe helyezés;false;9;;;;
 C0429;Q95;A;A kismegszakító névleges feszültsége 230/400 V váltakozó feszültség.;true;1;;;;
 C0430;Q95;B;A 6000 érték a zárlati szilárdságra utal.;true;2;;;;
 C0431;Q95;C;A kismegszakító névleges árama 10 A.;true;3;;;;
 C0432;Q95;D;A kismegszakító B kioldási karakterisztikájú.;true;4;;;;
 C0433;Q95;E;A CE jelölés a névleges áramerősséget mutatja.;false;5;;;;
-C0434;Q98;A;egyfázisú dugaszolóaljzat;false;1;;;;dugalj
-C0435;Q98;B;kettős egyfázisú dugaszolóaljzat;false;2;;;;dugalj
-C0436;Q98;C;hárompólusú kapcsoló;false;3;;;;kapcsoló
-C0437;Q98;D;nyomógomb;false;4;;;;kapcsoló
-C0438;Q98;E;mozgásérzékelős világítótest;false;5;;;;világítás
-C0439;Q98;F;fénycsöves lámpatest;false;6;;;;világítás
+C0434;Q98;;egyfázisú dugaszolóaljzat;false;1;;;;dugalj
+C0435;Q98;;kettős egyfázisú dugaszolóaljzat;false;2;;;;dugalj
+C0436;Q98;;hárompólusú kapcsoló;false;3;;;;kapcsoló
+C0437;Q98;;nyomógomb;false;4;;;;kapcsoló
+C0438;Q98;;mozgásérzékelős világítótest;false;5;;;;világítás
+C0439;Q98;;fénycsöves lámpatest;false;6;;;;világítás
 C0440;Q99;A;váltókapcsoló;true;1;A rajzon a két váltókapcsoló látható.;;;
 C0441;Q99;B;kétpólusú kapcsoló;false;2;Ez más kapcsolótípus.;;;
 C0442;Q99;C;nyomógomb;false;3;A nyomógomb jelölése eltérő.;;;
@@ -470,21 +470,21 @@ C0472;Q110;A;Igen, mert a mért érték kisebb a megengedettnél.;true;1;;;;
 C0473;Q110;B;Igen, mert a mért érték nagyobb a megengedettnél.;false;2;;;;
 C0474;Q110;C;Nem, mert a mért érték kisebb a megengedettnél.;false;3;;;;
 C0475;Q110;D;Nem, mert a mért érték nagyobb a megengedettnél.;false;4;;;;
-C0476;Q111;A;Teljes leválasztás;false;1;;;;
-C0477;Q111;B;Visszakapcsolás megakadályozása;false;2;;;;
-C0478;Q111;C;Feszültség nélküli állapot ellenőrzése;false;3;;;;
-C0479;Q111;D;Földelés, rövidre zárás;false;4;;;;
-C0480;Q111;E;Feszültség alatt maradó részek elhatárolása;false;5;;;;
-C0481;Q112;A;egyfázisú dugaszolóaljzat;false;1;;;;dugalj
-C0482;Q112;B;kettős egyfázisú dugaszolóaljzat;false;2;;;;dugalj
-C0483;Q112;C;hármas elosztó;false;3;;;;dugalj
-C0484;Q112;D;ötpólusú háromfázisú dugaszolóaljzat;false;4;;;;dugalj
-C0485;Q112;E;kétpólusú kapcsoló;false;5;;;;kapcsoló
-C0486;Q112;F;hárompólusú kapcsoló;false;6;;;;kapcsoló
-C0487;Q112;G;két áramkörös kapcsoló;false;7;;;;kapcsoló
-C0488;Q112;H;egy áramkörös világítótest;false;8;;;;világítás
-C0489;Q112;I;mozgásérzékelős világítótest;false;9;;;;világítás
-C0490;Q112;J;fénycsöves lámpatest;false;10;;;;világítás
+C0476;Q111;;Teljes leválasztás;false;1;;;;
+C0477;Q111;;Visszakapcsolás megakadályozása;false;2;;;;
+C0478;Q111;;Feszültség nélküli állapot ellenőrzése;false;3;;;;
+C0479;Q111;;Földelés, rövidre zárás;false;4;;;;
+C0480;Q111;;Feszültség alatt maradó részek elhatárolása;false;5;;;;
+C0481;Q112;;egyfázisú dugaszolóaljzat;false;1;;;;dugalj
+C0482;Q112;;kettős egyfázisú dugaszolóaljzat;false;2;;;;dugalj
+C0483;Q112;;hármas elosztó;false;3;;;;dugalj
+C0484;Q112;;ötpólusú háromfázisú dugaszolóaljzat;false;4;;;;dugalj
+C0485;Q112;;kétpólusú kapcsoló;false;5;;;;kapcsoló
+C0486;Q112;;hárompólusú kapcsoló;false;6;;;;kapcsoló
+C0487;Q112;;két áramkörös kapcsoló;false;7;;;;kapcsoló
+C0488;Q112;;egy áramkörös világítótest;false;8;;;;világítás
+C0489;Q112;;mozgásérzékelős világítótest;false;9;;;;világítás
+C0490;Q112;;fénycsöves lámpatest;false;10;;;;világítás
 C0491;Q113;A;8;true;1;;;;
 C0492;Q113;B;7;false;2;;;;
 C0493;Q113;C;6;false;3;;;;
@@ -494,56 +494,56 @@ C0496;Q114;B;a vezeték melegedésének és tűzveszélyének korlátozása;true
 C0497;Q114;C;gazdaságos keresztmetszet-választás;true;3;;;;
 C0498;Q114;D;a kapcsolók számának növelése;false;4;;;;
 C0499;Q114;E;a vezeték színjelölésének egységesítése;false;5;;;;
-C0500;Q115;A;Kiszámítjuk a fogyasztók teljesítményfelvételét.;false;1;;;;
-C0501;Q115;B;Meghatározzuk a hálózatot terhelő áramerősséget.;false;2;;;;
-C0502;Q115;C;Kiszámítjuk a megengedett feszültségesés fázisértékét.;false;3;;;;
-C0503;Q115;D;Meghatározzuk a szükséges keresztmetszetet.;false;4;;;;
-C0504;Q115;E;Kiválasztjuk a következő nagyobb szabványos keresztmetszetet.;false;5;;;;
-C0505;Q116;A;vakolat alatti védőcsőbe húzott egyszerű vezeték;false;1;;;;A
-C0506;Q116;B;5 db egyszerű vezeték szabadon szerelt védőcsőben;false;2;;;;A
-C0507;Q116;C;9 db egyszerű vezeték kötegelve szerelt állapotban;false;3;;;;A
-C0508;Q116;D;vakolatba fektetett vagy falra ragasztott vezeték;false;4;;;;B
-C0509;Q116;E;egyszerű vezeték szabadon szerelve;false;5;;;;C
-C0510;Q116;F;5 db egyszerű vezeték szabadon szerelt védőcsőben, ha 10 mm távolságra több védőcső vagy csatorna halad párhuzamosan;false;6;;;;B
+C0500;Q115;;Kiszámítjuk a fogyasztók teljesítményfelvételét.;false;1;;;;
+C0501;Q115;;Meghatározzuk a hálózatot terhelő áramerősséget.;false;2;;;;
+C0502;Q115;;Kiszámítjuk a megengedett feszültségesés fázisértékét.;false;3;;;;
+C0503;Q115;;Meghatározzuk a szükséges keresztmetszetet.;false;4;;;;
+C0504;Q115;;Kiválasztjuk a következő nagyobb szabványos keresztmetszetet.;false;5;;;;
+C0505;Q116;;vakolat alatti védőcsőbe húzott egyszerű vezeték;false;1;;;;A
+C0506;Q116;;5 db egyszerű vezeték szabadon szerelt védőcsőben;false;2;;;;A
+C0507;Q116;;9 db egyszerű vezeték kötegelve szerelt állapotban;false;3;;;;A
+C0508;Q116;;vakolatba fektetett vagy falra ragasztott vezeték;false;4;;;;B
+C0509;Q116;;egyszerű vezeték szabadon szerelve;false;5;;;;C
+C0510;Q116;;5 db egyszerű vezeték szabadon szerelt védőcsőben, ha 10 mm távolságra több védőcső vagy csatorna halad párhuzamosan;false;6;;;;B
 C0511;Q117;A;A táppontot a fogyasztóval közvetlenül összekötő vezeték, amelyen csak a végén van terhelés.;true;1;;;;
 C0512;Q117;B;Olyan vezeték, amelynek közbenső pontjain is több fogyasztó csatlakozhat.;false;2;;;;
 C0513;Q117;C;A fogyasztói készülékek belső összekötő vezetéke.;false;3;;;;
 C0514;Q117;D;Csak védőföldelésre szolgáló vezeték.;false;4;;;;
-C0515;Q118;A;gL/gG;false;1;;left;C0519;
-C0516;Q118;B;aM/gM;false;2;;left;C0520;
-C0517;Q118;C;gR/aR;false;3;;left;C0521;
-C0518;Q118;D;gTr;false;4;;left;C0522;
-C0519;Q118;1;vezetékek;false;1;;right;;
-C0520;Q118;2;motorok;false;2;;right;;
-C0521;Q118;3;félvezetők;false;3;;right;;
-C0522;Q118;4;transzformátorok;false;4;;right;;
+C0515;Q118;;gL/gG;false;1;;left;C0519;
+C0516;Q118;;aM/gM;false;2;;left;C0520;
+C0517;Q118;;gR/aR;false;3;;left;C0521;
+C0518;Q118;;gTr;false;4;;left;C0522;
+C0519;Q118;;vezetékek;false;1;;right;;
+C0520;Q118;;motorok;false;2;;right;;
+C0521;Q118;;félvezetők;false;3;;right;;
+C0522;Q118;;transzformátorok;false;4;;right;;
 C0523;Q119;A;A hibás berendezésrész kapcsolódjon ki, a többi maradjon üzemben.;true;1;;;;
 C0524;Q119;B;Minden készülék egyszerre kapcsoljon le túlterheléskor.;false;2;;;;
 C0525;Q119;C;A védelmek azonos karakterisztikáját jelenti.;false;3;;;;
 C0526;Q119;D;A vezetékszín szerinti elkülönítést.;false;4;;;;
 C0527;Q120;A;true;true;1;;;;
 C0528;Q120;B;false;false;2;;;;
-C0529;Q121;A;felfogó;false;1;;;;
-C0530;Q121;B;levezető;false;2;;;;
-C0531;Q121;C;földelő;false;3;;;;
-C0532;Q122;A;1. osztályú;false;1;;left;C0535;
-C0533;Q122;B;2. osztályú;false;2;;left;C0536;
-C0534;Q122;C;3. osztályú;false;3;;left;C0537;
-C0535;Q122;1;nagy energiájú részvillámáramok levezetése;false;1;;right;;
-C0536;Q122;2;energiájuktól megfosztott túlfeszültségek korlátozása;false;2;;right;;
-C0537;Q122;3;további korlátozás, finomvédelem;false;3;;right;;
+C0529;Q121;;felfogó;false;1;;;;
+C0530;Q121;;levezető;false;2;;;;
+C0531;Q121;;földelő;false;3;;;;
+C0532;Q122;;1. osztályú;false;1;;left;C0535;
+C0533;Q122;;2. osztályú;false;2;;left;C0536;
+C0534;Q122;;3. osztályú;false;3;;left;C0537;
+C0535;Q122;;nagy energiájú részvillámáramok levezetése;false;1;;right;;
+C0536;Q122;;energiájuktól megfosztott túlfeszültségek korlátozása;false;2;;right;;
+C0537;Q122;;további korlátozás, finomvédelem;false;3;;right;;
 C0538;Q123;A;true;false;1;;;;
 C0539;Q123;B;false;true;2;;;;
-C0540;Q125;A;fogyasztásmérő szekrény;false;1;;left;C0545;
-C0541;Q125;B;energiaelosztó szekrény;false;2;;left;C0546;
-C0542;Q125;C;motorvezérlő központ (MCC);false;3;;left;C0547;
-C0543;Q125;D;rackrendszerű szekrény;false;4;;left;C0548;
-C0544;Q125;E;túlnyomásos szekrény;false;5;;left;C0549;
-C0545;Q125;1;moduláris, zárópecsételhető, mérőállás leolvasható;false;1;;right;;
-C0546;Q125;2;125 A és 6300 A közötti energiaelosztás;false;2;;right;;
-C0547;Q125;3;fiókszerű, hot-swappable modulok;false;3;;right;;
-C0548;Q125;4;"19""-os vázas, 1U egységben mérhető";false;4;;right;;
-C0549;Q125;5;Ex p, öblítő- és nyomásfokozó egységgel;false;5;;right;;
+C0540;Q125;;fogyasztásmérő szekrény;false;1;;left;C0545;
+C0541;Q125;;energiaelosztó szekrény;false;2;;left;C0546;
+C0542;Q125;;motorvezérlő központ (MCC);false;3;;left;C0547;
+C0543;Q125;;rackrendszerű szekrény;false;4;;left;C0548;
+C0544;Q125;;túlnyomásos szekrény;false;5;;left;C0549;
+C0545;Q125;;moduláris, zárópecsételhető, mérőállás leolvasható;false;1;;right;;
+C0546;Q125;;125 A és 6300 A közötti energiaelosztás;false;2;;right;;
+C0547;Q125;;fiókszerű, hot-swappable modulok;false;3;;right;;
+C0548;Q125;;"19""-os vázas, 1U egységben mérhető";false;4;;right;;
+C0549;Q125;;Ex p, öblítő- és nyomásfokozó egységgel;false;5;;right;;
 C0550;Q126;A;a napsugárzás, a hőterhelés és a mechanikai igénybevétel is számít;true;1;;;;
 C0551;Q126;B;az IP a vezetékek keresztmetszetét jelöli;false;2;;;;
 C0552;Q126;C;kültérre csak műanyag szekrény építhető;false;3;;;;
@@ -890,13 +890,13 @@ C1156;Q328;A;A csatlakozóvezeték fogadása és az első túláramvédelmi kés
 C1157;Q328;B;A fogyasztók esztétikai fedése;false;2;;;;
 C1158;Q328;C;Csak a világítási körök színkódolása;false;3;;;;
 C1159;Q328;D;A mérőeszközök kalibrálása;false;4;;;;
-C1160;Q329;A;Vezetékfolytonosság ellenőrzése (PE-vezeték folytonosságának ellenőrzése);false;1;;;;
-C1161;Q329;B;Szigetelési ellenállás mérése;false;2;;;;
-C1162;Q329;C;Vezetékfelcserélés vizsgálata az egyes fogyasztóknál (polaritásvizsgálat);false;3;;;;
-C1163;Q329;D;Hibahelyi hurokimpedancia mérése;false;4;;;;
-C1164;Q329;E;Kiegészítő védelem hatásosságának vizsgálata (pl. ÁVK);false;5;;;;
-C1165;Q329;F;Feszültségesés ellenőrzése;false;6;;;;
-C1166;Q329;G;Működés ellenőrzése;false;7;;;;
+C1160;Q329;;Vezetékfolytonosság ellenőrzése (PE-vezeték folytonosságának ellenőrzése);false;1;;;;
+C1161;Q329;;Szigetelési ellenállás mérése;false;2;;;;
+C1162;Q329;;Vezetékfelcserélés vizsgálata az egyes fogyasztóknál (polaritásvizsgálat);false;3;;;;
+C1163;Q329;;Hibahelyi hurokimpedancia mérése;false;4;;;;
+C1164;Q329;;Kiegészítő védelem hatásosságának vizsgálata (pl. ÁVK);false;5;;;;
+C1165;Q329;;Feszültségesés ellenőrzése;false;6;;;;
+C1166;Q329;;Működés ellenőrzése;false;7;;;;
 C1167;Q330;A;13;false;1;;;;
 C1168;Q330;B;11;false;2;;;;
 C1169;Q330;C;9;true;3;;;;

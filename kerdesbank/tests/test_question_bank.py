@@ -84,6 +84,12 @@ class QuestionBankTest(unittest.TestCase):
             if match_choice_id:
                 self.assertIn(match_choice_id, choice_ids)
 
+    def test_structured_questions_do_not_store_display_labels(self):
+        question_types = {row["question_id"]: row["question_type"] for row in self.questions}
+        for row in self.choices:
+            if question_types[row["question_id"]] in {"ordering", "matching", "grouping"}:
+                self.assertEqual(row["choice_label"], "", row["choice_id"])
+
 
 if __name__ == "__main__":
     unittest.main()

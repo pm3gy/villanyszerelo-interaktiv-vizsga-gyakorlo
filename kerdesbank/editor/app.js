@@ -1329,7 +1329,7 @@ function buildChoiceRowsPreview() {
 
   if (type === "ordering") {
     parseLines(state.form.orderingText).forEach((line, index) => {
-      addRow(choiceLabelForIndex(index), line, false, index + 1);
+      addRow("", line, false, index + 1);
     });
     return rows;
   }
@@ -1343,7 +1343,7 @@ function buildChoiceRowsPreview() {
       rows.push({
         choice_id: rightChoiceId,
         question_id: questionId,
-        choice_label: String(index + 1),
+        choice_label: "",
         choice_text_md: right,
         is_correct: "false",
         sort_order: String(index + 1),
@@ -1357,7 +1357,7 @@ function buildChoiceRowsPreview() {
       rows.push({
         choice_id: `C${nextChoiceIndex++}`,
         question_id: questionId,
-        choice_label: choiceLabelForIndex(index),
+        choice_label: "",
         choice_text_md: left,
         is_correct: "false",
         sort_order: String(index + 1),
@@ -1372,7 +1372,7 @@ function buildChoiceRowsPreview() {
 
   if (type === "grouping") {
     parsePairs(state.form.groupingText).forEach(([item, groupLabel], index) => {
-      addRow(choiceLabelForIndex(index), item, false, index + 1, { group_label: groupLabel });
+      addRow("", item, false, index + 1, { group_label: groupLabel });
     });
     return rows;
   }
