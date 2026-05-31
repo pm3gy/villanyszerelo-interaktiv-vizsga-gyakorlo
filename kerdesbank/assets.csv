@@ -28,3 +28,15 @@ A0026;Q389;../kerdesbank/media/szktv_2025_q0389_motor_kapocstabla_csillag.png;di
 A0027;Q392;../kerdesbank/media/szktv_2025_q0392_vezetek_szamok.png;diagram;Vezetékek számát jelölő kapcsolási rajzok a, b, c és d változatban;S0038;10-11. oldal
 A0028;Q398;../kerdesbank/media/szktv_2025_q0398_tulfeszultsegvedelmi_eszkoz.png;photo;Túlfeszültségvédelmi eszköz fényképe;S0038;12. oldal
 A0029;Q399;../kerdesbank/media/szktv_2025_q0399_transzformator_kapcsolas.png;diagram;Transzformátor tekercselési és fázorábrája;S0038;13. oldal
+A0030;Q413;../kerdesbank/media/szktv_2024_q0413_konyha_aramkorok.png;diagram;Konyha süllyesztett szerelés nyomvonalrajza az áramkörök számához;S0039;3. oldal
+A0031;Q414;../kerdesbank/media/szktv_2024_q0414_szerelveny_dobozok.png;diagram;Iroda süllyesztett szerelés nyomvonalrajza a szerelvénydobozok számához;S0039;3. oldal
+A0032;Q416;../kerdesbank/media/szktv_2024_q0416_haromfazisu_csatlakozo_dugo.png;photo;Háromfázisú csatlakozó dugó fényképe;S0039;4. oldal
+A0033;Q419;../kerdesbank/media/szktv_2024_q0419_tulfeszultsegvedelem_rajz.png;diagram;Elosztó rajza túlfeszültségvédelmi készülék jelölésével;S0039;5. oldal
+A0034;Q425;../kerdesbank/media/szktv_2024_q0425_reteszelt_vezerloaramkor.png;diagram;Reteszelt vezérlőáramkör rajza K1 és K2 mágneskapcsolóval;S0039;7. oldal
+A0035;Q426;../kerdesbank/media/szktv_2024_q0426_ketnyomogombos_vezerles.png;diagram;Két helyről indítható és leállítható vezérlőáramkör rajza;S0039;8. oldal
+A0036;Q427;../kerdesbank/media/szktv_2024_q0427_csillag_delta_motor_rajz.png;diagram;Csillag-delta motor kapcsolási rajza;S0039;9. oldal
+A0037;Q429;../kerdesbank/media/szktv_2024_q0429_it_rendszer_rajz.png;diagram;IT rendszer rajza;S0039;10. oldal
+A0038;Q430;../kerdesbank/media/szktv_2024_q0430_motor_kapocstabla_delta.png;diagram;Aszinkron motor kapocstábla delta kapcsoláshoz;S0039;10. oldal
+A0039;Q433;../kerdesbank/media/szktv_2024_q0433_vezetek_szamok.png;diagram;Vezetékek számát jelölő kapcsolási rajzok a, b, c és d változatban;S0039;12. oldal
+A0040;Q439;../kerdesbank/media/szktv_2024_q0439_aram_vedokapcsolo.png;diagram;Áram-védőkapcsoló rajza és kapcsolási jelképe;S0039;14. oldal
+A0041;Q440;../kerdesbank/media/szktv_2024_q0440_transzformator_yy6.png;diagram;Yy6 transzformátor tekercselési és fázorábrája;S0039;15. oldal
