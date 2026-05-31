@@ -861,8 +861,8 @@ function getFilteredPool() {
   }
 
   if (mode === "source") {
-    const sourceId = normalizeSelectedSourceId(state.settings.selectedSourceId);
-    return supported.filter((question) => question.source_id === sourceId);
+    const sourceIds = getSelectedSourceIds(state.settings.selectedSourceId);
+    return supported.filter((question) => sourceIds.has(question.source_id));
   }
 
   if (mode === "topics") {
@@ -903,16 +903,40 @@ function getSourcesWithQuestionCounts() {
     if (!SUPPORTED_TYPES.has(question.question_type) || !question.source_id) continue;
     counts.set(question.source_id, (counts.get(question.source_id) || 0) + 1);
   }
-  return [...data.sources.values()]
-    .map((source) => ({
-      ...source,
-      count: counts.get(source.source_id) || 0,
-    }))
-    .filter((source) => source.count > 0)
-    .sort((a, b) => {
-      const yearDelta = Number(b.year || 0) - Number(a.year || 0);
-      return yearDelta || a.title.localeCompare(b.title, "hu");
-    });
+  const groups = new Map();
+  for (const source of data.sources.values()) {
+    const count = counts.get(source.source_id) || 0;
+    if (count === 0) continue;
+
+    const title = getSourceDisplayTitle(source);
+    const groupKey = getSourceGroupKey(source);
+    const group = groups.get(groupKey);
+    if (group) {
+      group.count += count;
+      group.source_ids.push(source.source_id);
+      group.year = String(Math.max(Number(group.year || 0), Number(source.year || 0)) || group.year || source.year || "");
+    } else {
+      groups.set(groupKey, {
+        ...source,
+        title,
+        count,
+        source_ids: [source.source_id],
+      });
+    }
+  }
+
+  return [...groups.values()].sort((a, b) => {
+    const yearDelta = Number(b.year || 0) - Number(a.year || 0);
+    return yearDelta || a.title.localeCompare(b.title, "hu");
+  });
+}
+
+function getSourceDisplayTitle(source) {
+  return source?.title || source?.path || source?.source_id || "Ismeretlen forrás";
+}
+
+function getSourceGroupKey(source) {
+  return getSourceDisplayTitle(source).trim().toLocaleLowerCase("hu");
 }
 
 function getFirstQuestionId() {
@@ -933,10 +957,19 @@ function normalizeSelectionMode(selectionMode, selectedTopics) {
 
 function normalizeSelectedSourceId(sourceId) {
   const sources = getSourcesWithQuestionCounts();
-  if (sourceId && sources.some((source) => source.source_id === sourceId)) {
-    return sourceId;
+  if (sourceId) {
+    const source = sources.find((candidate) => candidate.source_ids.includes(sourceId));
+    if (source) {
+      return source.source_id;
+    }
   }
   return sources[0]?.source_id || "";
+}
+
+function getSelectedSourceIds(sourceId) {
+  const normalizedSourceId = normalizeSelectedSourceId(sourceId);
+  const source = getSourcesWithQuestionCounts().find((candidate) => candidate.source_id === normalizedSourceId);
+  return new Set(source?.source_ids || []);
 }
 
 function normalizeQuestionIdInput(value) {
@@ -977,7 +1010,7 @@ function getSelectionLabel() {
   }
   if (mode === "source") {
     const sourceId = normalizeSelectedSourceId(state.settings.selectedSourceId);
-    return data.sources.get(sourceId)?.title || "Forrás szerint";
+    return getSourcesWithQuestionCounts().find((source) => source.source_id === sourceId)?.title || "Forrás szerint";
   }
   if (mode === "topics") {
     const topics = state.settings.selectedTopics || [];
