@@ -75,3 +75,13 @@ A bővítő scriptek:
 
 A repó Cloudflare Pages alatt közvetlenül hostolható, mert a gyökérben van egy önálló `index.html`.
 Backendre nincs szükség, a kérdésbank CSV-k és a statikus UI ugyanarról a site-ról tölthetők.
+
+## Offline használat
+
+A gyakorlófelület PWA-ként telepíthető. A gyökérben lévő `sw.js` cache-eli az alkalmazást,
+a kérdésbank CSV-it és a `kerdesbank/media` képeit, így az első sikeres online betöltés után
+offline is használható.
+
+Ha az alkalmazás shellje vagy a cache-elt média változik, emeld a `sw.js` fájlban a
+`CACHE_VERSION` értékét. A CSV-k hálózat esetén frissülnek, offline pedig a cache-elt
+változatból töltődnek be.

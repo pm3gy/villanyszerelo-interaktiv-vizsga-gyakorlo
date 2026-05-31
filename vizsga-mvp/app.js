@@ -1,4 +1,5 @@
 const STORAGE_KEY = "villany-vizsga-mvp:v1";
+const PWA_UPDATE_CHECK_INTERVAL_MS = 30 * 60 * 1000;
 const DATA_FILES = {
   questions: "../kerdesbank/questions.csv",
   choices: "../kerdesbank/choices.csv",
@@ -23,6 +24,7 @@ const SUPPORTED_TYPES = new Set([
   "numeric_entry",
 ]);
 const SELECTION_MODES = new Set(["all", "range", "source", "topics"]);
+const SHUFFLED_CHOICE_TYPES = new Set(["single_choice", "multi_choice", "list_choice"]);
 
 const TOPIC_ALIASES = new Map([
   ["erintesvedelem", "érintésvédelem"],
@@ -34,6 +36,10 @@ const TOPIC_ALIASES = new Map([
 ]);
 
 let orderingDragState = null;
+let deferredInstallPrompt = null;
+let pwaRegistration = null;
+let waitingServiceWorker = null;
+let pwaReloadPending = false;
 
 const state = loadState();
 let data = null;
@@ -56,6 +62,10 @@ const els = {
   rangeConfig: document.getElementById("rangeConfig"),
   sourceConfig: document.getElementById("sourceConfig"),
   sourceSelect: document.getElementById("sourceSelect"),
+  pwaPanel: document.getElementById("pwaPanel"),
+  pwaStatus: document.getElementById("pwaStatus"),
+  installPwaButton: document.getElementById("installPwaButton"),
+  updatePwaButton: document.getElementById("updatePwaButton"),
   questionRangeFromInput: document.getElementById("questionRangeFromInput"),
   questionRangeToInput: document.getElementById("questionRangeToInput"),
   questionCountInput: document.getElementById("questionCountInput"),
@@ -87,6 +97,9 @@ const els = {
   evaluateButton: document.getElementById("evaluateButton"),
   resultsPanel: document.getElementById("resultsPanel"),
   resultScore: document.getElementById("resultScore"),
+  resultPercentCard: document.getElementById("resultPercentCard"),
+  resultPercent: document.getElementById("resultPercent"),
+  resultPercentIcon: document.getElementById("resultPercentIcon"),
   resultCorrect: document.getElementById("resultCorrect"),
   resultWrong: document.getElementById("resultWrong"),
   resultTotal: document.getElementById("resultTotal"),
@@ -109,10 +122,10 @@ init().catch((error) => {
 
 async function init() {
   const [questionsText, choicesText, sourcesText, assetsText] = await Promise.all([
-    fetch(DATA_FILES.questions, { cache: "no-store" }).then(requireOk).then((r) => r.text()),
-    fetch(DATA_FILES.choices, { cache: "no-store" }).then(requireOk).then((r) => r.text()),
-    fetch(DATA_FILES.sources, { cache: "no-store" }).then(requireOk).then((r) => r.text()),
-    fetch(DATA_FILES.assets, { cache: "no-store" }).then(requireOk).then((r) => r.text()),
+    fetch(DATA_FILES.questions).then(requireOk).then((r) => r.text()),
+    fetch(DATA_FILES.choices).then(requireOk).then((r) => r.text()),
+    fetch(DATA_FILES.sources).then(requireOk).then((r) => r.text()),
+    fetch(DATA_FILES.assets).then(requireOk).then((r) => r.text()),
   ]);
 
   const questions = parseCsv(questionsText);
@@ -126,6 +139,7 @@ async function init() {
   renderTopicFilters();
   wireSettingsEvents();
   wireEvents();
+  initPwa();
   render();
   startExamClockTicker();
   els.datasetStatus.textContent = "Készen áll";
@@ -205,65 +219,6 @@ function buildData(questionRows, choiceRows, sourceRows, assetRows) {
   return { questions, questionsById, sources, choicesByQuestion, assets };
 }
 
-function buildPresentationForQuestion(question) {
-  const presentation = {};
-
-  if (
-    question.question_type === "single_choice" ||
-    question.question_type === "multi_choice" ||
-    question.question_type === "true_false" ||
-    question.question_type === "list_choice"
-  ) {
-    presentation.choiceOrder = shuffle(question.choices.map((choice) => choice.choice_id));
-  }
-
-  if (question.question_type === "matching") {
-    const leftIds = question.choices.filter((choice) => choice.match_role === "left").map((choice) => choice.choice_id);
-    const rightIds = question.choices.filter((choice) => choice.match_role === "right").map((choice) => choice.choice_id);
-    presentation.leftOrder = shuffle(leftIds);
-    presentation.rightOrder = shuffle(rightIds);
-  }
-
-  if (question.question_type === "grouping") {
-    presentation.itemOrder = shuffle(question.choices.map((choice) => choice.choice_id));
-    presentation.groupOrder = shuffle([...new Set(question.choices.map((choice) => choice.group_label).filter(Boolean))]);
-  }
-
-  return presentation;
-}
-
-function ensureQuestionPresentation(question) {
-  if (!state.session || !question) return null;
-  state.session.presentationByQuestionId = state.session.presentationByQuestionId || {};
-  if (!state.session.presentationByQuestionId[question.question_id]) {
-    state.session.presentationByQuestionId[question.question_id] = buildPresentationForQuestion(question);
-  }
-  return state.session.presentationByQuestionId[question.question_id];
-}
-
-function getSessionQuestionIds() {
-  const mainIds = state.session?.questionIds || [];
-  const reviewIds = state.session?.reviewQuestionIds || [];
-  return [...new Set([...mainIds, ...reviewIds])];
-}
-
-function ensureSessionPresentation() {
-  if (!state.session || !data) return;
-  state.session.presentationByQuestionId = state.session.presentationByQuestionId || {};
-  let changed = false;
-  for (const questionId of getSessionQuestionIds()) {
-    const question = data.questionsById.get(questionId);
-    if (!question) continue;
-    if (!state.session.presentationByQuestionId[questionId]) {
-      state.session.presentationByQuestionId[questionId] = buildPresentationForQuestion(question);
-      changed = true;
-    }
-  }
-  if (changed) {
-    saveState();
-  }
-}
-
 function hydrateStateFromData() {
   state.settings = state.settings || {};
   state.settings.selectionMode = normalizeSelectionMode(state.settings.selectionMode, state.settings.selectedTopics);
@@ -279,7 +234,7 @@ function hydrateStateFromData() {
   state.session.questionIds = Array.isArray(state.session.questionIds) ? state.session.questionIds : [];
   state.session.reviewQuestionIds = Array.isArray(state.session.reviewQuestionIds) ? state.session.reviewQuestionIds : [];
   state.session.phase = state.session.phase || "main";
-  state.session.presentationByQuestionId = state.session.presentationByQuestionId || {};
+  state.choiceOrders = state.choiceOrders || {};
 
   const filteredPool = getFilteredPool();
   const defaultCount = Math.min(10, filteredPool.length || 1);
@@ -299,7 +254,6 @@ function hydrateStateFromData() {
     }
   }
   ensureSessionClock();
-  ensureSessionPresentation();
   saveState();
 }
 
@@ -483,6 +437,171 @@ function wireEvents() {
     render();
     els.questionCard.scrollIntoView({ behavior: "smooth", block: "start" });
   });
+}
+
+function initPwa() {
+  if (!els.pwaPanel || !els.pwaStatus) return;
+  els.pwaPanel.hidden = false;
+
+  els.installPwaButton?.addEventListener("click", installPwa);
+  els.updatePwaButton?.addEventListener("click", activateWaitingServiceWorker);
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    renderPwaControls();
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    renderPwaControls();
+  });
+
+  window.addEventListener("online", () => {
+    renderPwaControls();
+    checkForPwaUpdates();
+  });
+
+  window.addEventListener("offline", renderPwaControls);
+
+  const serviceWorker = getServiceWorkerContainer();
+  if (!serviceWorker) {
+    renderPwaControls("Az offline módot ez a böngésző nem támogatja.");
+    return;
+  }
+
+  serviceWorker.addEventListener("controllerchange", () => {
+    if (pwaReloadPending) {
+      window.location.reload();
+    }
+  });
+
+  serviceWorker
+    .register("../sw.js", { scope: "../" })
+    .then((registration) => {
+      pwaRegistration = registration;
+      watchServiceWorkerRegistration(registration);
+      checkForPwaUpdates();
+      window.setInterval(checkForPwaUpdates, PWA_UPDATE_CHECK_INTERVAL_MS);
+      renderPwaControls();
+    })
+    .catch(() => {
+      renderPwaControls("Az offline mód most nem aktiválható.");
+    });
+}
+
+function watchServiceWorkerRegistration(registration) {
+  const serviceWorker = getServiceWorkerContainer();
+  if (registration.waiting && serviceWorker?.controller) {
+    waitingServiceWorker = registration.waiting;
+    renderPwaControls();
+  }
+
+  registration.addEventListener("updatefound", () => {
+    const installingWorker = registration.installing;
+    if (!installingWorker) return;
+
+    installingWorker.addEventListener("statechange", () => {
+      if (installingWorker.state === "installed" && serviceWorker?.controller) {
+        waitingServiceWorker = installingWorker;
+        renderPwaControls();
+      }
+    });
+  });
+}
+
+async function installPwa() {
+  if (!deferredInstallPrompt) {
+    renderPwaControls("Telepítés a böngésző menüből indítható.");
+    return;
+  }
+  const promptEvent = deferredInstallPrompt;
+  deferredInstallPrompt = null;
+  renderPwaControls("Telepítés megnyitva...");
+  await promptEvent.prompt();
+  await promptEvent.userChoice.catch(() => null);
+  renderPwaControls();
+}
+
+function activateWaitingServiceWorker() {
+  if (!waitingServiceWorker) {
+    checkForPwaUpdates();
+    renderPwaControls("Frissítések keresése...");
+    return;
+  }
+  pwaReloadPending = true;
+  waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
+}
+
+function checkForPwaUpdates() {
+  if (!pwaRegistration || !isBrowserOnline()) return;
+  pwaRegistration.update().catch(() => null);
+}
+
+function renderPwaControls(statusOverride = "") {
+  if (!els.pwaPanel || !els.pwaStatus) return;
+
+  const isStandalone = isPwaStandalone();
+  const serviceWorker = getServiceWorkerContainer();
+  const hasServiceWorkerSupport = Boolean(serviceWorker);
+  const offlineReady = Boolean(pwaRegistration?.active || serviceWorker?.controller);
+  const installAvailable = Boolean(!isStandalone && hasServiceWorkerSupport);
+  const updateAvailable = Boolean(waitingServiceWorker);
+
+  let status = statusOverride;
+  if (!status) {
+    if (!hasServiceWorkerSupport) {
+      status = "Az offline módot ez a böngésző nem támogatja.";
+    } else if (updateAvailable) {
+      status = "Új kérdésbank vagy alkalmazásverzió elérhető.";
+    } else if (!isBrowserOnline()) {
+      status = "Offline módban fut.";
+    } else if (isStandalone) {
+      status = "Telepítve, offline használatra kész.";
+    } else if (offlineReady) {
+      status = "Offline használatra kész.";
+    } else {
+      status = "Offline mód előkészítése...";
+    }
+  }
+
+  els.pwaStatus.textContent = status;
+  if (els.statusPanel) {
+    els.statusPanel.dataset.updateAvailable = String(updateAvailable);
+    if (updateAvailable) {
+      els.statusPanel.dataset.panelState = "open";
+    }
+  }
+  els.pwaStatus.classList.toggle("pwa-panel__status--update", updateAvailable);
+  if (els.installPwaButton) {
+    els.installPwaButton.hidden = !installAvailable || updateAvailable;
+  }
+  if (els.updatePwaButton) {
+    els.updatePwaButton.hidden = !updateAvailable;
+  }
+}
+
+function isPwaStandalone() {
+  const browserNavigator = getBrowserNavigator();
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.matchMedia("(display-mode: fullscreen)").matches ||
+    browserNavigator?.standalone === true
+  );
+}
+
+function getBrowserNavigator() {
+  return typeof window !== "undefined" && window.navigator ? window.navigator : null;
+}
+
+function getServiceWorkerContainer() {
+  const browserNavigator = getBrowserNavigator();
+  return browserNavigator && "serviceWorker" in browserNavigator ? browserNavigator.serviceWorker : null;
+}
+
+function isBrowserOnline() {
+  const browserNavigator = getBrowserNavigator();
+  return browserNavigator ? browserNavigator.onLine : true;
 }
 
 function wireSettingsEvents() {
@@ -703,16 +822,15 @@ function startNewSession(options = {}) {
     completedAt: null,
     startedAt: new Date().toISOString(),
     examDurationSeconds: getExamDurationForQuestionCount(chosen.length),
-    presentationByQuestionId: {},
   };
   state.answers = {};
   state.skipped = {};
+  state.choiceOrders = {};
   for (const question of chosen) {
     state.answers[question.question_id] = createDefaultAnswer(question);
     state.skipped[question.question_id] = false;
   }
 
-  ensureSessionPresentation();
   if (!options.silent) {
     saveState();
   }
@@ -732,13 +850,6 @@ function syncSessionWithData() {
 
   state.session.questionIds = keptIds;
   state.session.reviewQuestionIds = keptReviewIds;
-  state.session.presentationByQuestionId = state.session.presentationByQuestionId || {};
-  const allowedIds = new Set([...keptIds, ...keptReviewIds]);
-  for (const questionId of Object.keys(state.session.presentationByQuestionId)) {
-    if (!allowedIds.has(questionId)) {
-      delete state.session.presentationByQuestionId[questionId];
-    }
-  }
   state.session.phase = state.session.phase === "review" && keptReviewIds.length > 0 ? "review" : "main";
   state.session.currentIndex = clamp(
     Number(state.session.currentIndex || 0),
@@ -747,7 +858,6 @@ function syncSessionWithData() {
   );
   state.session.completed = Boolean(state.session.completed && keptIds.length > 0);
   ensureSessionClock();
-  ensureSessionPresentation();
 }
 
 function getFilteredPool() {
@@ -761,8 +871,8 @@ function getFilteredPool() {
   }
 
   if (mode === "source") {
-    const sourceId = normalizeSelectedSourceId(state.settings.selectedSourceId);
-    return supported.filter((question) => question.source_id === sourceId);
+    const sourceIds = getSelectedSourceIds(state.settings.selectedSourceId);
+    return supported.filter((question) => sourceIds.has(question.source_id));
   }
 
   if (mode === "topics") {
@@ -803,16 +913,40 @@ function getSourcesWithQuestionCounts() {
     if (!SUPPORTED_TYPES.has(question.question_type) || !question.source_id) continue;
     counts.set(question.source_id, (counts.get(question.source_id) || 0) + 1);
   }
-  return [...data.sources.values()]
-    .map((source) => ({
-      ...source,
-      count: counts.get(source.source_id) || 0,
-    }))
-    .filter((source) => source.count > 0)
-    .sort((a, b) => {
-      const yearDelta = Number(b.year || 0) - Number(a.year || 0);
-      return yearDelta || a.title.localeCompare(b.title, "hu");
-    });
+  const groups = new Map();
+  for (const source of data.sources.values()) {
+    const count = counts.get(source.source_id) || 0;
+    if (count === 0) continue;
+
+    const title = getSourceDisplayTitle(source);
+    const groupKey = getSourceGroupKey(source);
+    const group = groups.get(groupKey);
+    if (group) {
+      group.count += count;
+      group.source_ids.push(source.source_id);
+      group.year = String(Math.max(Number(group.year || 0), Number(source.year || 0)) || group.year || source.year || "");
+    } else {
+      groups.set(groupKey, {
+        ...source,
+        title,
+        count,
+        source_ids: [source.source_id],
+      });
+    }
+  }
+
+  return [...groups.values()].sort((a, b) => {
+    const yearDelta = Number(b.year || 0) - Number(a.year || 0);
+    return yearDelta || a.title.localeCompare(b.title, "hu");
+  });
+}
+
+function getSourceDisplayTitle(source) {
+  return source?.title || source?.path || source?.source_id || "Ismeretlen forrás";
+}
+
+function getSourceGroupKey(source) {
+  return getSourceDisplayTitle(source).trim().toLocaleLowerCase("hu");
 }
 
 function getFirstQuestionId() {
@@ -833,10 +967,19 @@ function normalizeSelectionMode(selectionMode, selectedTopics) {
 
 function normalizeSelectedSourceId(sourceId) {
   const sources = getSourcesWithQuestionCounts();
-  if (sourceId && sources.some((source) => source.source_id === sourceId)) {
-    return sourceId;
+  if (sourceId) {
+    const source = sources.find((candidate) => candidate.source_ids.includes(sourceId));
+    if (source) {
+      return source.source_id;
+    }
   }
   return sources[0]?.source_id || "";
+}
+
+function getSelectedSourceIds(sourceId) {
+  const normalizedSourceId = normalizeSelectedSourceId(sourceId);
+  const source = getSourcesWithQuestionCounts().find((candidate) => candidate.source_id === normalizedSourceId);
+  return new Set(source?.source_ids || []);
 }
 
 function normalizeQuestionIdInput(value) {
@@ -844,7 +987,7 @@ function normalizeQuestionIdInput(value) {
   if (!raw) return "";
   const numericMatch = raw.match(/^Q?0*(\d+)$/);
   if (!numericMatch) return raw;
-  return `Q${numericMatch[1].padStart(4, "0")}`;
+  return `Q${Number(numericMatch[1])}`;
 }
 
 function normalizeStoredQuestionRangeId(value, fallback) {
@@ -877,7 +1020,7 @@ function getSelectionLabel() {
   }
   if (mode === "source") {
     const sourceId = normalizeSelectedSourceId(state.settings.selectedSourceId);
-    return data.sources.get(sourceId)?.title || "Forrás szerint";
+    return getSourcesWithQuestionCounts().find((source) => source.source_id === sourceId)?.title || "Forrás szerint";
   }
   if (mode === "topics") {
     const topics = state.settings.selectedTopics || [];
@@ -915,6 +1058,39 @@ function shuffle(items) {
     [copy[i], copy[j]] = [copy[j], copy[i]];
   }
   return copy;
+}
+
+function getRenderedChoices(question, choices, scope) {
+  if (!SHUFFLED_CHOICE_TYPES.has(question.question_type) && scope === "choices") {
+    return choices;
+  }
+  const ids = choices.map((choice) => choice.choice_id);
+  const orderedIds = getStableChoiceOrder(question, scope, ids);
+  const byId = new Map(choices.map((choice) => [choice.choice_id, choice]));
+  return orderedIds.map((choiceId) => byId.get(choiceId)).filter(Boolean);
+}
+
+function getStableChoiceOrder(question, scope, choiceIds) {
+  state.choiceOrders = state.choiceOrders || {};
+  const uniqueIds = [...new Set(choiceIds)];
+  const key = `${question.question_id}:${scope}`;
+  const saved = Array.isArray(state.choiceOrders[key])
+    ? state.choiceOrders[key].filter((choiceId) => uniqueIds.includes(choiceId))
+    : [];
+
+  if (saved.length === uniqueIds.length && new Set(saved).size === uniqueIds.length) {
+    return saved;
+  }
+
+  const next = shuffle(uniqueIds);
+  state.choiceOrders[key] = next;
+  saveState();
+  return next;
+}
+
+function choiceLabelForIndex(index) {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  return alphabet[index] || String(index + 1);
 }
 
 function clamp(value, min, max) {
@@ -1249,15 +1425,10 @@ function renderQuestion(question) {
 function renderChoiceQuestion(question) {
   const selected = new Set(state.answers[question.question_id] || []);
   const type = question.question_type === "multi_choice" ? "checkbox" : "radio";
-  const presentation = ensureQuestionPresentation(question);
-  const byId = new Map(question.choices.map((choice) => [choice.choice_id, choice]));
-  const choiceOrder = presentation?.choiceOrder || [];
-  const choicesToRender =
-    choiceOrder.length === question.choices.length
-      ? choiceOrder.map((choiceId) => byId.get(choiceId)).filter(Boolean)
-      : question.choices;
+  const choices = getRenderedChoices(question, question.choices, "choices");
 
-  for (const choice of choicesToRender) {
+  choices.forEach((choice, index) => {
+    const displayLabel = choiceLabelForIndex(index);
     const label = document.createElement("label");
     label.className = "choice";
     label.dataset.choiceId = choice.choice_id;
@@ -1269,27 +1440,21 @@ function renderChoiceQuestion(question) {
         name="choice"
         value="${escapeHtml(choice.choice_id)}"
         ${checked ? "checked" : ""}
-        aria-label="${escapeHtml(`${choice.choice_label}. ${choice.choice_text_md}`)}"
+        aria-label="${escapeHtml(`${displayLabel}. ${choice.choice_text_md}`)}"
       />
       <div>
-        <span class="choice__label">${escapeHtml(choice.choice_label || "")}</span>
+        <span class="choice__label">${escapeHtml(displayLabel)}</span>
         <span class="choice__text">${renderMarkdown(choice.choice_text_md)}</span>
       </div>
     `;
 
     els.choices.appendChild(label);
-  }
+  });
 }
 
 function renderListChoiceQuestion(question) {
   const selected = Array.isArray(state.answers[question.question_id]) ? state.answers[question.question_id][0] : "";
-  const presentation = ensureQuestionPresentation(question);
-  const byId = new Map(question.choices.map((choice) => [choice.choice_id, choice]));
-  const choiceOrder = presentation?.choiceOrder || [];
-  const choicesToRender =
-    choiceOrder.length === question.choices.length
-      ? choiceOrder.map((choiceId) => byId.get(choiceId)).filter(Boolean)
-      : question.choices;
+  const choices = getRenderedChoices(question, question.choices, "choices");
   const wrapper = document.createElement("label");
   wrapper.className = "choice choice--field";
   wrapper.innerHTML = `
@@ -1299,10 +1464,10 @@ function renderListChoiceQuestion(question) {
     </div>
     <select class="list-choice-select" aria-label="Válaszlista">
       <option value="">Válassz...</option>
-      ${choicesToRender
+      ${choices
         .map(
-          (choice) => {
-            const text = `${choice.choice_label ? `${choice.choice_label}. ` : ""}${choice.choice_text_md}`;
+          (choice, index) => {
+            const text = `${choiceLabelForIndex(index)}. ${choice.choice_text_md}`;
             return `<option value="${escapeHtml(choice.choice_id)}" ${choice.choice_id === selected ? "selected" : ""}>${escapeHtml(text)}</option>`;
           }
         )
@@ -1350,7 +1515,6 @@ function renderOrderingQuestion(question) {
     item.innerHTML = `
       <div class="ordering-item__rank">${index + 1}</div>
       <div class="ordering-item__body">
-        <div class="ordering-item__label">${escapeHtml(choice.choice_label || "")}</div>
         <div class="ordering-item__text">${renderMarkdown(choice.choice_text_md)}</div>
       </div>
       <div class="ordering-item__handle" aria-hidden="true">↕</div>
@@ -1363,23 +1527,19 @@ function renderOrderingQuestion(question) {
 
 function renderMatchingQuestion(question) {
   const answer = state.answers[question.question_id] || {};
-  const presentation = ensureQuestionPresentation(question);
-  const byId = new Map(question.choices.map((choice) => [choice.choice_id, choice]));
-  const leftIds = presentation?.leftOrder || [];
-  const rightIds = presentation?.rightOrder || [];
-  const canonicalLeft = question.choices.filter((choice) => choice.match_role === "left");
-  const canonicalRight = question.choices.filter((choice) => choice.match_role === "right");
-  const leftItems =
-    leftIds.length === canonicalLeft.length ? leftIds.map((choiceId) => byId.get(choiceId)).filter(Boolean) : canonicalLeft;
-  const rightItems =
-    rightIds.length === canonicalRight.length ? rightIds.map((choiceId) => byId.get(choiceId)).filter(Boolean) : canonicalRight;
+  const leftItems = question.choices.filter((choice) => choice.match_role === "left");
+  const rightItems = getRenderedChoices(
+    question,
+    question.choices.filter((choice) => choice.match_role === "right"),
+    "matching-right"
+  );
 
   leftItems.forEach((choice, index) => {
     const wrapper = document.createElement("label");
     wrapper.className = "choice choice--field";
     wrapper.innerHTML = `
       <div>
-        <span class="choice__label">${escapeHtml(choice.choice_label || String(index + 1))}</span>
+        <span class="choice__label">${escapeHtml(choiceLabelForIndex(index))}</span>
         <span class="choice__text">${renderMarkdown(choice.choice_text_md)}</span>
       </div>
       <select class="matching-select" data-left-choice-id="${escapeHtml(choice.choice_id)}" aria-label="Pár választása">
@@ -1387,7 +1547,7 @@ function renderMatchingQuestion(question) {
         ${rightItems
           .map(
             (rightChoice) =>
-              `<option value="${escapeHtml(rightChoice.choice_id)}" ${String(answer[choice.choice_id] || "") === rightChoice.choice_id ? "selected" : ""}>${escapeHtml(rightChoice.choice_label || "")}. ${escapeHtml(rightChoice.choice_text_md)}</option>`
+              `<option value="${escapeHtml(rightChoice.choice_id)}" ${String(answer[choice.choice_id] || "") === rightChoice.choice_id ? "selected" : ""}>${escapeHtml(rightChoice.choice_text_md)}</option>`
           )
           .join("")}
       </select>
@@ -1398,20 +1558,15 @@ function renderMatchingQuestion(question) {
 
 function renderGroupingQuestion(question) {
   const answer = state.answers[question.question_id] || {};
-  const presentation = ensureQuestionPresentation(question);
-  const byId = new Map(question.choices.map((choice) => [choice.choice_id, choice]));
-  const itemIds = presentation?.itemOrder || [];
-  const groupOrder = presentation?.groupOrder || [];
-  const groups = groupOrder.length > 0 ? groupOrder : [...new Set(question.choices.map((choice) => choice.group_label).filter(Boolean))];
-  const items =
-    itemIds.length === question.choices.length ? itemIds.map((choiceId) => byId.get(choiceId)).filter(Boolean) : question.choices;
+  const groups = [...new Set(question.choices.map((choice) => choice.group_label).filter(Boolean))];
+  const items = getRenderedChoices(question, question.choices, "grouping-items");
 
   items.forEach((choice, index) => {
     const wrapper = document.createElement("label");
     wrapper.className = "choice choice--field";
     wrapper.innerHTML = `
       <div>
-        <span class="choice__label">${escapeHtml(choice.choice_label || String(index + 1))}</span>
+        <span class="choice__label">${escapeHtml(choiceLabelForIndex(index))}</span>
         <span class="choice__text">${renderMarkdown(choice.choice_text_md)}</span>
       </div>
       <select class="grouping-select" data-item-id="${escapeHtml(choice.choice_id)}" aria-label="Csoport kiválasztása">
@@ -1475,8 +1630,25 @@ function renderResults() {
   const questions = getMainSessionQuestions();
   const total = questions.length;
   const wrong = total - result.correctCount;
+  const correctPct = total > 0 ? Math.round((result.correctCount / total) * 100) : 0;
+  const scoreTone = getResultScoreTone(correctPct);
 
   els.resultScore.textContent = `${result.earnedPoints} pont`;
+  if (els.resultPercent) {
+    els.resultPercent.textContent = `${correctPct}%`;
+  }
+  if (els.resultPercentIcon) {
+    els.resultPercentIcon.textContent = scoreTone.icon;
+  }
+  if (els.resultPercentCard) {
+    els.resultPercentCard.classList.remove(
+      "result-card--score-excellent",
+      "result-card--score-good",
+      "result-card--score-medium",
+      "result-card--score-danger"
+    );
+    els.resultPercentCard.classList.add(scoreTone.cardClass);
+  }
   els.resultCorrect.textContent = String(result.correctCount);
   els.resultWrong.textContent = String(wrong);
   els.resultTotal.textContent = String(total);
@@ -1510,6 +1682,32 @@ function renderResults() {
     `;
     els.reviewList.appendChild(card);
   }
+}
+
+function getResultScoreTone(correctPct) {
+  if (correctPct >= 90) {
+    return {
+      cardClass: "result-card--score-excellent",
+      icon: "🎉",
+    };
+  }
+  if (correctPct >= 70) {
+    return {
+      cardClass: "result-card--score-good",
+      icon: "",
+    };
+  }
+  if (correctPct >= 40) {
+    return {
+      cardClass: "result-card--score-medium",
+      icon: "",
+    };
+  }
+
+  return {
+    cardClass: "result-card--score-danger",
+    icon: "",
+  };
 }
 
 function evaluate() {
@@ -1624,7 +1822,7 @@ function formatChoiceAnswers(question, answerIds) {
   return normalized
     .map((choiceId) => {
       const choice = byId.get(choiceId);
-      return choice ? `${choice.choice_label}. ${choice.choice_text_md}` : choiceId;
+      return choice ? choice.choice_text_md : choiceId;
     })
     .join(" | ");
 }
@@ -1838,10 +2036,10 @@ function loadState() {
           completedAt: null,
           startedAt: null,
           examDurationSeconds: 0,
-          presentationByQuestionId: {},
         },
         answers: {},
         skipped: {},
+        choiceOrders: {},
       };
     }
     const parsed = JSON.parse(raw);
@@ -1863,10 +2061,10 @@ function loadState() {
         completedAt: null,
         startedAt: null,
         examDurationSeconds: 0,
-        presentationByQuestionId: {},
       },
       answers: parsed.answers || {},
       skipped: parsed.skipped || {},
+      choiceOrders: parsed.choiceOrders || {},
     };
   } catch {
     return {
@@ -1887,10 +2085,10 @@ function loadState() {
         completedAt: null,
         startedAt: null,
         examDurationSeconds: 0,
-        presentationByQuestionId: {},
       },
       answers: {},
       skipped: {},
+      choiceOrders: {},
     };
   }
 }

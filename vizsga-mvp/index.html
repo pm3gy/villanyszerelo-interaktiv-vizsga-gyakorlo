@@ -6,6 +6,8 @@
     <meta name="theme-color" content="#0f172a" />
     <meta name="format-detection" content="telephone=no, email=no, address=no, date=no" />
     <title>Villanyszerelő - Épületvillamosság (4 0713 04 07) | Interaktív vizsga gyakorló</title>
+    <link rel="manifest" href="../manifest.webmanifest" />
+    <link rel="icon" href="../pwa-icon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./styles.css?v=20260423-2" />
   </head>
   <body>
@@ -13,15 +15,14 @@
     <div class="backdrop backdrop-b"></div>
     <div class="shell">
       <header class="hero">
-        <div>
-          <p class="eyebrow">Villanyszerelő interaktív vizsga gyakorló</p>
-          <h1>
-            <span class="title-line">
-              Villanyszerelő - Épületvillamosság
-              <span class="title-code" translate="no">(4 0713 04 07)</span>
-            </span>
-            <span class="title-subtitle">Interaktív vizsga gyakorló</span>
-          </h1>
+          <div>
+	          <h1 class="hero-title">
+	            <span class="title-line">
+	              Villanyszerelő - Épületvillamosság
+	              <span class="title-code" translate="no">(4 0713 04 07)</span>
+	            </span>
+	            <span class="title-subtitle">Interaktív vizsga gyakorló</span>
+	          </h1>
         </div>
         <div class="hero-cards">
           <div class="hero-card hero-card--status" id="statusPanel" data-panel-state="closed">
@@ -33,6 +34,15 @@
             </div>
             <div class="hero-card__body">
               <div class="hero-card__meta" id="datasetMeta"></div>
+              <div class="pwa-panel" id="pwaPanel" hidden>
+                <div class="pwa-panel__status" id="pwaStatus">Offline mód előkészítése...</div>
+                <div class="pwa-panel__actions">
+                  <button class="ghost" id="installPwaButton" type="button" hidden>Telepítés</button>
+                  <button class="button button--secondary" id="updatePwaButton" type="button" hidden>
+                    Frissítés telepítése
+                  </button>
+                </div>
+              </div>
               <div class="hero-card__divider"></div>
               <div class="hero-card__label">Vizsgaóra</div>
               <div class="hero-card__clock" id="examClock">--:--</div>
@@ -124,11 +134,11 @@
               <div class="range-fields">
                 <label class="number-field" for="questionRangeFromInput">
                   <span>Tól</span>
-                  <input id="questionRangeFromInput" type="text" inputmode="numeric" placeholder="Q0001" />
+                  <input id="questionRangeFromInput" type="text" inputmode="numeric" placeholder="Q1" />
                 </label>
                 <label class="number-field" for="questionRangeToInput">
                   <span>Ig</span>
-                  <input id="questionRangeToInput" type="text" inputmode="numeric" placeholder="Q0412" />
+                  <input id="questionRangeToInput" type="text" inputmode="numeric" placeholder="Q412" />
                 </label>
               </div>
             </div>
@@ -201,6 +211,13 @@
                 <span>Pontszám</span>
                 <strong id="resultScore">0</strong>
               </div>
+              <div class="result-card result-card--percent" id="resultPercentCard">
+                <span>Teljesítés</span>
+                <strong>
+                  <span id="resultPercent">0%</span>
+                  <span id="resultPercentIcon" class="result-score-icon" aria-hidden="true"></span>
+                </strong>
+              </div>
               <div class="result-card">
                 <span>Helyes</span>
                 <strong id="resultCorrect">0</strong>
@@ -229,7 +246,7 @@
           </p>
           <p class="footer__note">
             [Ha egy kérdésben találtál hibát, akkor küldd el a sorszámát is
-            (pl. <code>Q0030</code>)]
+            (pl. <code>Q30</code>)]
           </p>
           <p class="footer__note footer__note--emphasis">
             FONTOS: ez nem egy hivatalos segédanyag, szóval saját felelősségre használd ;)
@@ -239,6 +256,6 @@
       </footer>
     </div>
 
-    <script type="module" src="./app.js?v=20260423-2"></script>
+    <script type="module" src="./app.js?v=20260423-1"></script>
   </body>
 </html>

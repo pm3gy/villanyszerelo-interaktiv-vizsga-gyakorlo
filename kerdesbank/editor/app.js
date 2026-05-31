@@ -629,7 +629,7 @@ function createBlankDraft() {
       category: "vizsga",
       notes: "",
     },
-    topic: inferDefaultTopic(),
+    topic: "vezetékek",
     subtopic: "",
     difficulty: "2",
     points: "1",
@@ -1329,7 +1329,7 @@ function buildChoiceRowsPreview() {
 
   if (type === "ordering") {
     parseLines(state.form.orderingText).forEach((line, index) => {
-      addRow(choiceLabelForIndex(index), line, false, index + 1);
+      addRow("", line, false, index + 1);
     });
     return rows;
   }
@@ -1343,7 +1343,7 @@ function buildChoiceRowsPreview() {
       rows.push({
         choice_id: rightChoiceId,
         question_id: questionId,
-        choice_label: String(index + 1),
+        choice_label: "",
         choice_text_md: right,
         is_correct: "false",
         sort_order: String(index + 1),
@@ -1357,7 +1357,7 @@ function buildChoiceRowsPreview() {
       rows.push({
         choice_id: `C${nextChoiceIndex++}`,
         question_id: questionId,
-        choice_label: choiceLabelForIndex(index),
+        choice_label: "",
         choice_text_md: left,
         is_correct: "false",
         sort_order: String(index + 1),
@@ -1372,7 +1372,7 @@ function buildChoiceRowsPreview() {
 
   if (type === "grouping") {
     parsePairs(state.form.groupingText).forEach(([item, groupLabel], index) => {
-      addRow(choiceLabelForIndex(index), item, false, index + 1, { group_label: groupLabel });
+      addRow("", item, false, index + 1, { group_label: groupLabel });
     });
     return rows;
   }
@@ -1389,7 +1389,7 @@ function buildAssetRowsPreview() {
     : [];
   const existingPreview = existingRows.map((row) => ({ ...row }));
   const newPreview = state.assetFiles.map((file, index) => ({
-    asset_id: `A${String(getNextAssetIdNumber() + index).padStart(4, "0")}`,
+    asset_id: `A${getNextAssetIdNumber() + index}`,
     question_id: questionId,
     path: `../kerdesbank/media/${sanitizeFilename(file.name)}`,
     kind,
@@ -1420,7 +1420,7 @@ function getSelectedSource() {
 }
 
 function getNextQuestionId() {
-  return `Q${String(getNextNumericId(state.data.questions, "question_id", "Q")).padStart(4, "0")}`;
+  return `Q${getNextNumericId(state.data.questions, "question_id", "Q")}`;
 }
 
 function getCurrentQuestionId() {
@@ -1436,11 +1436,11 @@ function getNextAssetIdNumber() {
 }
 
 function getNextAssetId() {
-  return `A${String(getNextAssetIdNumber()).padStart(4, "0")}`;
+  return `A${getNextAssetIdNumber()}`;
 }
 
 function getNextSourceId() {
-  return `S${String(getNextNumericId(state.data.sources, "source_id", "S")).padStart(4, "0")}`;
+  return `S${getNextNumericId(state.data.sources, "source_id", "S")}`;
 }
 
 function getNextNumericId(rows, field, prefix) {
@@ -1635,7 +1635,7 @@ async function writeAssetFiles(questionId, sourceRow) {
     await writable.write(await file.arrayBuffer());
     await writable.close();
     rows.push({
-      asset_id: `A${String(getNextAssetIdNumber() + rows.length).padStart(4, "0")}`,
+      asset_id: `A${getNextAssetIdNumber() + rows.length}`,
       question_id: questionId,
       path: `../kerdesbank/media/${targetName}`,
       kind,
@@ -1704,7 +1704,7 @@ function createDefaultChoiceRows(type) {
 }
 
 function getNextChoiceId() {
-  return `C${String(getNextChoiceIdNumber()).padStart(4, "0")}`;
+  return `C${getNextChoiceIdNumber()}`;
 }
 
 function saveDraft() {
@@ -1870,7 +1870,10 @@ function normalizeText(text) {
 }
 
 function normalizeQuestionId(text) {
-  return normalizeText(text).toUpperCase();
+  const raw = normalizeText(text).toUpperCase();
+  const numericMatch = raw.match(/^Q?0*(\d+)$/);
+  if (!numericMatch) return raw;
+  return `Q${Number(numericMatch[1])}`;
 }
 
 function sanitizeFilename(name) {
