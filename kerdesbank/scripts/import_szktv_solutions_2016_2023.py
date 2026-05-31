@@ -16,6 +16,23 @@ REPO_DIR = BANK_DIR.parent
 RESOURCE_DIR = REPO_DIR.parent / "szakma sztár feladatok"
 MEDIA_DIR = BANK_DIR / "media"
 YEARS = range(2016, 2024)
+ACCEPTED_TASKS = {
+    (2023, 2),
+    (2023, 5),
+    (2023, 6),
+    (2023, 7),
+    (2023, 9),
+    (2023, 11),
+    (2023, 13),
+    (2023, 14),
+    (2023, 15),
+    (2023, 16),
+    (2023, 17),
+    (2023, 18),
+    (2023, 20),
+    (2023, 21),
+    (2023, 22),
+}
 
 WHITES = {0, 9, 10, 12, 13, 32}
 DELIMS = {9, 10, 12, 13, 32, 40, 41, 60, 62, 91, 93, 47}
@@ -839,7 +856,6 @@ def import_years() -> None:
     totals: dict[int, dict[str, int]] = {}
     for year in YEARS:
         pdf_path = RESOURCE_DIR / f"Villanyszerelő_Megoldás_{year}.pdf"
-        source_id, s_num = ensure_source(sources, year, s_num)
         if not pdf_path.exists():
             totals[year] = {"parsed": 0, "added": 0, "skipped": 0, "assets": 0}
             continue
@@ -848,11 +864,17 @@ def import_years() -> None:
         image_objects = page_image_objects(objects, pages)
         used_images: dict[int, int] = {}
         totals[year] = {"parsed": len(parsed), "added": 0, "skipped": 0, "assets": 0}
+        source_id = ""
         for item in parsed:
+            if (year, item["number"]) not in ACCEPTED_TASKS:
+                totals[year]["skipped"] += 1
+                continue
             key = normalize_key(item["prompt"])
             if key in existing_keys:
                 totals[year]["skipped"] += 1
                 continue
+            if not source_id:
+                source_id, s_num = ensure_source(sources, year, s_num)
             qid = f"Q{q_num}"
             q_num += 1
             topic, subtopic, tag = infer_topic(item["prompt"])
