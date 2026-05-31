@@ -1,4 +1,4 @@
-const CACHE_VERSION = "20260531-2";
+const CACHE_VERSION = "20260531-3";
 const CACHE_NAME = `villany-vizsga-${CACHE_VERSION}`;
 
 const APP_SHELL_URLS = [
@@ -93,6 +93,11 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  if (isEditorUrl(url) && !isLocalhost(self.location.hostname)) {
+    event.respondWith(blockReleasedEditor(request));
+    return;
+  }
+
   if (request.mode === "navigate") {
     event.respondWith(networkFirst(request, "/vizsga-mvp/index.html"));
     return;
@@ -108,6 +113,28 @@ self.addEventListener("fetch", (event) => {
 
 function isDataUrl(url) {
   return DATA_URLS.includes(url.pathname);
+}
+
+function isEditorUrl(url) {
+  return url.pathname === "/kerdesbank/editor" || url.pathname.startsWith("/kerdesbank/editor/");
+}
+
+function isLocalhost(hostname) {
+  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+}
+
+function blockReleasedEditor(request) {
+  if (request.mode === "navigate") {
+    return Response.redirect(new URL("/kerdesbank/", self.location.origin), 302);
+  }
+
+  return new Response("Not found", {
+    status: 404,
+    headers: {
+      "content-type": "text/plain; charset=utf-8",
+      "cache-control": "no-store",
+    },
+  });
 }
 
 async function networkFirst(request, fallbackUrl) {
