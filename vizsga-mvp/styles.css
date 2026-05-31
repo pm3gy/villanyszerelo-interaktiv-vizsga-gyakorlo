@@ -207,6 +207,39 @@ h1 {
   line-height: 1.45;
 }
 
+.pwa-panel {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.8rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(29, 78, 216, 0.14);
+  border-radius: var(--radius-md);
+  background: rgba(29, 78, 216, 0.06);
+}
+
+.pwa-panel[hidden] {
+  display: none;
+}
+
+.pwa-panel__status {
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.pwa-panel__actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pwa-panel__actions .button,
+.pwa-panel__actions .ghost {
+  min-height: 2.25rem;
+  padding: 0.55rem 0.85rem;
+}
+
 .hero-card__divider {
   margin: 0.55rem 0 0.35rem;
   height: 1px;
@@ -994,6 +1027,11 @@ h1 {
 
   .mobile-dock .ghost {
     width: 100%;
+  }
+
+  .pwa-panel__actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .hero-card__toggle {

@@ -14,6 +14,8 @@ Ez egy statikus, hostolható gyakorlófelület a kérdésbankhoz.
 - automatikus kiértékelés a teszt végén
 - végső eredmény statisztikával
 - állapotmentés böngészőben
+- PWA telepítés és offline cache
+- frissítésjelzés új alkalmazás- vagy kérdésbankverzió esetén
 - vizsgaóra a hivatalos 90 perces időkeretből, kb. 40 kérdéses arányosítással
 - az állapot és az áttekintés a fejlécben, mobilon külön dockból érhető el
 - a teszt vége az értékelésre vált, nem marad a legutóbbi kérdésen

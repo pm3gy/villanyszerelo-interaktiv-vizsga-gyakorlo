@@ -1,4 +1,5 @@
 const STORAGE_KEY = "villany-vizsga-mvp:v1";
+const PWA_UPDATE_CHECK_INTERVAL_MS = 30 * 60 * 1000;
 const DATA_FILES = {
   questions: "../kerdesbank/questions.csv",
   choices: "../kerdesbank/choices.csv",
@@ -34,6 +35,10 @@ const TOPIC_ALIASES = new Map([
 ]);
 
 let orderingDragState = null;
+let deferredInstallPrompt = null;
+let pwaRegistration = null;
+let waitingServiceWorker = null;
+let pwaReloadPending = false;
 
 const state = loadState();
 let data = null;
@@ -56,6 +61,10 @@ const els = {
   rangeConfig: document.getElementById("rangeConfig"),
   sourceConfig: document.getElementById("sourceConfig"),
   sourceSelect: document.getElementById("sourceSelect"),
+  pwaPanel: document.getElementById("pwaPanel"),
+  pwaStatus: document.getElementById("pwaStatus"),
+  installPwaButton: document.getElementById("installPwaButton"),
+  updatePwaButton: document.getElementById("updatePwaButton"),
   questionRangeFromInput: document.getElementById("questionRangeFromInput"),
   questionRangeToInput: document.getElementById("questionRangeToInput"),
   questionCountInput: document.getElementById("questionCountInput"),
@@ -126,6 +135,7 @@ async function init() {
   renderTopicFilters();
   wireSettingsEvents();
   wireEvents();
+  initPwa();
   render();
   startExamClockTicker();
   els.datasetStatus.textContent = "Készen áll";
@@ -422,6 +432,164 @@ function wireEvents() {
     render();
     els.questionCard.scrollIntoView({ behavior: "smooth", block: "start" });
   });
+}
+
+function initPwa() {
+  if (!els.pwaPanel || !els.pwaStatus) return;
+  els.pwaPanel.hidden = false;
+
+  els.installPwaButton?.addEventListener("click", installPwa);
+  els.updatePwaButton?.addEventListener("click", activateWaitingServiceWorker);
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    renderPwaControls();
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    renderPwaControls();
+  });
+
+  window.addEventListener("online", () => {
+    renderPwaControls();
+    checkForPwaUpdates();
+  });
+
+  window.addEventListener("offline", renderPwaControls);
+
+  const serviceWorker = getServiceWorkerContainer();
+  if (!serviceWorker) {
+    renderPwaControls("Az offline módot ez a böngésző nem támogatja.");
+    return;
+  }
+
+  serviceWorker.addEventListener("controllerchange", () => {
+    if (pwaReloadPending) {
+      window.location.reload();
+    }
+  });
+
+  serviceWorker
+    .register("../sw.js", { scope: "../" })
+    .then((registration) => {
+      pwaRegistration = registration;
+      watchServiceWorkerRegistration(registration);
+      checkForPwaUpdates();
+      window.setInterval(checkForPwaUpdates, PWA_UPDATE_CHECK_INTERVAL_MS);
+      renderPwaControls();
+    })
+    .catch(() => {
+      renderPwaControls("Az offline mód most nem aktiválható.");
+    });
+}
+
+function watchServiceWorkerRegistration(registration) {
+  const serviceWorker = getServiceWorkerContainer();
+  if (registration.waiting && serviceWorker?.controller) {
+    waitingServiceWorker = registration.waiting;
+    renderPwaControls();
+  }
+
+  registration.addEventListener("updatefound", () => {
+    const installingWorker = registration.installing;
+    if (!installingWorker) return;
+
+    installingWorker.addEventListener("statechange", () => {
+      if (installingWorker.state === "installed" && serviceWorker?.controller) {
+        waitingServiceWorker = installingWorker;
+        renderPwaControls();
+      }
+    });
+  });
+}
+
+async function installPwa() {
+  if (!deferredInstallPrompt) {
+    renderPwaControls("Telepítés a böngésző menüből indítható.");
+    return;
+  }
+  const promptEvent = deferredInstallPrompt;
+  deferredInstallPrompt = null;
+  renderPwaControls("Telepítés megnyitva...");
+  await promptEvent.prompt();
+  await promptEvent.userChoice.catch(() => null);
+  renderPwaControls();
+}
+
+function activateWaitingServiceWorker() {
+  if (!waitingServiceWorker) {
+    checkForPwaUpdates();
+    renderPwaControls("Frissítések keresése...");
+    return;
+  }
+  pwaReloadPending = true;
+  waitingServiceWorker.postMessage({ type: "SKIP_WAITING" });
+}
+
+function checkForPwaUpdates() {
+  if (!pwaRegistration || !isBrowserOnline()) return;
+  pwaRegistration.update().catch(() => null);
+}
+
+function renderPwaControls(statusOverride = "") {
+  if (!els.pwaPanel || !els.pwaStatus) return;
+
+  const isStandalone = isPwaStandalone();
+  const serviceWorker = getServiceWorkerContainer();
+  const hasServiceWorkerSupport = Boolean(serviceWorker);
+  const offlineReady = Boolean(pwaRegistration?.active || serviceWorker?.controller);
+  const installAvailable = Boolean(!isStandalone && hasServiceWorkerSupport);
+  const updateAvailable = Boolean(waitingServiceWorker);
+
+  let status = statusOverride;
+  if (!status) {
+    if (!hasServiceWorkerSupport) {
+      status = "Az offline módot ez a böngésző nem támogatja.";
+    } else if (updateAvailable) {
+      status = "Új kérdésbank vagy alkalmazásverzió elérhető.";
+    } else if (!isBrowserOnline()) {
+      status = "Offline módban fut.";
+    } else if (isStandalone) {
+      status = "Telepítve, offline használatra kész.";
+    } else if (offlineReady) {
+      status = "Offline használatra kész.";
+    } else {
+      status = "Offline mód előkészítése...";
+    }
+  }
+
+  els.pwaStatus.textContent = status;
+  if (els.installPwaButton) {
+    els.installPwaButton.hidden = !installAvailable || updateAvailable;
+  }
+  if (els.updatePwaButton) {
+    els.updatePwaButton.hidden = !updateAvailable;
+  }
+}
+
+function isPwaStandalone() {
+  const browserNavigator = getBrowserNavigator();
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.matchMedia("(display-mode: fullscreen)").matches ||
+    browserNavigator?.standalone === true
+  );
+}
+
+function getBrowserNavigator() {
+  return typeof window !== "undefined" && window.navigator ? window.navigator : null;
+}
+
+function getServiceWorkerContainer() {
+  const browserNavigator = getBrowserNavigator();
+  return browserNavigator && "serviceWorker" in browserNavigator ? browserNavigator.serviceWorker : null;
+}
+
+function isBrowserOnline() {
+  const browserNavigator = getBrowserNavigator();
+  return browserNavigator ? browserNavigator.onLine : true;
 }
 
 function wireSettingsEvents() {

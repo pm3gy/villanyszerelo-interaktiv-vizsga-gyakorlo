@@ -1,0 +1,19 @@
+{
+  "name": "Villanyszerelő interaktív vizsga gyakorló",
+  "short_name": "Villany vizsga",
+  "description": "Offline is használható villanyszerelő interaktív vizsga gyakorló.",
+  "lang": "hu",
+  "start_url": "/vizsga-mvp/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#eaf2fb",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
