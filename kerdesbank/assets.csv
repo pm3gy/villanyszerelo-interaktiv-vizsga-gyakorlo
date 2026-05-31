@@ -1,41 +1,41 @@
 asset_id;question_id;path;kind;alt_text;source_id;source_locator
-A1;Q91;../kerdesbank/media/vbs_motorvezerlo_kozpont.jpg;photo;Nyitott motorvezérlő központ;S0031;6.1.4 fejezet
-A2;Q92;../kerdesbank/media/vbs_tomszelence.jpg;photo;Kábelbevezető tömszelence;S0031;6.1.4 fejezet
-A3;Q93;../kerdesbank/media/doc150619_vezetekszakasz.jpg;diagram;A vezetékakaszok száma jelöléssel;S0032;3. oldal
-A4;Q94;../kerdesbank/media/doc150619_munkafazisok.jpg;diagram;Falba süllyesztett védőcsöves szerelés munkafázisai;S0032;5. oldal
-A5;Q99;../kerdesbank/media/doc150619_valtokapcsolo.jpg;diagram;Váltókapcsolós világítási ábra;S0032;4. oldal
-A6;Q103;../kerdesbank/media/doc103_tablazat_1.png;image;doc103_tablazat;S0020;10. oldal
-A7;Q330;../kerdesbank/media/Screenshot_2026-05-29_at_15.38.25.png;image;Screenshot 2026-05-29 at 15.38.25;S0037;1. oldal
-A8;Q331;../kerdesbank/media/Screenshot_2026-05-29_at_16.13.32.png;image;Screenshot 2026-05-29 at 16.13.32;S0037;3. oldal
-A9;Q332;../kerdesbank/media/Screenshot_2026-05-29_at_20.11.56.png;image;Screenshot 2026-05-29 at 20.11.56;S0037;4. oldal
-A10;Q333;../kerdesbank/media/Screenshot_2026-05-29_at_20.14.17.png;image;Screenshot 2026-05-29 at 20.14.17;S0037;4. oldal
-A11;Q334;../kerdesbank/media/szktv_2026_q0334_tapegyseg.png;image;Tápegység adattáblája;S0037;5. oldal
-A12;Q335;../kerdesbank/media/szktv_2026_q0335_eloszto_avk_kismegszakito.png;photo;Elosztó részlete kismegszakítóval és áram-védőkapcsolóval;S0037;5. oldal
-A13;Q336;../kerdesbank/media/szktv_2026_q0336_analog_voltmero.png;photo;Analóg voltmérő skálája;S0037;6. oldal
-A14;Q355;../kerdesbank/media/szktv_2026_q0355_tulfeszultseglevezeto.png;photo;Phoenix Contact túlfeszültséglevezető modulok;S0037;10. oldal
-A15;Q356;../kerdesbank/media/szktv_2026_q0356_szetszerelt_magneskapcsolo.png;photo;Szétszerelt mágneskapcsoló;S0037;11. oldal
-A16;Q357;../kerdesbank/media/szktv_2026_q0357_it_rendszer_rajz.png;diagram;IT rendszer rajza;S0037;11. oldal
-A17;Q359;../kerdesbank/media/szktv_2026_q0359_teljesitmenymero_kijelzo.png;photo;Mérőműszer kijelzője feszültség, áram és teljesítmény adatokkal;S0037;12. oldal
-A18;Q369;../kerdesbank/media/szktv_2026_q0369_motorvezerles_rajz.png;diagram;Aszinkron motor vezérlési rajza;S0037;16. oldal
-A19;Q372;../kerdesbank/media/szktv_2025_q0372_konyha_aramkorok.png;diagram;Konyha süllyesztett szerelés nyomvonalrajza az áramkörök számához;S0038;3. oldal
-A20;Q373;../kerdesbank/media/szktv_2025_q0373_szerelveny_dobozok.png;diagram;Konyha süllyesztett szerelés nyomvonalrajza a szerelvénydobozok számához;S0038;3. oldal
-A21;Q375;../kerdesbank/media/szktv_2025_q0375_szakaszolo_biztosito.png;photo;Szakaszoló biztosító fényképe;S0038;4. oldal
-A22;Q378;../kerdesbank/media/szktv_2025_q0378_eloszto_aramutas_rajz.png;diagram;Elosztó áramutas rajza;S0038;5. oldal
-A23;Q385;../kerdesbank/media/szktv_2025_q0385_napelem_jelleggorbe.png;diagram;Napelem modul áram-feszültség jelleggörbéje különböző hőmérsékleteken;S0038;7. oldal
-A24;Q386;../kerdesbank/media/szktv_2025_q0386_motor_kapcsolas_rajz.png;diagram;Aszinkron motor kapcsolási rajza mágneskapcsolókkal;S0038;8. oldal
-A25;Q388;../kerdesbank/media/szktv_2025_q0388_tt_rendszer_rajz.png;diagram;TT rendszer rajza;S0038;9. oldal
-A26;Q389;../kerdesbank/media/szktv_2025_q0389_motor_kapocstabla_csillag.png;diagram;Aszinkron motor kapocstábla csillag kapcsoláshoz;S0038;9. oldal
-A27;Q392;../kerdesbank/media/szktv_2025_q0392_vezetek_szamok.png;diagram;Vezetékek számát jelölő kapcsolási rajzok a, b, c és d változatban;S0038;10-11. oldal
-A28;Q398;../kerdesbank/media/szktv_2025_q0398_tulfeszultsegvedelmi_eszkoz.png;photo;Túlfeszültségvédelmi eszköz fényképe;S0038;12. oldal
-A29;Q399;../kerdesbank/media/szktv_2025_q0399_transzformator_kapcsolas.png;diagram;Transzformátor tekercselési és fázorábrája;S0038;13. oldal
-A30;Q413;../kerdesbank/media/szktv_2024_q0413_konyha_aramkorok.png;diagram;Konyha süllyesztett szerelés nyomvonalrajza az áramkörök számához;S0039;3. oldal
-A31;Q414;../kerdesbank/media/szktv_2024_q0414_szerelveny_dobozok.png;diagram;Iroda süllyesztett szerelés nyomvonalrajza a szerelvénydobozok számához;S0039;3. oldal
-A32;Q416;../kerdesbank/media/szktv_2024_q0416_haromfazisu_csatlakozo_dugo.png;photo;Háromfázisú csatlakozó dugó fényképe;S0039;4. oldal
-A33;Q419;../kerdesbank/media/szktv_2024_q0419_tulfeszultsegvedelem_rajz.png;diagram;Elosztó rajza túlfeszültségvédelmi készülék jelölésével;S0039;5. oldal
-A34;Q425;../kerdesbank/media/szktv_2024_q0425_reteszelt_vezerloaramkor.png;diagram;Reteszelt vezérlőáramkör rajza K1 és K2 mágneskapcsolóval;S0039;7. oldal
-A35;Q426;../kerdesbank/media/szktv_2024_q0426_ketnyomogombos_vezerles.png;diagram;Két helyről indítható és leállítható vezérlőáramkör rajza;S0039;8. oldal
-A36;Q427;../kerdesbank/media/szktv_2024_q0427_csillag_delta_motor_rajz.png;diagram;Csillag-delta motor kapcsolási rajza;S0039;9. oldal
-A37;Q429;../kerdesbank/media/szktv_2024_q0429_it_rendszer_rajz.png;diagram;IT rendszer rajza;S0039;10. oldal
-A38;Q430;../kerdesbank/media/szktv_2024_q0430_motor_kapocstabla_delta.png;diagram;Aszinkron motor kapocstábla delta kapcsoláshoz;S0039;10. oldal
-A40;Q439;../kerdesbank/media/szktv_2024_q0439_aram_vedokapcsolo.png;diagram;Áram-védőkapcsoló rajza és kapcsolási jelképe;S0039;14. oldal
-A41;Q440;../kerdesbank/media/szktv_2024_q0440_transzformator_yy6.png;diagram;Yy6 transzformátor tekercselési és fázorábrája;S0039;15. oldal
+A1;Q91;../kerdesbank/media/vbs_motorvezerlo_kozpont.jpg;photo;Nyitott motorvezérlő központ;S31;6.1.4 fejezet
+A2;Q92;../kerdesbank/media/vbs_tomszelence.jpg;photo;Kábelbevezető tömszelence;S31;6.1.4 fejezet
+A3;Q93;../kerdesbank/media/doc150619_vezetekszakasz.jpg;diagram;A vezetékakaszok száma jelöléssel;S32;3. oldal
+A4;Q94;../kerdesbank/media/doc150619_munkafazisok.jpg;diagram;Falba süllyesztett védőcsöves szerelés munkafázisai;S32;5. oldal
+A5;Q99;../kerdesbank/media/doc150619_valtokapcsolo.jpg;diagram;Váltókapcsolós világítási ábra;S32;4. oldal
+A6;Q103;../kerdesbank/media/doc103_tablazat_1.png;image;doc103_tablazat;S20;10. oldal
+A7;Q330;../kerdesbank/media/Screenshot_2026-05-29_at_15.38.25.png;image;Screenshot 2026-05-29 at 15.38.25;S37;1. oldal
+A8;Q331;../kerdesbank/media/Screenshot_2026-05-29_at_16.13.32.png;image;Screenshot 2026-05-29 at 16.13.32;S37;3. oldal
+A9;Q332;../kerdesbank/media/Screenshot_2026-05-29_at_20.11.56.png;image;Screenshot 2026-05-29 at 20.11.56;S37;4. oldal
+A10;Q333;../kerdesbank/media/Screenshot_2026-05-29_at_20.14.17.png;image;Screenshot 2026-05-29 at 20.14.17;S37;4. oldal
+A11;Q334;../kerdesbank/media/szktv_2026_q0334_tapegyseg.png;image;Tápegység adattáblája;S37;5. oldal
+A12;Q335;../kerdesbank/media/szktv_2026_q0335_eloszto_avk_kismegszakito.png;photo;Elosztó részlete kismegszakítóval és áram-védőkapcsolóval;S37;5. oldal
+A13;Q336;../kerdesbank/media/szktv_2026_q0336_analog_voltmero.png;photo;Analóg voltmérő skálája;S37;6. oldal
+A14;Q355;../kerdesbank/media/szktv_2026_q0355_tulfeszultseglevezeto.png;photo;Phoenix Contact túlfeszültséglevezető modulok;S37;10. oldal
+A15;Q356;../kerdesbank/media/szktv_2026_q0356_szetszerelt_magneskapcsolo.png;photo;Szétszerelt mágneskapcsoló;S37;11. oldal
+A16;Q357;../kerdesbank/media/szktv_2026_q0357_it_rendszer_rajz.png;diagram;IT rendszer rajza;S37;11. oldal
+A17;Q359;../kerdesbank/media/szktv_2026_q0359_teljesitmenymero_kijelzo.png;photo;Mérőműszer kijelzője feszültség, áram és teljesítmény adatokkal;S37;12. oldal
+A18;Q369;../kerdesbank/media/szktv_2026_q0369_motorvezerles_rajz.png;diagram;Aszinkron motor vezérlési rajza;S37;16. oldal
+A19;Q372;../kerdesbank/media/szktv_2025_q0372_konyha_aramkorok.png;diagram;Konyha süllyesztett szerelés nyomvonalrajza az áramkörök számához;S38;3. oldal
+A20;Q373;../kerdesbank/media/szktv_2025_q0373_szerelveny_dobozok.png;diagram;Konyha süllyesztett szerelés nyomvonalrajza a szerelvénydobozok számához;S38;3. oldal
+A21;Q375;../kerdesbank/media/szktv_2025_q0375_szakaszolo_biztosito.png;photo;Szakaszoló biztosító fényképe;S38;4. oldal
+A22;Q378;../kerdesbank/media/szktv_2025_q0378_eloszto_aramutas_rajz.png;diagram;Elosztó áramutas rajza;S38;5. oldal
+A23;Q385;../kerdesbank/media/szktv_2025_q0385_napelem_jelleggorbe.png;diagram;Napelem modul áram-feszültség jelleggörbéje különböző hőmérsékleteken;S38;7. oldal
+A24;Q386;../kerdesbank/media/szktv_2025_q0386_motor_kapcsolas_rajz.png;diagram;Aszinkron motor kapcsolási rajza mágneskapcsolókkal;S38;8. oldal
+A25;Q388;../kerdesbank/media/szktv_2025_q0388_tt_rendszer_rajz.png;diagram;TT rendszer rajza;S38;9. oldal
+A26;Q389;../kerdesbank/media/szktv_2025_q0389_motor_kapocstabla_csillag.png;diagram;Aszinkron motor kapocstábla csillag kapcsoláshoz;S38;9. oldal
+A27;Q392;../kerdesbank/media/szktv_2025_q0392_vezetek_szamok.png;diagram;Vezetékek számát jelölő kapcsolási rajzok a, b, c és d változatban;S38;10-11. oldal
+A28;Q398;../kerdesbank/media/szktv_2025_q0398_tulfeszultsegvedelmi_eszkoz.png;photo;Túlfeszültségvédelmi eszköz fényképe;S38;12. oldal
+A29;Q399;../kerdesbank/media/szktv_2025_q0399_transzformator_kapcsolas.png;diagram;Transzformátor tekercselési és fázorábrája;S38;13. oldal
+A30;Q413;../kerdesbank/media/szktv_2024_q0413_konyha_aramkorok.png;diagram;Konyha süllyesztett szerelés nyomvonalrajza az áramkörök számához;S39;3. oldal
+A31;Q414;../kerdesbank/media/szktv_2024_q0414_szerelveny_dobozok.png;diagram;Iroda süllyesztett szerelés nyomvonalrajza a szerelvénydobozok számához;S39;3. oldal
+A32;Q416;../kerdesbank/media/szktv_2024_q0416_haromfazisu_csatlakozo_dugo.png;photo;Háromfázisú csatlakozó dugó fényképe;S39;4. oldal
+A33;Q419;../kerdesbank/media/szktv_2024_q0419_tulfeszultsegvedelem_rajz.png;diagram;Elosztó rajza túlfeszültségvédelmi készülék jelölésével;S39;5. oldal
+A34;Q425;../kerdesbank/media/szktv_2024_q0425_reteszelt_vezerloaramkor.png;diagram;Reteszelt vezérlőáramkör rajza K1 és K2 mágneskapcsolóval;S39;7. oldal
+A35;Q426;../kerdesbank/media/szktv_2024_q0426_ketnyomogombos_vezerles.png;diagram;Két helyről indítható és leállítható vezérlőáramkör rajza;S39;8. oldal
+A36;Q427;../kerdesbank/media/szktv_2024_q0427_csillag_delta_motor_rajz.png;diagram;Csillag-delta motor kapcsolási rajza;S39;9. oldal
+A37;Q429;../kerdesbank/media/szktv_2024_q0429_it_rendszer_rajz.png;diagram;IT rendszer rajza;S39;10. oldal
+A38;Q430;../kerdesbank/media/szktv_2024_q0430_motor_kapocstabla_delta.png;diagram;Aszinkron motor kapocstábla delta kapcsoláshoz;S39;10. oldal
+A40;Q439;../kerdesbank/media/szktv_2024_q0439_aram_vedokapcsolo.png;diagram;Áram-védőkapcsoló rajza és kapcsolási jelképe;S39;14. oldal
+A41;Q440;../kerdesbank/media/szktv_2024_q0440_transzformator_yy6.png;diagram;Yy6 transzformátor tekercselési és fázorábrája;S39;15. oldal

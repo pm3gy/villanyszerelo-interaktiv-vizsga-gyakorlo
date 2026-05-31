@@ -59,7 +59,7 @@ Megjegyzés:
 
 ### `sources.csv`
 
-- `source_id`: egyedi azonosító, például `S0001`
+- `source_id`: egyedi azonosító, például `S1`
 - `title`: a dokumentum címe, ha a forrásban szerepel; a fájlnevet csak végső esetben használjuk
 - `path`: a fájl elérési útja a repo-ban
 - `source_type`: például `pdf`, `docx`, `doc`, `ppt`, `jpg`, `folder`
@@ -133,7 +133,7 @@ Ajánlott sorrend:
 
 ```csv
 question_id;question_type;prompt_md;explanation_md;topic;subtopic;difficulty;points;time_estimate_sec;source_id;source_locator;tags;language;correct_answer_md;answer_tolerance
-Q1;single_choice;Melyik állítás igaz a TN-S rendszerre?;A TN-S rendszerben a védővezető és a nullavezető külön vezetett.;érintésvédelem;TN-S rendszer;2;1;30;S0001;3. oldal;"TN-S, érintésvédelem";hu;;
-Q2;multi_choice;Válassza ki azokat az értékeket, amelyek kisfeszültségnek számítanak!;A kisfeszültség AC esetén 1000 V-ig, DC esetén 1500 V-ig terjed.;villamos-alapok;feszültségszintek;2;1;20;S0001;71. sor;"kisfeszültség, feszültségszint";hu;;
-Q3;numeric_entry;Mekkora a megengedett feszültségesés?;A numerikus válasznál a pontos eredmény számít.;érintésvédelem;földelés;2;1;20;S0001;1. oldal;"feszültségesés";hu;4.90;0
+Q1;single_choice;Melyik állítás igaz a TN-S rendszerre?;A TN-S rendszerben a védővezető és a nullavezető külön vezetett.;érintésvédelem;TN-S rendszer;2;1;30;S1;3. oldal;"TN-S, érintésvédelem";hu;;
+Q2;multi_choice;Válassza ki azokat az értékeket, amelyek kisfeszültségnek számítanak!;A kisfeszültség AC esetén 1000 V-ig, DC esetén 1500 V-ig terjed.;villamos-alapok;feszültségszintek;2;1;20;S1;71. sor;"kisfeszültség, feszültségszint";hu;;
+Q3;numeric_entry;Mekkora a megengedett feszültségesés?;A numerikus válasznál a pontos eredmény számít.;érintésvédelem;földelés;2;1;20;S1;1. oldal;"feszültségesés";hu;4.90;0
 ```

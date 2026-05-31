@@ -1440,7 +1440,7 @@ function getNextAssetId() {
 }
 
 function getNextSourceId() {
-  return `S${String(getNextNumericId(state.data.sources, "source_id", "S")).padStart(4, "0")}`;
+  return `S${getNextNumericId(state.data.sources, "source_id", "S")}`;
 }
 
 function getNextNumericId(rows, field, prefix) {

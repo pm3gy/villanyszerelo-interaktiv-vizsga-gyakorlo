@@ -12,6 +12,8 @@ CHOICE_ID_RE = re.compile(r"^C[1-9]\d*$")
 PADDED_CHOICE_ID_RE = re.compile(r"^C0+\d+$")
 ASSET_ID_RE = re.compile(r"^A[1-9]\d*$")
 PADDED_ASSET_ID_RE = re.compile(r"^A0+\d+$")
+SOURCE_ID_RE = re.compile(r"^S[1-9]\d*$")
+PADDED_SOURCE_ID_RE = re.compile(r"^S0+\d+$")
 SUPPORTED_TYPES = {
     "single_choice",
     "multi_choice",
@@ -35,6 +37,7 @@ class QuestionBankTest(unittest.TestCase):
         cls.questions = read_csv("questions.csv")
         cls.choices = read_csv("choices.csv")
         cls.assets = read_csv("assets.csv")
+        cls.sources = read_csv("sources.csv")
 
     def test_question_ids_are_unpadded_and_ordered(self):
         seen_numbers = []
@@ -75,6 +78,59 @@ class QuestionBankTest(unittest.TestCase):
 
         self.assertEqual(len(choice_ids), len(set(choice_ids)))
         self.assertEqual(len(asset_ids), len(set(asset_ids)))
+
+    def test_source_ids_are_unpadded_and_references_are_valid(self):
+        source_ids = []
+        for row in self.sources:
+            source_id = row["source_id"]
+            self.assertRegex(source_id, SOURCE_ID_RE)
+            self.assertNotRegex(source_id, PADDED_SOURCE_ID_RE)
+            source_ids.append(source_id)
+
+        self.assertEqual(len(source_ids), len(set(source_ids)))
+        source_id_set = set(source_ids)
+
+        for row in self.questions:
+            source_id = row["source_id"]
+            if source_id:
+                self.assertIn(source_id, source_id_set, row["question_id"])
+                self.assertNotRegex(source_id, PADDED_SOURCE_ID_RE)
+
+        for row in self.assets:
+            source_id = row["source_id"]
+            if source_id:
+                self.assertIn(source_id, source_id_set, row["asset_id"])
+                self.assertNotRegex(source_id, PADDED_SOURCE_ID_RE)
+
+    def test_szakma_kivalo_tanuloja_sources_use_unified_titles(self):
+        normalized_ids = {
+            "S4",
+            "S5",
+            "S20",
+            "S21",
+            "S22",
+            "S23",
+            "S24",
+            "S25",
+            "S26",
+            "S27",
+            "S28",
+            "S29",
+            "S30",
+            "S37",
+            "S38",
+            "S39",
+        }
+        sources_by_id = {row["source_id"]: row for row in self.sources}
+
+        for source_id in normalized_ids:
+            row = sources_by_id[source_id]
+            self.assertRegex(row["year"], r"^\d{4}$", source_id)
+            self.assertEqual(
+                row["title"],
+                f"Szakma Kiváló Tanulója Verseny {row['year']}",
+                source_id,
+            )
 
     def test_choice_shape_matches_question_type(self):
         choices_by_question = defaultdict(list)
