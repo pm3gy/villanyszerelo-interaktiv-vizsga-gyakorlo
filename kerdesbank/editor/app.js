@@ -1389,7 +1389,7 @@ function buildAssetRowsPreview() {
     : [];
   const existingPreview = existingRows.map((row) => ({ ...row }));
   const newPreview = state.assetFiles.map((file, index) => ({
-    asset_id: `A${String(getNextAssetIdNumber() + index).padStart(4, "0")}`,
+    asset_id: `A${getNextAssetIdNumber() + index}`,
     question_id: questionId,
     path: `../kerdesbank/media/${sanitizeFilename(file.name)}`,
     kind,
@@ -1436,7 +1436,7 @@ function getNextAssetIdNumber() {
 }
 
 function getNextAssetId() {
-  return `A${String(getNextAssetIdNumber()).padStart(4, "0")}`;
+  return `A${getNextAssetIdNumber()}`;
 }
 
 function getNextSourceId() {
@@ -1635,7 +1635,7 @@ async function writeAssetFiles(questionId, sourceRow) {
     await writable.write(await file.arrayBuffer());
     await writable.close();
     rows.push({
-      asset_id: `A${String(getNextAssetIdNumber() + rows.length).padStart(4, "0")}`,
+      asset_id: `A${getNextAssetIdNumber() + rows.length}`,
       question_id: questionId,
       path: `../kerdesbank/media/${targetName}`,
       kind,

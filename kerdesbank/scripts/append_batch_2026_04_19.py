@@ -260,7 +260,7 @@ def make_choice_rows(question_id: str, choice_id_start: int, correct: str, wrong
     for idx, option in enumerate(options):
         rows.append(
             {
-                "choice_id": f"C{choice_id_start + idx:04d}",
+                "choice_id": f"C{choice_id_start + idx}",
                 "question_id": question_id,
                 "choice_label": labels[idx],
                 "choice_text_md": option,
@@ -278,7 +278,7 @@ def make_choice_rows(question_id: str, choice_id_start: int, correct: str, wrong
 def make_tf_rows(question_id: str, choice_id_start: int, statement: str, answer: bool):
     return [
         {
-            "choice_id": f"C{choice_id_start:04d}",
+            "choice_id": f"C{choice_id_start}",
             "question_id": question_id,
             "choice_label": "A",
             "choice_text_md": "true",
@@ -290,7 +290,7 @@ def make_tf_rows(question_id: str, choice_id_start: int, statement: str, answer:
             "group_label": "",
         },
         {
-            "choice_id": f"C{choice_id_start + 1:04d}",
+            "choice_id": f"C{choice_id_start + 1}",
             "question_id": question_id,
             "choice_label": "B",
             "choice_text_md": "false",

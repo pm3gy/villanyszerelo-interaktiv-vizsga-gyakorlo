@@ -8,6 +8,10 @@ from pathlib import Path
 BANK_DIR = Path(__file__).resolve().parents[1]
 QUESTION_ID_RE = re.compile(r"^Q[1-9]\d*$")
 PADDED_QUESTION_ID_RE = re.compile(r"^Q0+\d+$")
+CHOICE_ID_RE = re.compile(r"^C[1-9]\d*$")
+PADDED_CHOICE_ID_RE = re.compile(r"^C0+\d+$")
+ASSET_ID_RE = re.compile(r"^A[1-9]\d*$")
+PADDED_ASSET_ID_RE = re.compile(r"^A0+\d+$")
 SUPPORTED_TYPES = {
     "single_choice",
     "multi_choice",
@@ -54,6 +58,24 @@ class QuestionBankTest(unittest.TestCase):
             self.assertIn(row["question_id"], question_ids)
             self.assertNotRegex(row["question_id"], PADDED_QUESTION_ID_RE)
 
+    def test_choice_and_asset_ids_are_unpadded(self):
+        choice_ids = []
+        for row in self.choices:
+            choice_id = row["choice_id"]
+            self.assertRegex(choice_id, CHOICE_ID_RE)
+            self.assertNotRegex(choice_id, PADDED_CHOICE_ID_RE)
+            choice_ids.append(choice_id)
+
+        asset_ids = []
+        for row in self.assets:
+            asset_id = row["asset_id"]
+            self.assertRegex(asset_id, ASSET_ID_RE)
+            self.assertNotRegex(asset_id, PADDED_ASSET_ID_RE)
+            asset_ids.append(asset_id)
+
+        self.assertEqual(len(choice_ids), len(set(choice_ids)))
+        self.assertEqual(len(asset_ids), len(set(asset_ids)))
+
     def test_choice_shape_matches_question_type(self):
         choices_by_question = defaultdict(list)
         for row in self.choices:
@@ -83,6 +105,7 @@ class QuestionBankTest(unittest.TestCase):
             match_choice_id = row["match_choice_id"]
             if match_choice_id:
                 self.assertIn(match_choice_id, choice_ids)
+                self.assertNotRegex(match_choice_id, PADDED_CHOICE_ID_RE)
 
     def test_structured_questions_do_not_store_display_labels(self):
         question_types = {row["question_id"]: row["question_type"] for row in self.questions}

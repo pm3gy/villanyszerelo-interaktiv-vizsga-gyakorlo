@@ -46,7 +46,7 @@ Megjegyzés:
 
 ### `choices.csv`
 
-- `choice_id`: egyedi azonosító, például `C0001`
+- `choice_id`: egyedi azonosító, például `C1`
 - `question_id`: hivatkozás a `questions.csv` sorára
 - `choice_label`: válaszjel, például `A`, `B`, `C`, `D`; strukturált feladatoknál (`ordering`, `matching`, `grouping`) üres, hogy ne áruljon el eredeti sorrendet
 - `choice_text_md`: a válasz szövege Markdown formában
@@ -69,7 +69,7 @@ Megjegyzés:
 
 ### `assets.csv`
 
-- `asset_id`: egyedi azonosító
+- `asset_id`: egyedi azonosító, például `A1`
 - `question_id`: melyik kérdéshez tartozik
 - `path`: képfájl vagy egyéb média elérési útja
 - `kind`: például `image`, `diagram`, `photo`
