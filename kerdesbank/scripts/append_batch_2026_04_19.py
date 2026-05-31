@@ -333,7 +333,7 @@ def main():
         tf_key = question_key("true_false", tf_prompt, fact)
         if tf_key not in existing_keys:
             existing_keys.add(tf_key)
-            tf_qid = f"Q{q_id_num:04d}"
+            tf_qid = f"Q{q_id_num}"
             q_id_num += 1
             new_questions.append(
                 {
@@ -361,7 +361,7 @@ def main():
         sc_key = question_key("single_choice", sc_prompt, fact)
         if sc_key not in existing_keys:
             existing_keys.add(sc_key)
-            sc_qid = f"Q{q_id_num:04d}"
+            sc_qid = f"Q{q_id_num}"
             q_id_num += 1
             new_questions.append(
                 {

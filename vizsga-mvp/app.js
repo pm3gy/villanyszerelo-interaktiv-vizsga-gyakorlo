@@ -773,7 +773,7 @@ function normalizeQuestionIdInput(value) {
   if (!raw) return "";
   const numericMatch = raw.match(/^Q?0*(\d+)$/);
   if (!numericMatch) return raw;
-  return `Q${numericMatch[1].padStart(4, "0")}`;
+  return `Q${Number(numericMatch[1])}`;
 }
 
 function normalizeStoredQuestionRangeId(value, fallback) {
