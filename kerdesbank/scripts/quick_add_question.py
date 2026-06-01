@@ -71,8 +71,19 @@ def read_csv(path: Path):
 
 
 def write_csv(path: Path, fieldnames, rows):
+    line_ending = "\n"
+    if path.exists():
+        text = path.read_text(encoding="utf-8-sig")
+        if "\r\n" in text:
+            line_ending = "\r\n"
+
     with path.open("w", encoding="utf-8", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=fieldnames, delimiter=";")
+        writer = csv.DictWriter(
+            fh,
+            fieldnames=fieldnames,
+            delimiter=";",
+            lineterminator=line_ending,
+        )
         writer.writeheader()
         writer.writerows(rows)
 

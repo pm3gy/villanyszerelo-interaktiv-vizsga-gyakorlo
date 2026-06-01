@@ -91,6 +91,12 @@ const state = {
     sources: [],
     assets: [],
   },
+  csvLineEndings: {
+    questions: "\n",
+    choices: "\n",
+    sources: "\n",
+    assets: "\n",
+  },
   bankFolderHandle: null,
   workspaceLabel: "Mappa kiválasztása szükséges",
   editingQuestionId: savedDraft.editingQuestionId,
@@ -205,6 +211,10 @@ async function loadRepositoryData() {
     fetch(DATA_FILES.assets, { cache: "no-store" }).then(requireOk).then((response) => response.text()),
   ]);
 
+  state.csvLineEndings.questions = detectLineEnding(questionsText);
+  state.csvLineEndings.choices = detectLineEnding(choicesText);
+  state.csvLineEndings.sources = detectLineEnding(sourcesText);
+  state.csvLineEndings.assets = detectLineEnding(assetsText);
   state.data.questions = parseCsv(questionsText);
   state.data.choices = parseCsv(choicesText);
   state.data.sources = parseCsv(sourcesText);
@@ -219,6 +229,10 @@ async function loadRepositoryDataFromHandle(folderHandle) {
     readTextFromHandle(folderHandle, "assets.csv"),
   ]);
 
+  state.csvLineEndings.questions = detectLineEnding(questionsText);
+  state.csvLineEndings.choices = detectLineEnding(choicesText);
+  state.csvLineEndings.sources = detectLineEnding(sourcesText);
+  state.csvLineEndings.assets = detectLineEnding(assetsText);
   state.data.questions = parseCsv(questionsText);
   state.data.choices = parseCsv(choicesText);
   state.data.sources = parseCsv(sourcesText);
@@ -694,7 +708,7 @@ function createDraftFromQuestion(question) {
 
   draft.choiceRowsByType[draft.question_type] = getChoicesForQuestion(question.question_id)
     .sort((left, right) => Number(left.sort_order || 0) - Number(right.sort_order || 0))
-    .map((row) => ({ text: row.choice_text_md || "", correct: String(row.is_correct) === "true" }));
+    .map((row) => ({ id: row.choice_id || "", text: row.choice_text_md || "", correct: String(row.is_correct) === "true" }));
 
   if (draft.choiceRowsByType[draft.question_type].length === 0) {
     draft.choiceRowsByType[draft.question_type] = createDefaultChoiceRows(draft.question_type);
@@ -1295,10 +1309,38 @@ function buildChoiceRowsPreview() {
   const questionId = getCurrentQuestionId();
   const rows = [];
   let nextChoiceIndex = getNextChoiceIdNumber();
+  const existingRows = state.editingQuestionId ? getChoicesForQuestion(state.editingQuestionId) : [];
+  const existingByType = {
+    sorted: [...existingRows].sort((left, right) => Number(left.sort_order || 0) - Number(right.sort_order || 0)),
+    right: existingRows
+      .filter((row) => row.match_role === "right")
+      .sort((left, right) => Number(left.sort_order || 0) - Number(right.sort_order || 0)),
+    left: existingRows
+      .filter((row) => row.match_role === "left")
+      .sort((left, right) => Number(left.sort_order || 0) - Number(right.sort_order || 0)),
+  };
+  const usedChoiceIds = new Set();
+
+  const nextChoiceId = () => {
+    let choiceId = `C${nextChoiceIndex++}`;
+    while (usedChoiceIds.has(choiceId)) {
+      choiceId = `C${nextChoiceIndex++}`;
+    }
+    usedChoiceIds.add(choiceId);
+    return choiceId;
+  };
+
+  const reuseChoiceId = (preferredId) => {
+    if (preferredId && !usedChoiceIds.has(preferredId)) {
+      usedChoiceIds.add(preferredId);
+      return preferredId;
+    }
+    return nextChoiceId();
+  };
 
   const addRow = (choiceLabel, text, isCorrect, sortOrder, extra = {}) => {
     rows.push({
-      choice_id: `C${nextChoiceIndex++}`,
+      choice_id: reuseChoiceId(extra.choice_id || ""),
       question_id: questionId,
       choice_label: choiceLabel,
       choice_text_md: text,
@@ -1315,21 +1357,24 @@ function buildChoiceRowsPreview() {
     getChoiceRows(type)
       .filter((row) => row.text.trim())
       .forEach((row, index) => {
-        addRow(choiceLabelForIndex(index), row.text.trim(), row.correct, index + 1);
+        addRow(choiceLabelForIndex(index), row.text.trim(), row.correct, index + 1, { choice_id: row.id || "" });
       });
     return rows;
   }
 
   if (type === "true_false") {
     const firstCorrect = state.form.trueFalseCorrect === "true";
-    addRow("A", "Igaz", firstCorrect, 1);
-    addRow("B", "Hamis", !firstCorrect, 2);
+    const trueRow = existingRows.find((row) => String(row.choice_text_md || "").trim().toLowerCase() === "igaz") || existingByType.sorted[0];
+    const falseRow = existingRows.find((row) => String(row.choice_text_md || "").trim().toLowerCase() === "hamis") || existingByType.sorted[1];
+    addRow("A", "Igaz", firstCorrect, 1, { choice_id: trueRow ? trueRow.choice_id : "" });
+    addRow("B", "Hamis", !firstCorrect, 2, { choice_id: falseRow ? falseRow.choice_id : "" });
     return rows;
   }
 
   if (type === "ordering") {
     parseLines(state.form.orderingText).forEach((line, index) => {
-      addRow("", line, false, index + 1);
+      const existingRow = existingByType.sorted[index];
+      addRow("", line, false, index + 1, { choice_id: existingRow ? existingRow.choice_id : "" });
     });
     return rows;
   }
@@ -1338,7 +1383,8 @@ function buildChoiceRowsPreview() {
     const pairs = parsePairs(state.form.matchingText);
     const rightIds = [];
     pairs.forEach(([left, right], index) => {
-      const rightChoiceId = `C${nextChoiceIndex++}`;
+      const existingRight = existingByType.right[index];
+      const rightChoiceId = reuseChoiceId(existingRight ? existingRight.choice_id : "");
       rightIds.push(rightChoiceId);
       rows.push({
         choice_id: rightChoiceId,
@@ -1354,8 +1400,9 @@ function buildChoiceRowsPreview() {
       });
     });
     pairs.forEach(([left, right], index) => {
+      const existingLeft = existingByType.left[index];
       rows.push({
-        choice_id: `C${nextChoiceIndex++}`,
+        choice_id: reuseChoiceId(existingLeft ? existingLeft.choice_id : ""),
         question_id: questionId,
         choice_label: "",
         choice_text_md: left,
@@ -1372,7 +1419,8 @@ function buildChoiceRowsPreview() {
 
   if (type === "grouping") {
     parsePairs(state.form.groupingText).forEach(([item, groupLabel], index) => {
-      addRow("", item, false, index + 1, { group_label: groupLabel });
+      const existingRow = existingByType.sorted[index];
+      addRow("", item, false, index + 1, { choice_id: existingRow ? existingRow.choice_id : "", group_label: groupLabel });
     });
     return rows;
   }
@@ -1676,8 +1724,13 @@ async function fileExists(directoryHandle, name) {
 
 async function writeWorkspaceCsv(filename, rows, fields) {
   const fileHandle = await state.bankFolderHandle.getFileHandle(filename, { create: true });
+  const key = filename.replace(/\.csv$/i, "");
+  const nextText = serializeCsv(rows, fields, state.csvLineEndings[key] || "\n");
+  const currentText = await readTextFromHandle(state.bankFolderHandle, filename);
+  if (currentText === nextText) return;
+
   const writable = await fileHandle.createWritable();
-  await writable.write(serializeCsv(rows, fields));
+  await writable.write(nextText);
   await writable.close();
 }
 
@@ -1807,7 +1860,11 @@ function parseCsv(text) {
   });
 }
 
-function serializeCsv(rows, fields) {
+function detectLineEnding(text) {
+  return String(text || "").includes("\r\n") ? "\r\n" : "\n";
+}
+
+function serializeCsv(rows, fields, lineEnding = "\n") {
   const escape = (value) => {
     const text = String(value ?? "");
     if (/[;"\n\r]/.test(text)) {
@@ -1820,7 +1877,7 @@ function serializeCsv(rows, fields) {
   for (const row of rows) {
     lines.push(fields.map((field) => escape(row[field])).join(";"));
   }
-  return `${lines.join("\n")}\n`;
+  return `${lines.join(lineEnding)}${lineEnding}`;
 }
 
 function choiceLabelForIndex(index) {
