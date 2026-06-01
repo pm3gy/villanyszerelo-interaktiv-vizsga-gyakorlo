@@ -1,4 +1,4 @@
-const CACHE_VERSION = "20260531-4";
+const CACHE_VERSION = "20260601-1";
 const CACHE_NAME = `villany-vizsga-${CACHE_VERSION}`;
 
 const APP_SHELL_URLS = [
@@ -108,11 +108,20 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  if (isAppShellUrl(url)) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
   event.respondWith(cacheFirst(request));
 });
 
 function isDataUrl(url) {
   return DATA_URLS.includes(url.pathname);
+}
+
+function isAppShellUrl(url) {
+  return APP_SHELL_URLS.includes(url.pathname);
 }
 
 function isEditorUrl(url) {
