@@ -1621,7 +1621,7 @@ function renderResults() {
     card.innerHTML = `
       <div class="review-item__top">
         <div>
-          <strong>${escapeHtml(`${item.sessionIndex + 1}. kérdés`)}</strong>
+          <strong>${escapeHtml(`${item.sessionIndex + 1}. kérdés · ID ${item.question.question_id}`)}</strong>
           <div class="review-item__meta">${escapeHtml(item.question.topic || "")} ${item.question.subtopic ? "· " + escapeHtml(item.question.subtopic) : ""}</div>
           <div class="review-item__meta">Nehézség: ${escapeHtml(String(item.question.difficulty || "-"))}</div>
         </div>

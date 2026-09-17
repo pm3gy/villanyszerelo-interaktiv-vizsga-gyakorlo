@@ -169,6 +169,33 @@ class QuestionBankTest(unittest.TestCase):
             if question_types[row["question_id"]] in {"ordering", "matching", "grouping"}:
                 self.assertEqual(row["choice_label"], "", row["choice_id"])
 
+    def test_reported_question_corrections(self):
+        questions_by_id = {row["question_id"]: row for row in self.questions}
+        choices_by_question = defaultdict(list)
+        for row in self.choices:
+            choices_by_question[row["question_id"]].append(row)
+
+        for question_id in ("Q82", "Q102"):
+            rod_question = questions_by_id[question_id]
+            for operand in ("R1 = 12 Ω", "R2 = 15 Ω", "R3 = 18 Ω"):
+                self.assertIn(operand, rod_question["prompt_md"])
+            self.assertEqual(rod_question["correct_answer_md"], "4.86")
+            self.assertEqual(rod_question["source_id"], "S28")
+
+        ip20_correct = [
+            row["choice_text_md"]
+            for row in choices_by_question["Q89"]
+            if row["is_correct"].strip().lower() == "true"
+        ]
+        self.assertEqual(ip20_correct, ["Igaz."])
+
+    def test_results_review_heading_includes_stable_question_id(self):
+        app_js = (BANK_DIR.parent / "vizsga-mvp" / "app.js").read_text(encoding="utf-8")
+        render_results = app_js.split("function renderResults()", 1)[1].split(
+            "function getResultScoreTone", 1
+        )[0]
+        self.assertIn("ID ${item.question.question_id}", render_results)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -393,8 +393,8 @@ C400;Q87;A;Igaz.;true;1;;;;
 C401;Q87;B;Hamis.;false;2;;;;
 C402;Q88;A;Igaz.;true;1;;;;
 C403;Q88;B;Hamis.;false;2;;;;
-C404;Q89;A;Igaz.;false;1;;;;
-C405;Q89;B;Hamis.;true;2;;;;
+C404;Q89;A;Igaz.;true;1;;;;
+C405;Q89;B;Hamis.;false;2;;;;
 C406;Q90;A;Igaz.;false;1;;;;
 C407;Q90;B;Hamis.;true;2;;;;
 C408;Q80;;Zöld-sárga;false;5;;;;védővezető
