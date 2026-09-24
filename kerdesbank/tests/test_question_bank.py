@@ -189,6 +189,13 @@ class QuestionBankTest(unittest.TestCase):
         ]
         self.assertEqual(ip20_correct, ["Igaz."])
 
+        q55_correct = [
+            row["choice_text_md"]
+            for row in choices_by_question["Q55"]
+            if row["is_correct"].strip().lower() == "true"
+        ]
+        self.assertEqual(q55_correct, ["Mü III."])
+
     def test_results_review_heading_includes_stable_question_id(self):
         app_js = (BANK_DIR.parent / "vizsga-mvp" / "app.js").read_text(encoding="utf-8")
         render_results = app_js.split("function renderResults()", 1)[1].split(
