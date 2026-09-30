@@ -1,4 +1,4 @@
-const CACHE_VERSION = "20260924-2";
+const CACHE_VERSION = "20260930-1";
 const CACHE_NAME = `villany-vizsga-${CACHE_VERSION}`;
 
 const APP_SHELL_URLS = [

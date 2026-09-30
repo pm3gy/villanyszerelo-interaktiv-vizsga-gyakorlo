@@ -189,6 +189,20 @@ class QuestionBankTest(unittest.TestCase):
         ]
         self.assertEqual(ip20_correct, ["Igaz."])
 
+        q5_correct = [
+            row["choice_text_md"]
+            for row in choices_by_question["Q5"]
+            if row["is_correct"].strip().lower() == "true"
+        ]
+        self.assertEqual(q5_correct, ["420V AC"])
+
+        q486_correct = [
+            row["choice_text_md"]
+            for row in choices_by_question["Q486"]
+            if row["is_correct"].strip().lower() == "true"
+        ]
+        self.assertEqual(q486_correct, ["24 V AC", "100 V DC"])
+
         q55_correct = [
             row["choice_text_md"]
             for row in choices_by_question["Q55"]
