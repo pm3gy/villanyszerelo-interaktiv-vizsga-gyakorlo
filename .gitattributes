@@ -1,0 +1,2 @@
+# Keep question-bank data portable and avoid platform-specific line-ending diffs.
+*.csv text eol=lf
