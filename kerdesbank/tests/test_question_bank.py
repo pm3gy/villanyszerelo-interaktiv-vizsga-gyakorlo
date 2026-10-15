@@ -203,6 +203,10 @@ class QuestionBankTest(unittest.TestCase):
         ]
         self.assertEqual(q486_correct, ["24 V AC", "100 V DC"])
 
+        q392 = questions_by_id["Q392"]
+        self.assertNotIn("b jelű", q392["explanation_md"])
+        self.assertIn("opciók sorrendje", q392["explanation_md"])
+
         q55_correct = [
             row["choice_text_md"]
             for row in choices_by_question["Q55"]

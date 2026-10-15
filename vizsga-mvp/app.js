@@ -1399,6 +1399,7 @@ function renderChoiceQuestion(question) {
       />
       <div>
         <span class="choice__label">${escapeHtml(displayLabel)}</span>
+        ${choice.choice_image_path ? `<img class="choice__image" src="${escapeHtml(toAssetUrl(choice.choice_image_path))}" alt="${escapeHtml(`${displayLabel}. ${choice.choice_text_md}`)}" loading="lazy" />` : ""}
         <span class="choice__text">${renderMarkdown(choice.choice_text_md)}</span>
       </div>
     `;

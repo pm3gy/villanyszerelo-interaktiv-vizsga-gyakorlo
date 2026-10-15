@@ -1,4 +1,4 @@
-choice_id;question_id;choice_label;choice_text_md;is_correct;sort_order;feedback_md;match_role;match_choice_id;group_label
+choice_id;question_id;choice_label;choice_text_md;is_correct;sort_order;feedback_md;match_role;match_choice_id;group_label;choice_image_path
 C1;Q1;A;A töltéshordozók egyirányú rendezett mozgása.;false;1;Ez az elektromos áram definíciója, nem az áramütésé.;;;
 C2;Q1;B;A villamos áram kémiai hatásai.;false;2;Ez egy hatás, nem a meghatározás.;;;
 C3;Q1;C;A villamos áram mechanikai, rázó- vagy ütőhatása az emberi testre.;false;3;A megfogalmazás pontatlan.;;;
@@ -1124,10 +1124,10 @@ C1423;Q391;A;Szigetelő anyagú padló burkolat, vagy szőnyeg alkalmazásával.
 C1424;Q391;B;Áram-védőkapcsoló alkalmazásával.;false;2;;;;
 C1425;Q391;C;Szigetelő kesztyű használatával.;true;3;;;;
 C1426;Q391;D;A földelési ellenállás csökkentésével;false;4;;;;
-C1427;Q392;A;a;false;1;;;;
-C1428;Q392;B;b;true;2;;;;
-C1429;Q392;C;c;false;3;;;;
-C1430;Q392;D;d;false;4;;;;
+C1427;Q392;A;;false;1;;;;;../kerdesbank/media/q392_option_a.png
+C1428;Q392;B;;true;2;;;;;../kerdesbank/media/q392_option_b.png
+C1429;Q392;C;;false;3;;;;;../kerdesbank/media/q392_option_c.png
+C1430;Q392;D;;false;4;;;;;../kerdesbank/media/q392_option_d.png
 C1431;Q393;A;LPZ0A;true;1;;;;
 C1432;Q393;B;LPZ0B;false;2;;;;
 C1433;Q393;C;LPZ1;false;3;;;;
