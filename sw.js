@@ -1,4 +1,4 @@
-const CACHE_VERSION = "20260930-1";
+const CACHE_VERSION = "20261109-1";
 const CACHE_NAME = `villany-vizsga-${CACHE_VERSION}`;
 
 const APP_SHELL_URLS = [
@@ -29,6 +29,7 @@ const MEDIA_URLS = [
   "/kerdesbank/media/Screenshot_2026-05-29_at_20.11.56.png",
   "/kerdesbank/media/Screenshot_2026-05-29_at_20.14.17.png",
   "/kerdesbank/media/doc103_tablazat_1.png",
+  "/kerdesbank/media/q077_avk_adattabla.png",
   "/kerdesbank/media/doc150619_munkafazisok.jpg",
   "/kerdesbank/media/doc150619_valtokapcsolo.jpg",
   "/kerdesbank/media/doc150619_vezetekszakasz.jpg",

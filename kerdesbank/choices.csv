@@ -79,10 +79,6 @@ C77;Q19;A;Elengedés késleltetésű időrelé.;true;1;A lépcsőházi automata 
 C78;Q19;B;Olvadóbiztosító.;false;2;Ez nem időrelé.;;;
 C79;Q19;C;Motorvédő kapcsoló.;false;3;Ez nem időrelé.;;;
 C80;Q19;D;Keresztkapcsoló.;false;4;Ez nem időrelé.;;;
-C81;Q20;A;Hőrelé;true;1;Túlterhelésvédelmet ad.;;;
-C82;Q20;B;Motorvédő kapcsoló;true;2;Túlterhelésvédelmet ad.;;;
-C83;Q20;C;Mágneskapcsoló;false;3;Ez főként kapcsolóeszköz.;;;
-C84;Q20;D;FI-relé;false;4;Ez hibaáram-védelmi eszköz.;;;
 C85;Q21;A;3;true;1;A forrás szerint többnyire három főérintkező van.;;;
 C86;Q21;B;1;false;2;Ez túl kevés.;;;
 C87;Q21;C;2;false;3;Ez nem jellemző.;;;
@@ -179,21 +175,23 @@ C177;Q39;C;Négy vezeték csatlakozik hozzá.;true;3;A forrás ezt hangsúlyozza
 C178;Q39;D;A két alternatív szálat cseréli meg.;true;4;Ez a működési elve.;;;
 C179;Q39;E;Egy fogyasztó három vagy több kapcsolási helyéről is alkalmazható.;true;5;A köztes kapcsolók számával bővíthető.;;;
 C180;Q39;F;Csak két vezeték megy rá.;false;6;Ez nem igaz a keresztkapcsolóra.;;;
-C181;Q40;A;Rendelkező szerv lehet nyomógomb.;true;1;A nyomógomb a rendelkező szerv tipikus példája.;;;
-C182;Q40;B;Érzékelő szerv lehet termosztát.;true;2;A termosztát érzékelő szervként szerepel.;;;
-C183;Q40;C;Jelformáló szerv lehet relé.;true;3;A relé jelformáló elemként működhet.;;;
-C184;Q40;D;Beavatkozó szerv lehet mágneskapcsoló.;true;4;A mágneskapcsoló beavatkozó szerv.;;;
-C185;Q40;E;A vezérlés a kimeneti eredményt figyeli és visszacsatol.;false;5;Ez már a szabályzás logikája.;;;
+C181;Q40;A;A folyamatirányítás lehet vezérlés és szabályzás, és mindkettő lehet kézzel irányított és automatikus.;true;1;Mindkét irányítási mód megvalósítható kézi vagy automatikus működtetéssel.;;;
+C182;Q40;B;A vezérlés leírható hatáslánccal, de a szabályozás nem.;false;2;A szabályozás is leírható hatáslánccal.;;;
+C183;Q40;C;**Szabályozásról** beszélünk, ha a folyamat az indítását követően, annak eredményétől függetlenül végrehajtódik.;false;3;Ez a vezérlés jellemzője.;;;
+C184;Q40;D;**Vezérlésről** beszélünk akkor, ha a folyamat indítását követően, annak eredményét figyelve a folyamatba beavatkozás történik a helyes eredmény érdekében.;false;4;Az eredmény figyelése és a visszacsatolt beavatkozás a szabályozás jellemzője.;;;
+C185;Q40;E;**Vezérlésről** beszélünk, ha a folyamat az indítását követően, annak eredményétől függetlenül végrehajtódik.;true;5;A vezérlés a folyamat eredményétől függetlenül működik.;;;
+C1851;Q40;F;Mágneskapcsoló lehet a vezérlés eszköze.;true;6;A mágneskapcsoló vezérlőáramkörrel működtethető kapcsolóeszköz.;;;
+C1852;Q40;G;**Szabályozásról** beszélünk akkor, ha a folyamat indítását követően, annak eredményét figyelve a folyamatba beavatkozás történik a helyes eredmény érdekében.;true;7;A szabályozás a mért eredményt visszacsatolva avatkozik be.;;;
 C186;Q41;A;Visszacsatolással működik.;true;1;A szabályzás alapja a visszacsatolás.;;;
 C187;Q41;B;A kimeneti értéket figyelve avatkozik be.;true;2;A folyamat eredménye alapján módosít.;;;
 C188;Q41;C;Stabilizálja a rendszert.;true;3;A negatív visszacsatolás erre szolgál.;;;
 C189;Q41;D;Lehet kézi vagy automatikus.;true;4;Mindkét megoldás létezik.;;;
 C190;Q41;E;A folyamat eredményétől függetlenül zajlik.;false;5;Ez a vezérlésre jellemző.;;;
-C191;Q42;A;Elektromágnesként működik.;true;1;A mágneskapcsoló alapelve ez.;;;
-C192;Q42;B;Főáramkörben többnyire három záró érintkezőt tartalmaz.;true;2;A teljesítménykapcsolás miatt ez jellemző.;;;
-C193;Q42;C;Legalább egy záró és egy nyitó segédérintkezője lehet.;true;3;A vezérléshez segédérintkezők is vannak.;;;
-C194;Q42;D;A segédérintkezők száma bővíthető.;true;4;A forrás külön kiemeli a bővíthetőséget.;;;
-C195;Q42;E;Csak kézi mechanikus kapcsoló.;false;5;A működése elektromágneses.;;;
+C191;Q42;A;Funkciója lehet kis árammal nagy kapcsolása.;true;1;Kis vezérlőárammal nagyobb teljesítményű áramkört kapcsolhat.;;;
+C192;Q42;B;Elektromágnesként működik.;true;2;A mágneskapcsoló működése elektromágneses.;;;
+C193;Q42;C;Lehetnek segédérintkezői.;true;3;A segédérintkezők a vezérlőáramkörben használhatók.;;;
+C194;Q42;D;A túlterhelés elleni védelmet az ikerfémes kialakítása látja el.;false;4;Az ikerfémes túlterhelésvédelem a hőrelé működési elve.;;;
+C195;Q42;E;Csak mechanikusan, kézi kapcsoló.;false;5;A mágneskapcsoló elektromágneses működésű.;;;
 C196;Q43;A;Motorok túlterhelés elleni védelmére szolgál.;true;1;Ez a fő feladata.;;;
 C197;Q43;B;A hőrelé segédérintkezőin jelzés adható.;true;2;A hőrelé erre is alkalmas.;;;
 C198;Q43;C;A motorvédő kapcsoló megszakíthatja a túlterhelt áramkört.;true;3;Ez a motorvédő egyik erőssége.;;;
@@ -346,14 +344,13 @@ C349;Q76;A;Kétpólusú kapcsoló.;false;1;Ez nem a két billentyűs, két áram
 C350;Q76;B;Váltókapcsoló.;false;2;Ez más kapcsolótípus.;;;
 C351;Q76;C;Két áramkörös, csillárkapcsoló.;true;3;Ez a helyes megnevezés.;;;
 C352;Q76;D;Nyomógomb.;false;4;Ez nem ez a kapcsolótípus.;;;
-C353;Q77;A;IΔn = 0,03 A az érzékenységet jelöli.;true;1;Ez a helyes jelölés.;;;
-C354;Q77;B;AC az áramnemet jelöli.;true;2;Ez a helyes jelölés.;;;
-C355;Q77;C;ABB a gyártót jelöli.;true;3;Ez a helyes jelölés.;;;
-C356;Q77;D;25 A a névleges áramot jelöli.;true;4;Ez a helyes jelölés.;;;
-C357;Q77;E;Im = 1000 A a maximális megszakítóképességet jelöli.;true;5;Ez a helyes jelölés.;;;
-C358;Q77;F;Un = 230 V a névleges feszültséget jelöli.;true;6;Ez a helyes jelölés.;;;
-C359;Q77;G;F 202 a típust jelöli.;true;7;Ez a helyes jelölés.;;;
-C360;Q77;H;50 Hz a névleges frekvenciát jelöli.;false;8;Ez nem szerepel a forrásban.;;;
+C353;Q77;A;Az ÁVK érzékenysége 0.03 A;true;1;Az IΔn = 0,03 A jelölés az érzékenységet adja meg.;;;
+C354;Q77;B;Az ÁVK érzékenysége 25 A;false;2;A 25 A a névleges áram, nem az érzékenység.;;;
+C355;Q77;C;Az ÁVK érzékenysége 1000 A;false;3;Az Im = 1000 A nem az érzékenységet jelöli.;;;
+C356;Q77;D;Az ÁVK áramneme AC;true;4;Az adattáblán AC szerepel.;;;
+C357;Q77;E;Az ÁVK gyártója ABB;true;5;Az ABB gyártó neve szerepel az adattáblán.;;;
+C358;Q77;F;Maximális megszakítóképesség 1000 A;true;6;Az adattáblán Im = 1000 A szerepel.;;;
+C359;Q77;G;Maximális megszakítóképesség 25 A;false;7;A 25 A a névleges áram, az Im értéke 1000 A.;;;
 C362;Q78;;Előkészületi munkák;false;1;;;;
 C364;Q78;;Nyomvonal kijelölése;false;2;;;;
 C366;Q78;;Horony- és fészekvésés;false;3;;;;
@@ -476,10 +473,6 @@ C487;Q112;;két áramkörös kapcsoló;false;7;;;;kapcsoló
 C488;Q112;;egy áramkörös világítótest;false;8;;;;világítás
 C489;Q112;;mozgásérzékelős világítótest;false;9;;;;világítás
 C490;Q112;;fénycsöves lámpatest;false;10;;;;világítás
-C491;Q113;A;8;true;1;;;;
-C492;Q113;B;7;false;2;;;;
-C493;Q113;C;6;false;3;;;;
-C494;Q113;D;9;false;4;;;;
 C495;Q114;A;minőségi energiaszolgáltatás biztosítása;true;1;;;;
 C496;Q114;B;a vezeték melegedésének és tűzveszélyének korlátozása;true;2;;;;
 C497;Q114;C;gazdaságos keresztmetszet-választás;true;3;;;;
