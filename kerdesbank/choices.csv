@@ -415,11 +415,18 @@ C425;Q94;;Hornyok elvakolása;false;6;;;;
 C426;Q94;;Vezetékek leszabása és behúzása;false;7;;;;
 C427;Q94;;Vezetékek azonosítása, kötések elkészítése;false;8;;;;
 C428;Q94;;Szerelői ellenőrzés, üzembe helyezés;false;9;;;;
-C429;Q95;A;A kismegszakító névleges feszültsége 230/400 V váltakozó feszültség.;true;1;;;;
-C430;Q95;B;A 6000 érték a zárlati szilárdságra utal.;true;2;;;;
-C431;Q95;C;A kismegszakító névleges árama 10 A.;true;3;;;;
-C432;Q95;D;A kismegszakító B kioldási karakterisztikájú.;true;4;;;;
-C433;Q95;E;A CE jelölés a névleges áramerősséget mutatja.;false;5;;;;
+C429;Q95;A;A kismegszakító csak 10 Volt feszültség felett alkalmazható.;false;1;;;;
+C430;Q95;B;A kismegszakító névleges feszültsége 230/400 V váltakozó feszültség.;true;2;;;;
+C431;Q95;C;A kismegszakító 230 V váltakozó- és 400 V egyenfeszültségen alkalmazható.;false;3;;;;
+C432;Q95;D;A kismegszakító zárlati szilárdsága 6 kA.;true;4;;;;
+C433;Q95;E;A kismegszakító a hibavédelem hatékonyság növelésének eszköze.;false;5;;;;
+C1853;Q95;F;A kismegszakító névleges áramerőssége 10 A.;true;6;;;;
+C1854;Q95;G;A 6000 a kismegszakító védettségére utal.;false;7;;;;
+C1855;Q95;H;A 6000 azt jelenti, hogy 6000 órát üzemelhet.;false;8;;;;
+C1856;Q95;I;A kismegszakító C kioldású karakterisztikájú.;false;9;;;;
+C1857;Q95;J;A kismegszakító CE kioldási karakterisztikájú.;false;10;;;;
+C1858;Q95;K;A kismegszakító csak zárlatvédelemre alkalmazható.;false;11;;;;
+C1859;Q95;L;A CE jelölés a kismegszakító védettségére utal.;false;12;;;;
 C434;Q98;;egyfázisú dugaszolóaljzat;false;1;;;;dugalj
 C435;Q98;;kettős egyfázisú dugaszolóaljzat;false;2;;;;dugalj
 C436;Q98;;hárompólusú kapcsoló;false;3;;;;kapcsoló
